@@ -44,3 +44,10 @@ curl http://127.0.0.1:7379/GET/hello
 
 curl -d "GET/hello" http://127.0.0.1:7379/
 → {"GET":"world"}
+
+# Install nginx
+...
+
+
+# Configure and Run nginx
+...
