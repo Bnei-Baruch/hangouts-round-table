@@ -88,7 +88,7 @@ function get_key(key) {
 }
 
 function update_server() {
-  var key = gapi.hangout.getHangoutId();
+  var key = encodeURIComponent(gapi.hangout.getHangoutUrl());
   var value = new Object();
   value.lang = "en";
   value.paritipants = new Array();
