@@ -87,6 +87,8 @@
 <button id="set_button">SET</button><input id="set_box" type="text"/><br>
 <button id="get_button">GET</button>
 
+<div id="webdis"><div>
+
 <hr>
 
 <p><a href="http://developers.google.com/+/hangouts/getting-started">Read the docs</a> to learn more about developing hangouts!</a></p>
