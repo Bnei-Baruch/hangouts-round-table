@@ -5,24 +5,55 @@
    * the License at
    *
    * http://www.apache.org/licenses/LICENSE-2.0
-   *﻿
+   *
    * Unless required by applicable law or agreed to in writing, software
    * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
    * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
    * License for the specific language governing permissions and limitations under
    * the License
   -->
-  ﻿  <ModulePrefs title="Hangout Starter">
-  ﻿  ﻿  <Require feature="rpc" />
-  ﻿  ﻿  <Require feature="views" />
-  ﻿  ﻿  <Require feature="locked-domain" />
-  ﻿  </ModulePrefs>
-  ﻿  <Content type="html"><![CDATA[
+  <ModulePrefs title="Hangout Starter">
+    <Require feature="rpc" />
+    <Require feature="views" />
+    <Require feature="locked-domain" />
+  </ModulePrefs>
+  <Content type="html"><![CDATA[
+
 <html>
 <head>
-    <!-- load JQuery from Google API -->
-    <script src="http://code.jquery.com/jquery-1.8.3.min.js">
-    </script>
+  <!-- load JQuery -->
+  <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+
+  <script type="text/javascript">
+  $(document).ready(function() {
+      function set() {
+          $.ajax({
+              url: "http://127.0.0.1:7379/SET/value/" + $("#set_box")[0].value,
+              data: "format=json",
+              dataType: "json",
+              success: function(data)
+              {
+                  $("#webdis").append("<div>" + JSON.stringify(data) + "</div>");
+              }
+          });
+      }
+
+      function get() {
+          $.ajax({
+              url: "http://127.0.0.1:7379/GET/value",
+              data: "format=json",
+              dataType: "json",
+              success: function(data)
+              {
+                  $("#webdis").append("<div>" + JSON.stringify(data) + "</div>");
+              }
+          });
+      }
+
+      $("#set_button").click(set);
+      $("#get_button").click(get);
+  });
+  </script>
 </head>
 <style type="text/css">
 <!--
@@ -35,8 +66,8 @@
 }
 
 .button:active {
-﻿  background: -webkit-gradient(linear, left top, left bottom, from(#aaa), to(#333));
-﻿  background: -moz-linear-gradient(bottom, #ddd, #aaa); }
+        background: -webkit-gradient(linear, left top, left bottom, from(#aaa), to(#333));
+        background: -moz-linear-gradient(bottom, #ddd, #aaa); }
 
 -->
 </style>
@@ -54,14 +85,14 @@
 
 <div id="participantsDiv"></div>
 
-<div id="webdis"></div>
+<button id="set_button">SET</button><input id="set_box" type="text"/><br>
+<button id="get_button">GET</button>
 
 <hr>
 
 <p><a href="http://developers.google.com/+/hangouts/getting-started">Read the docs</a> to learn more about developing hangouts!</a></p>
 
 <script>
-
 function showParticipants() {
   var participants = gapi.hangout.getParticipants();
 
@@ -99,5 +130,5 @@ gadgets.util.registerOnLoadHandler(init);
 </script>
 </body>
 ]]>
-</Content>
+  </Content>
 </Module>
