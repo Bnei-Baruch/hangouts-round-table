@@ -43,76 +43,58 @@
 <!-- load JQuery -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
 
-<script type="text/javascript">
-  $(document).ready(function() {
-      function set() {
-          $.ajax({
-              url: "http://127.0.0.1:7379/SET/value/" + $("#set_box")[0].value,
-              data: "format=json",
-              dataType: "json",
-              success: function(data)
-              {
-                  $("#webdis").append("<div>" + JSON.stringify(data) + "</div>");
-              }
-          });
-      }
-
-      function get() {
-          $.ajax({
-              url: "http://127.0.0.1:7379/GET/value",
-              data: "format=json",
-              dataType: "json",
-              success: function(data)
-              {
-                  $("#webdis").append("<div>" + JSON.stringify(data) + "</div>");
-              }
-          });
-      }
-
-      $("#set_button").click(set);
-      $("#get_button").click(get);
-  });
-</script>
-
-<h3>Simple Hangout App</h3>
-
 <p>
-<input class="button" type="button" value="Show participants!" id="showParticipants"
-    style="visibility:hidden;"
-    onClick="showParticipants()"/>
+<button id="show_participants" style="visibility:hidden;">Show Participants!</button>
+<div id="participants_div"></div>
 </p>
-
-<div id="participantsDiv"></div>
 
 <button id="set_button">SET</button><input id="set_box" type="text"/><br>
 <button id="get_button">GET</button>
 
 <div id="webdis"><div>
 
-<hr>
-
-<p><a href="http://developers.google.com/+/hangouts/getting-started">Read the docs</a> to learn more about developing hangouts!</a></p>
-
-<script>
-function showParticipants() {
+<script type="text/javascript">
+function show_participants() {
   var participants = gapi.hangout.getParticipants();
 
-  var retVal = '<p>Participants: </p><ul>';
+  var ret_val = '<p>Participants: </p><ul>';
 
   for (var index in participants) {
     var participant = participants[index];
 
     if (!participant.person) {
-      retVal += '<li>A participant not running this app</li>';
+      ret_val += '<li>A participant not running this app</li>';
     }
-    retVal += '<li>' + participant.person.displayName + '</li>';
+    ret_val += '<li>' + participant.person.displayName + '</li>';
   }
 
-  retVal += '</ul>';
+  ret_val += '</ul>';
 
-  var div = document.getElementById('participantsDiv');
+  var div = $("participants_div").html(ret_val);
+}
 
-  div.innerHTML = retVal;
+function set() {
+    $.ajax({
+        url: "http://127.0.0.1:7379/SET/value/" + $("#set_box")[0].value,
+        data: "format=json",
+        dataType: "json",
+        success: function(data)
+        {
+            $("#webdis").append("<div>" + JSON.stringify(data) + "</div>");
+        }
+    });
+}
+
+function get() {
+    $.ajax({
+        url: "http://127.0.0.1:7379/GET/value",
+        data: "format=json",
+        dataType: "json",
+        success: function(data)
+        {
+            $("#webdis").append("<div>" + JSON.stringify(data) + "</div>");
+        }
+    });
 }
 
 function init() {
@@ -120,8 +102,10 @@ function init() {
   gapi.hangout.onApiReady.add(
       function(eventObj) {
         if (eventObj.isApiReady) {
-          document.getElementById('showParticipants')
-            .style.visibility = 'visible';
+          $("#set_button").click(set);
+          $("#get_button").click(get);
+          $("#show_participants").click(show_participants);
+          $('#show_participants').css("visibility","visible");
         }
       });
 }
