@@ -88,7 +88,7 @@ function update_server() {
   value.lang = "en";
   value.paritipants = new Array();
   for(p in gapi.hangout.getParticipants()) {
-    value.paritipant.push(p.displayName);
+    value.paritipants.push(p.displayName);
   }
   set_key_value(key, JSON.stringify(value));
 }
