@@ -64,8 +64,7 @@ function show_participants() {
     ret_val += '<li>' + participant.person.displayName + '</li>';
   }
   ret_val += '</ul>';
-  alert(ret_val);
-  $("participants_div").html(ret_val);
+  $("#participants_div").html(ret_val);
 }
 
 function set() {
