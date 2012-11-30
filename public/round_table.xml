@@ -86,7 +86,10 @@ function update_server() {
   var key = gapi.hangout.getHangoutId();
   var value = new Object();
   value.lang = "en";
-  value.participants = gapi.hangout.getParticipants();
+  value.paritipants = new Array();
+  for(p in gapi.hangout.getParticipants()) {
+    value.paritipant.push(p.displayName);
+  }
   set_key_value(key, JSON.stringify(value));
 }
 
