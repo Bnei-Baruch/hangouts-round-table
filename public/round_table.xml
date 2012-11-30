@@ -46,6 +46,7 @@
 <button id="show_participants" style="visibility:hidden;">Show Participants!</button>
 <div id="participants_div">?</div>
 
+<button id="update_server_button">Update server</button>
 <button id="set_button">SET</button><input id="set_box" type="text"/><br>
 <button id="get_button">GET</button>
 
@@ -68,27 +69,37 @@ function show_participants() {
 }
 
 function set() {
-    $.ajax({
-        url: "http://127.0.0.1:7379/SET/value/" + $("#set_box")[0].value,
-        data: "format=json",
-        dataType: "json",
-        success: function(data)
-        {
-            $("#webdis").append("<div>" + JSON.stringify(data) + "</div>");
-        }
-    });
+  set_key_value("value", $("#set_box")[0].value);
+}
+
+function set_key_value(key, value) {
+  $.ajax({
+    url: "http://127.0.0.1:7379/SET/"+key+"/" + value,
+    data: "format=json",
+    dataType: "json",
+    success: function(data) {
+      $("#webdis").append("<div>" + JSON.stringify(data) + "</div>");
+    }
+  });
 }
 
 function get() {
-    $.ajax({
-        url: "http://127.0.0.1:7379/GET/value",
-        data: "format=json",
-        dataType: "json",
-        success: function(data)
-        {
-            $("#webdis").append("<div>" + JSON.stringify(data) + "</div>");
-        }
-    });
+  $.ajax({
+    url: "http://127.0.0.1:7379/GET/value",
+    data: "format=json",
+    dataType: "json",
+    success: function(data) {
+      $("#webdis").append("<div>" + JSON.stringify(data) + "</div>");
+    }
+  });
+}
+
+function update_server() {
+  var key = gapi.hangout.getHangoutUrl()
+  var value = new Object();
+  value.lang = "en";
+  value.participants = gapi.hangout.getParticipants();
+  set_key_value(key, JSON.stringify(value));
 }
 
 function init() {
@@ -100,6 +111,7 @@ function init() {
           $("#get_button").click(get);
           $("#show_participants").click(show_participants);
           $('#show_participants').css("visibility","visible");
+          $("#update_server_button").click(update_server);
         }
       });
 }
