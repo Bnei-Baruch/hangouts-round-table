@@ -46,7 +46,8 @@
 <button id="show_participants" style="visibility:hidden;">Show Participants!</button><br>
 <div id="participants_div">?</div><br>
 <button id="update_server_button">Update server</button><br>
-<button id="set_button">SET</button><input id="set_box" type="text"/><br>
+<button id="set_button">SET</button>
+Key:<input id="set_key_box" type="text"/> Value:<input id="set_value_box" type="text"/><br>
 <button id="get_button">GET</button>
 
 <div id="webdis"><div>
@@ -57,10 +58,10 @@ function show_participants() {
 }
 
 function set() {
-  set_key_value("value", $("#set_box")[0].value);
+  set_key($("#set_key_box")[0].value, $("#set_value_box")[0].value);
 }
 
-function set_key_value(key, value) {
+function set_key(key, value) {
   $.ajax({
     url: "http://127.0.0.1:7379/SET/"+key+"/" + value,
     data: "format=json",
@@ -72,8 +73,12 @@ function set_key_value(key, value) {
 }
 
 function get() {
+  get_key($("#set_key_box")[0].value);
+}
+
+function get_key(key) {
   $.ajax({
-    url: "http://127.0.0.1:7379/GET/value",
+    url: "http://127.0.0.1:7379/GET/" + key,
     data: "format=json",
     dataType: "json",
     success: function(data) {
@@ -87,10 +92,14 @@ function update_server() {
   var value = new Object();
   value.lang = "en";
   value.paritipants = new Array();
-  for(p in gapi.hangout.getParticipants()) {
-    value.paritipants.push(p.displayName);
+  var participants = gapi.hangout.getParticipants();
+  for (var index in participants) {
+    var participant = participants[index];
+    if (participant.person) {
+      value.paritipants.push(participant.person.displayName);
+    }
   }
-  set_key_value(key, JSON.stringify(value));
+  set_key(key, JSON.stringify(value));
 }
 
 function init() {
