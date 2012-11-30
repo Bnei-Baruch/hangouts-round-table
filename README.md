@@ -51,3 +51,7 @@ curl -d "GET/hello" http://127.0.0.1:7379/
 
 # Configure and Run nginx
 ...
+
+
+# How to create a google hangout application.
+https://developers.google.com/+/hangouts/getting-started
