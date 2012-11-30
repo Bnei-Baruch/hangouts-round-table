@@ -45,7 +45,7 @@
 
 <p>
 <button id="show_participants" style="visibility:hidden;">Show Participants!</button>
-<div id="participants_div"></div>
+<div id="participants_div">?</div>
 </p>
 
 <button id="set_button">SET</button><input id="set_box" type="text"/><br>
@@ -55,25 +55,23 @@
 
 <script type="text/javascript">
 function show_participants() {
+  alert();
   var participants = gapi.hangout.getParticipants();
-
   var ret_val = '<p>Participants: </p><ul>';
 
   for (var index in participants) {
     var participant = participants[index];
-
     if (!participant.person) {
       ret_val += '<li>A participant not running this app</li>';
     }
     ret_val += '<li>' + participant.person.displayName + '</li>';
   }
-
   ret_val += '</ul>';
-
-  var div = $("participants_div").html(ret_val);
+  $("participants_div").html(ret_val);
 }
 
 function set() {
+    alert();
     $.ajax({
         url: "http://127.0.0.1:7379/SET/value/" + $("#set_box")[0].value,
         data: "format=json",
