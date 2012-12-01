@@ -91,6 +91,8 @@ function update_server() {
   var key = encodeURIComponent(gapi.hangout.getHangoutUrl());
   var value = new Object();
   value.lang = "en";
+  value.url = gapi.hangout.getHangoutUrl();
+  value.timestamp = Date.now();
   value.paritipants = new Array();
   var participants = gapi.hangout.getParticipants();
   for (var index in participants) {
