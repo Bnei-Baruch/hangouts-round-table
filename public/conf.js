@@ -1,4 +1,4 @@
-var config = {
-  'host': 'http://bbworshop.kbb1.com/public',
-  'redis': 'http://bbworshop.kbb1.com/'
+var conf = {
+  'host': 'http://bbworkshop.kbb1.com/public',
+  'webdis': 'http://bbworkshop.kbb1.com/'
 }
