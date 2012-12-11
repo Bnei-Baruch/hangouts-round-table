@@ -6,9 +6,9 @@
   <script src="conf.js"></script>
   <script src="app.js"></script>
   <script type="text/javascript">
-    tables(function(data) {
-      $("#webdis").html("<div>" + JSON.stringify(data) + "</div>");
-    }); 
+    setInterval(function() { tables(function(data) {
+      $("#webdis").html("<div>" + JSON.stringify(data) + "</div><div>" + Date.now() + "</div>");
+    })}, conf.button_update_interval); 
   </script> 
 </head>
 <body>
