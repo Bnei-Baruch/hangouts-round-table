@@ -1,6 +1,7 @@
 var conf = {
-  'host': 'http://bbworkshop.kbb1.com/public',
-  'webdis': 'http://bbworkshop.kbb1.com',
-  'hangout_upadate_timeout': 3000, // in milliseconds.
-  'button_update_interval': 5000   // in milliseconds.
+  'host': 'https://bbworkshop.kbb1.com',
+  'webdis': 'https://bbworkshop.kbb1.com/webdis',
+  'hangout_upadate_timeout': 2000, // in milliseconds.
+  'button_update_interval': 1000,   // in milliseconds.
+  'table_max_limit': 2
 }

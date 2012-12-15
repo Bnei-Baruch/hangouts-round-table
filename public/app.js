@@ -40,8 +40,30 @@ function mget(key_arr, callback) {
   });
 }
 
+function del(key, callback) {
+  $.ajax({
+    url: conf.webdis + "/DEL/" + key,
+    data: "format=json",
+    dataType: "json",
+    success: callback
+  });
+}
+
 function tables(callback) {
   keys("table_*", function(table_keys) {
     mget(table_keys.KEYS.join('/'), callback);
+  });
+}
+
+function del_table(id, callback) {
+  del("table_" + id, callback);
+}
+
+function get_timestamp(callback) {
+  $.ajax({
+    url: conf.webdis + "/TIME",
+    data: "format=json",
+    dataType: "json",
+    success: function(data) { callback(data.TIME[0]); }
   });
 }
