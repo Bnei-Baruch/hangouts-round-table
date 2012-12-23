@@ -1,5 +1,6 @@
 <html>
 <head>
+<h1>Test Round Table</h1><br>
   <!-- load JQuery -->
   <script src="jquery-1.8.3.min.js"></script>
   <!-- Assumes conf.js is in the same place as index.html -->
@@ -9,6 +10,13 @@
     setInterval(function() { tables(function(data) {
       tables_dict = data;
       $("#webdis").html("<div>" + JSON.stringify(data) + "</div><div>" + Date.now() + "</div>");
+      for (var index in data.MGET) {
+        var one_table = JSON.parse(data.MGET[index]);
+        if (one_table != null) {
+          $("#webdis").append("<a href=\"https://plus.google.com/hangouts/_/" + one_table.id + "?gid=486366694302\">join " + one_table.id + " table (desktop)</a><br>" +
+                              "<a href=\"https://plus.google.com/hangouts/_/" + one_table.id + "\">join " + one_table.id + " table (mobile)</a><br><br>");
+        }
+      }
     })}, conf.button_update_interval); 
   </script> 
   <script type="text/javascript">
@@ -28,7 +36,11 @@
                 } else {
                   // Good up-to-date table
                   if (one_table.participants.length < conf.table_max_limit) {
-                    window.location.href = "https://plus.google.com/hangouts/_/" + one_table.id + "?gid=486366694302";
+                    if (isMobile.any()) {
+                      window.location.href = "https://plus.google.com/hangouts/_/" + one_table.id;
+                    } else {
+                      window.location.href = "https://plus.google.com/hangouts/_/" + one_table.id + "?gid=486366694302";
+                    }
                     redirected = true;
                     break;
                   }
@@ -37,8 +49,12 @@
             }
             // If no fitting tables exists, create new table.
             if (!redirected) {
-              window.location.href = "https://plus.google.com/hangouts/_?gid=486366694302";
-              redirected = true;
+              if (isMobile.any()) {
+                alert("Mobile device cannot start a new table, only join existing.");
+              } else {
+                window.location.href = "https://plus.google.com/hangouts/_?gid=486366694302";
+                redirected = true;
+              }
             }
           });
         });
@@ -50,7 +66,7 @@
 <a id="the_button" style="text-decoration:none;">
   <img src="https://ssl.gstatic.com/s2/oz/images/stars/hangout/1/gplus-hangout-20x86-normal.png"
     alt="Start a Hangout"
-    style="border:0;width:86px;height:20px;"/>
+    style="border:0;width:86px;height:20px;cursor:pointer;"/>
 </a>
 <div id="webdis"></div>
 </body>
