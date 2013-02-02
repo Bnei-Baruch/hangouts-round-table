@@ -88,3 +88,75 @@ var isMobile = {
         return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
     }
 };
+
+function get_free_table_id(callback) {
+  return tables(function(data) {
+    return get_timestamp(function(time_now) {
+      var redirected = false;
+      for (var index in data.MGET) {
+        one_table = JSON.parse(data.MGET[index]);
+        if (one_table != null) {
+          if ((parseInt(one_table.timestamp)*1000 +
+              (5*conf.hangout_upadate_timeout)) <
+              parseInt(time_now)*1000) {
+            // If the table if old not updated table, delete it from redis.
+            del_table(one_table.id); 
+          } else {
+            // Good up-to-date table
+            if (one_table.participants.length < conf.table_max_limit) {
+              callback(one_table.id);
+            }
+          }
+        }
+      } // for
+      callback("");
+    }); // get_timestamp
+  }); // tables
+}
+
+// Admin/Moderator opens a new table (should be from desktop).
+function on_admin_click() {
+  if (isMobile.any()) {
+    return "Hangout round table cannot be opened via mobile.";
+  } else {
+    window.open("https://plus.google.com/hangouts/_?gid=486366694302");
+    return "";
+  }
+}
+
+function on_user_click() {
+  get_free_table_id(function(table_id) {
+    if (table_id) {
+      if (isMobile.any()) {
+        window.open("https://plus.google.com/hangouts/_/" + one_table.id);
+        return "";
+      } else {
+        window.open("https://plus.google.com/hangouts/_/" + one_table.id + "?gid=486366694302");
+        return "";
+      }
+    } else {
+      return "User cannot start a new table, only join existing. Please retry when moderators will open new table.";
+    }
+  });
+}
+
+// One button for admin and users (no matter who will be admin).
+function on_any_click() {
+  get_free_table_id(function(table_id) {
+    if (table_id) {
+      if (isMobile.any()) {
+        //window.location.href = "https://plus.google.com/hangouts/_/" + one_table.id;
+        window.open("https://plus.google.com/hangouts/_/" + one_table.id);
+      } else {
+        window.open("https://plus.google.com/hangouts/_/" + one_table.id + "?gid=486366694302");
+      }
+    } else {
+      if (isMobile.any()) {
+        return "Mobile device cannot start a new table, only join existing.";
+      } else {
+        window.open("https://plus.google.com/hangouts/_?gid=486366694302");
+      }
+    }
+  });
+}
+

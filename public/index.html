@@ -20,54 +20,22 @@
     })}, conf.button_update_interval); 
   </script> 
   <script type="text/javascript">
+    function add_click_log(text) {
+      $("#log").append("<span>"+text+"</span><br>");
+    }
     $(document).ready(function() {
-      $("#the_button").click(function() {
-        tables(function(data) {
-          get_timestamp(function(time_now) {
-            var redirected = false;
-            for (var index in data.MGET) {
-              one_table = JSON.parse(data.MGET[index]);
-              if (one_table != null) {
-                if ((parseInt(one_table.timestamp)*1000 +
-                    (5*conf.hangout_upadate_timeout)) <
-                    parseInt(time_now)*1000) {
-                  // If the table if old not updated table, delete it from redis.
-                  del_table(one_table.id); 
-                } else {
-                  // Good up-to-date table
-                  if (one_table.participants.length < conf.table_max_limit) {
-                    if (isMobile.any()) {
-                      window.location.href = "https://plus.google.com/hangouts/_/" + one_table.id;
-                    } else {
-                      window.location.href = "https://plus.google.com/hangouts/_/" + one_table.id + "?gid=486366694302";
-                    }
-                    redirected = true;
-                    break;
-                  }
-                }
-              }
-            }
-            // If no fitting tables exists, create new table.
-            if (!redirected) {
-              if (isMobile.any()) {
-                alert("Mobile device cannot start a new table, only join existing.");
-              } else {
-                window.location.href = "https://plus.google.com/hangouts/_?gid=486366694302";
-                redirected = true;
-              }
-            }
-          });
-        });
-      });
+      $("#the_button_combined").click(function() { on_any_click(); });
+      $("#the_button_admin").click(function() { on_admin_click(); });
+      $("#the_button_user").click(function() { add_click_log(on_user_click()); });
     }); 
   </script>
 </head>
 <body>
-<a id="the_button" style="text-decoration:none;">
-  <img src="https://ssl.gstatic.com/s2/oz/images/stars/hangout/1/gplus-hangout-20x86-normal.png"
-    alt="Start a Hangout"
-    style="border:0;width:86px;height:20px;cursor:pointer;"/>
-</a>
+<button id="the_button_combined">Combined (Admin + User) no mattet.</button>
+<button id="the_button_admin">Admin</button>
+<button id="the_button_user">User</button>
 <div id="webdis"></div>
+<div id="log"></div>
+<!-- <iframe width="420" height="315" src="http://www.youtube.com/embed/sRxbzSFwQVA" frameborder="0" allowfullscreen></iframe> -->
 </body>
 </html>

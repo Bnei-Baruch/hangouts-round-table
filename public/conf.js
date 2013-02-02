@@ -3,5 +3,6 @@ var conf = {
   'webdis': 'https://bbworkshop.kbb1.com/webdis',
   'hangout_upadate_timeout': 2000, // in milliseconds.
   'button_update_interval': 1000,   // in milliseconds.
-  'table_max_limit': 10
+  'table_max_limit': 10,
+  'open_in_new_window': true,  // false is not implemented 
 }
