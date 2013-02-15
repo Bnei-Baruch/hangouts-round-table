@@ -93,6 +93,8 @@ function get_free_table_id(callback) {
   return tables(function(data) {
     return get_timestamp(function(time_now) {
       var redirected = false;
+      var max_participants = 0;
+      var best_table_id = "";
       for (var index in data.MGET) {
         one_table = JSON.parse(data.MGET[index]);
         if (one_table != null) {
@@ -104,12 +106,14 @@ function get_free_table_id(callback) {
           } else {
             // Good up-to-date table
             if (one_table.participants.length < conf.table_max_limit) {
-              callback(one_table.id);
+              if (one_table.participants.length > max_participants) {
+                best_table_id = one_table.id;
+              }
             }
           }
         }
       } // for
-      callback("");
+      callback(best_table_id);
     }); // get_timestamp
   }); // tables
 }
@@ -124,18 +128,22 @@ function on_admin_click() {
   }
 }
 
-function on_user_click() {
+function on_user_click(callback) {
   get_free_table_id(function(table_id) {
     if (table_id) {
       if (isMobile.any()) {
         window.open("https://plus.google.com/hangouts/_/" + one_table.id);
-        return "";
+        if (callback) {
+          callback("");
+        }
       } else {
         window.open("https://plus.google.com/hangouts/_/" + one_table.id + "?gid=486366694302");
-        return "";
+        if (callback) {
+          callback("");
+        }
       }
     } else {
-      return "User cannot start a new table, only join existing. Please retry when moderators will open new table.";
+      callback("User cannot start a new table, only join existing. Please retry when moderators will open new table.");
     }
   });
 }
