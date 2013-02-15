@@ -143,7 +143,9 @@ function on_user_click(callback) {
         }
       }
     } else {
-      callback("User cannot start a new table, only join existing. Please retry when moderators will open new table.");
+      if (callback) {
+        callback("User cannot start a new table, only join existing. Please retry when moderators will open new table.");
+      }
     }
   });
 }
