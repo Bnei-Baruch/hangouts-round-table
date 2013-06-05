@@ -1,0 +1,40 @@
+<html>
+<head>
+  <!-- load JQuery -->
+  <script type="text/javascript" src="jquery-1.8.3.min.js"></script>
+  <script type="text/javascript" src="jquery.ba-bbq.js"></script>
+  <script type="text/javascript" src="jquery-url.js"></script>
+  <!-- Fix $.ajax for IE8,9 -->
+  <script type="text/javascript" src="jquery.xdomainrequest.js"></script>
+  <!-- Assumes conf.js is in the same place as index.html -->
+  <script src="conf.js"></script>
+  <script src="app.js"></script>
+  <script type="text/javascript">
+    function admin_click() {
+      label = $.url('?label');
+      if (!label) {
+        label = 'default';
+      }
+      onair = $.url('?onair')
+      if (onair) {
+        onair = true;
+      } else {
+        onair = false;
+      }
+      $("#msg").append('<span>Opening new table...</span><br>');
+      on_admin_click(onair, label, function(action) {
+        if (action != null) {
+          window.location.href = action;
+        } else {
+          $("#msg").append('<span>Cannot open new table.</span><br>');
+        }
+      });
+    }
+    $(function() { admin_click(); });
+  </script> 
+</head>
+<body>
+<div id="msg"></div>
+</body>
+</html>
+

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <!-- Licensed under the Apache License, Version 2.0 (the "License"); you may not
+   * use this file except in compliance with the License. You may obtain a copy of
+   * the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+   * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+   * License for the specific language governing permissions and limitations under
+   * the License
+  -->
+  <ModulePrefs title="Hangout Starter">
+    <Require feature="rpc" />
+    <Require feature="views" />
+    <Require feature="locked-domain" />
+  </ModulePrefs>
+  <Content type="html"><![CDATA[
+
+<html>
+<body>
+
+<script src="//plus.google.com/hangouts/_/api/v1/hangout.js"></script>
+
+<!-- load JQuery -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
+<script src="//dev.bbworkshop.kbb1.com/jquery.ba-bbq.js"></script>
+<script src="//dev.bbworkshop.kbb1.com/conf.js"></script>
+<script src="//dev.bbworkshop.kbb1.com/app.js"></script>
+
+<script type="text/javascript">
+function update_server(label) {
+  get_timestamp(function(time_now) {
+    var value = new Object();
+    var url_arr = gapi.hangout.getHangoutUrl().split("/");
+    value.id = url_arr[url_arr.length - 1];
+    value.lang = "en";
+    value.label = label;
+    value.timestamp = time_now;
+    value.participants = new Array();
+    var participants = gapi.hangout.getParticipants();
+    for (var index in participants) {
+      var participant = participants[index];
+      if (participant.person) {
+        value.participants.push(participant.person.displayName);
+      }
+    }
+    set_key("table_" + label + "_" + value.id, $.param(value), function(data) { });
+  });
+}
+
+function only_one_update(label) {
+  var participants = gapi.hangout.getEnabledParticipants();
+  var local_participant_id = gapi.hangout.getLocalParticipantId();
+  var should_update = true;
+  for (var index in participants) {
+    var participant = participants[index];
+    if (participant.id < local_participant_id) {
+      should_update = false;
+      break;
+    } 
+  }
+  if (should_update) {
+    update_server(label);
+  }
+}
+
+function init() {
+  // When API is ready...
+  gapi.hangout.onApiReady.add(function(eventObj) {
+    if (eventObj.isApiReady) {
+      gapi.hangout.hideApp();
+      // Periodically update server (only one person from each hangout).
+      label = gadgets.views.getParams()['appData'];
+      if (!label) {
+        label = 'default';
+      }
+      setInterval(function() { only_one_update(label); }, conf.hangout_upadate_timeout);
+    }
+  });
+}
+
+// Wait for gadget to load.
+gadgets.util.registerOnLoadHandler(init);
+</script>
+</body>
+]]>
+  </Content>
+</Module>
