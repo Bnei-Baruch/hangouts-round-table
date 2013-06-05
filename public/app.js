@@ -4,27 +4,31 @@
 //  'host': URL where application reside.
 //  'webdis': URL where redis (vis webdis) reside.'
 
-// Enable
-//$.support.cors = true;
+var handle_error = function(err) {
+  // Uncomment for debuging XHR (ajax). 
+  // alert(err);
+};
 
 function get_key(key, callback) {
   $.ajax({
     cache: false,
-    url: location.protocol + "//" +  conf.webdis + "/GET/" + key,
+    url: location.protocol + "//" + conf.webdis + "/GET/" + key,
     data: "format=json",
     dataType: "json",
-    success: function(data) { callback(decodeURIComponent(data)) }
+    success: function(data) { callback(decodeURIComponent(data)) },
+    error: function(xhr, status, errorThrown) { handle_error(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
   });
 }
 
 function set_key(key, value, callback) {
-  var set_request = location.protocol + "//" + conf.webdis + "/SET/"+key+"/" + encodeURIComponent(value)
+  var set_request = location.protocol + "//" + conf.webdis + "/SET/" + key + "/" + encodeURIComponent(value);
   $.ajax({
     cache: false,
     url: set_request,
     data: "format=json",
     dataType: "json",
-    success: callback
+    success: callback,
+    error: function(xhr, status, errorThrown) { handle_error(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
   });
 }
 
@@ -34,7 +38,7 @@ function keys(pattern, callback) {
     url: location.protocol + "//" + conf.webdis + "/KEYS/" + pattern,
     dataType: "text",
     success: function(data) { callback($.parseJSON(data)); },
-    error: function(xhr, status, errorThrown) { alert(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
+    error: function(xhr, status, errorThrown) { handle_error(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
   });
 }
 
@@ -45,7 +49,7 @@ function mget(key_arr, callback) {
     data: "format=json",
     dataType: "json",
     success: callback,
-    error: function(xhr, status, errorThrown) { alert(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
+    error: function(xhr, status, errorThrown) { handle_error(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
   });
 }
 
@@ -56,18 +60,33 @@ function del(key, callback) {
     data: "format=json",
     dataType: "json",
     success: callback,
-    error: function(xhr, status, errorThrown) { alert(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
+    error: function(xhr, status, errorThrown) { handle_error(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
   });
 }
 
-function tables(callback) {
-  keys("table_*", function(table_keys) {
-    mget(table_keys.KEYS.join('/'), callback);
+function tables(label, callback) {
+  keys("table_" + label + "_*", function(table_keys) {
+    mget(table_keys.KEYS.join('/'), function(data) {
+      get_timestamp(function(time_now) {
+        for (var index in data.MGET) {
+          if (data.MGET[index] != null) {
+            one_table = $.deparam(data.MGET[index]);
+            if (one_table != null) {
+              if ((parseInt(one_table.timestamp) + (conf.table_stays_alive)) < parseInt(time_now)) {
+                // If the table if old not updated table, delete it from redis.
+                del_table(label, one_table.id); 
+              }
+            }
+          }
+        }
+        callback(data, time_now);
+      });
+    });
   });
 }
 
-function del_table(id, callback) {
-  del("table_" + id, callback);
+function del_table(label, id, callback) {
+  del("table_" + label + "_" + id, callback);
 }
 
 function get_timestamp(callback) {
@@ -77,7 +96,7 @@ function get_timestamp(callback) {
     data: "format=json",
     dataType: "json",
     success: function(data) { callback(data.TIME[0]); },
-    error: function(xhr, status, errorThrown) { alert(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
+    error: function(xhr, status, errorThrown) { handle_error(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
   });
 }
 
@@ -102,9 +121,9 @@ var isMobile = {
     }
 };
 
-function get_free_table_id(callback) {
-  return tables(function(data) {
-    return get_timestamp(function(time_now) {
+function get_free_table_id(label, callback) {
+  tables(label, function(data) {
+    get_timestamp(function(time_now) {
       var redirected = false;
       var max_participants = 0;
       var best_table_id = "";
@@ -113,11 +132,8 @@ function get_free_table_id(callback) {
           one_table = $.deparam(data.MGET[index]);
           if (one_table != null) {
             if ((parseInt(one_table.timestamp) +
-                (conf.table_stays_alive)) <
+                (conf.table_stays_alive)) >=
                 parseInt(time_now)) {
-              // If the table if old not updated table, delete it from redis.
-              del_table(one_table.id); 
-            } else {
               // Good up-to-date table
               if (one_table.participants.length < conf.table_max_limit) {
                 if (one_table.participants.length > max_participants) {
@@ -134,54 +150,28 @@ function get_free_table_id(callback) {
 }
 
 // Admin/Moderator opens a new table (should be from desktop).
-function on_admin_click() {
+function on_admin_click(onair, label, callback) {
   if (isMobile.any()) {
-    return "Hangout round table cannot be opened via mobile.";
+    callback(null);
   } else {
-    window.open("https://plus.google.com/hangouts/_?gid=486366694302");
-    return "";
+    onair_param = '';
+    if (onair) {
+      onair_param = '&hso=0';
+    }
+    callback("https://plus.google.com/hangouts/_?gid=" + conf.hangout_app_gid + onair_param + "&gd=" + label);
   }
 }
 
-function on_user_click(callback) {
-  get_free_table_id(function(table_id) {
+function on_user_click(label, callback) {
+  get_free_table_id(label, function(table_id) {
     if (table_id) {
       if (isMobile.any()) {
-        window.open("https://plus.google.com/hangouts/_/" + table_id);
-        if (callback) {
-          callback("");
-        }
+        callback("https://plus.google.com/hangouts/_/" + table_id + "?label=" + label);
       } else {
-        window.open("https://plus.google.com/hangouts/_/" + table_id + "?gid=486366694302");
-        if (callback) {
-          callback("");
-        }
+        callback("https://plus.google.com/hangouts/_/" + table_id + "?gid=" + conf.hangout_app_gid + "&label=" + label);
       }
     } else {
-      if (callback) {
-        callback("User cannot start a new table, only join existing. Please retry when moderators will open new table.");
-      }
+      callback(null);
     }
   });
 }
-
-// One button for admin and users (no matter who will be admin).
-function on_any_click() {
-  get_free_table_id(function(table_id) {
-    if (table_id) {
-      if (isMobile.any()) {
-        //window.location.href = "https://plus.google.com/hangouts/_/" + table_id;
-        window.open("https://plus.google.com/hangouts/_/" + table_id);
-      } else {
-        window.open("https://plus.google.com/hangouts/_/" + table_id + "?gid=486366694302");
-      }
-    } else {
-      if (isMobile.any()) {
-        return "Mobile device cannot start a new table, only join existing.";
-      } else {
-        window.open("https://plus.google.com/hangouts/_?gid=486366694302");
-      }
-    }
-  });
-}
-

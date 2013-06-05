@@ -4,40 +4,55 @@
   <!-- load JQuery -->
   <script type="text/javascript" src="jquery-1.8.3.min.js"></script>
   <script type="text/javascript" src="jquery.ba-bbq.js"></script>
+  <script type="text/javascript" src="jquery-url.js"></script>
   <!-- Fix $.ajax for IE8,9 -->
   <script type="text/javascript" src="jquery.xdomainrequest.js"></script>
   <!-- Assumes conf.js is in the same place as index.html -->
   <script src="conf.js"></script>
   <script src="app.js"></script>
   <script type="text/javascript">
-    setInterval(function() { tables(function(data) {
+    label = $.url('?label');
+    if (!label) {
+      label = '*';
+    }
+    setInterval(function() { tables(label, function(data) {
       tables_dict = data;
-      new_div = "<div>" + $.param(data) + "</div><div>" + $.now() + "</div>";
+      now_date = new Date($.now());
+      new_div = "<div>" + now_date.toString() + "</div>";
       $("#webdis").html(new_div);
+      table_str = "";
+      table_str +="<table border='1'><tr><td>label</td><td>id</td><td>Last update</td><td>link</td>" +
+        "<td>Participants</td></tr>";
       for (var index in data.MGET) {
         if (data.MGET[index] != null) {
           var one_table = $.deparam(data.MGET[index]);
-          $("#webdis").append("<a href=\"https://plus.google.com/hangouts/_/" + one_table.id + "?gid=486366694302\">join " + one_table.id + " table (desktop)</a><br>" +
-                              "<a href=\"https://plus.google.com/hangouts/_/" + one_table.id + "\">join " + one_table.id + " table (mobile)</a><br><br>");
+          table_str += "<tr><td>" + one_table.label + "</td>";
+          table_str += "<td>" + one_table.id + "</td>";
+          update_date = new Date(one_table.timestamp*1000);
+          table_str += "<td>" + update_date.toString() + "</td>"
+          table_str += "<td><a href=\"https://plus.google.com/hangouts/_/" +
+            one_table.id + "?gid=" + conf.hangout_app_gid + "\">join</a></td>";
+          table_str += "<td>";
+          for (var p_idx in one_table.participants) {
+            table_str += one_table.participants[p_idx] + "<br>";
+          }
+          table_str += "</td></tr>";
         }
       }
+      $("#webdis").append(table_str + "</table>")
     })}, conf.button_update_interval); 
   </script> 
   <script type="text/javascript">
     function add_click_log(text) {
       $("#log").append("<span>"+text+"</span><br>");
     }
-    $(document).ready(function() {
-      $("#the_button_combined").click(function() { on_any_click(); });
-      $("#the_button_admin").click(function() { on_admin_click(); });
-      $("#the_button_user").click(function() { on_user_click(add_click_log); });
-    }); 
   </script>
 </head>
 <body>
-<button id="the_button_combined">Combined (Admin + User) no mattet.</button>
-<button id="the_button_admin">Admin</button>
-<button id="the_button_user">User</button>
+<a href="http://bbworkshop.kbb1.com/user.html" target="_blank">User Link</a>
+<a href="http://bbworkshop.kbb1.com/admin.html" target="_blank">Admin Link</a>
+<a href="http://bbworkshop.kbb1.com/admin.html?onair=true" target="_blank">Admin Link (OnAir)</a>
+<br>
 <div id="webdis"></div>
 <div id="log"></div>
 <!-- <iframe width="420" height="315" src="http://www.youtube.com/embed/sRxbzSFwQVA" frameborder="0" allowfullscreen></iframe> -->
