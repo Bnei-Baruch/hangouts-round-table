@@ -20,17 +20,20 @@
       now_date = new Date($.now());
       new_div = "<div>" + now_date.toString() + "</div>";
       $("#webdis").html(new_div);
+      $("#webdis").append("<br>A \"Round Table\" will be removed from table below after " +
+                          parseInt(conf.table_delete_timeout/60) + " minutes.<br><br>");
       table_str = "";
-      table_str +="<table border='1'><tr><td>label</td><td>id</td><td>Last update</td><td>link</td>" +
-        "<td>Participants</td></tr>";
+      table_str +="<table border='1'><tr><td>label</td><td>id</td>" +
+        "<td>Table is \"live\" if seconds<br>since update less then " + conf.table_stays_alive +
+        "</td><td>link</td><td>Participants</td></tr>";
       for (var index in data.MGET) {
         if (data.MGET[index] != null) {
           var one_table = $.deparam(data.MGET[index]);
           table_str += "<tr><td>" + one_table.label + "</td>";
           table_str += "<td>" + one_table.id + "</td>";
-          update_date = new Date(one_table.timestamp*1000);
-          table_str += "<td>" + update_date.toString() + "</td>"
-          table_str += "<td><a href=\"https://plus.google.com/hangouts/_/" +
+          seconds_since_update = new Date().getTime()/1000 - parseInt(one_table.timestamp);
+          table_str += "<td align=\"center\">" + parseInt(seconds_since_update) + " seconds</td>"
+          table_str += "<td><a target=\"_blank\" href=\"https://plus.google.com/hangouts/_/" +
             one_table.id + "?gid=" + conf.hangout_app_gid + "\">join</a></td>";
           table_str += "<td>";
           for (var p_idx in one_table.participants) {

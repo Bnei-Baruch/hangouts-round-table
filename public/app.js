@@ -72,7 +72,7 @@ function tables(label, callback) {
           if (data.MGET[index] != null) {
             one_table = $.deparam(data.MGET[index]);
             if (one_table != null) {
-              if ((parseInt(one_table.timestamp) + (conf.table_stays_alive)) < parseInt(time_now)) {
+              if ((parseInt(one_table.timestamp) + (conf.table_delete_timeout)) < parseInt(time_now)) {
                 // If the table if old not updated table, delete it from redis.
                 del_table(label, one_table.id); 
               }
@@ -121,12 +121,12 @@ var isMobile = {
     }
 };
 
-function get_free_table_id(label, callback) {
+function get_free_table(label, callback) {
   tables(label, function(data) {
     get_timestamp(function(time_now) {
       var redirected = false;
       var max_participants = 0;
-      var best_table_id = "";
+      var best_table = null;
       for (var index in data.MGET) {
         if (data.MGET[index] != null) {
           one_table = $.deparam(data.MGET[index]);
@@ -137,19 +137,24 @@ function get_free_table_id(label, callback) {
               // Good up-to-date table
               if (one_table.participants.length < conf.table_max_limit) {
                 if (one_table.participants.length > max_participants) {
-                  best_table_id = one_table.id;
+                  best_table = one_table;
                 }
               }
             }
           }
         }
       } // for
-      callback(best_table_id);
+      callback(best_table);
     }); // get_timestamp
   }); // tables
 }
 
-// Admin/Moderator opens a new table (should be from desktop).
+function get_free_table_id(label, callback) {
+  get_free_table(label, function(one_table) {
+    callback(one_table.id);
+  });
+}
+
 function on_admin_click(onair, label, callback) {
   if (isMobile.any()) {
     callback(null);

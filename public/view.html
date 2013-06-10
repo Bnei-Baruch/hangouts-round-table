@@ -1,0 +1,37 @@
+<html>
+<head>
+  <!-- load JQuery -->
+  <script type="text/javascript" src="jquery-1.8.3.min.js"></script>
+  <script type="text/javascript" src="jquery.ba-bbq.js"></script>
+  <script type="text/javascript" src="jquery-url.js"></script>
+  <!-- Fix $.ajax for IE8,9 -->
+  <script type="text/javascript" src="jquery.xdomainrequest.js"></script>
+  <!-- Assumes conf.js is in the same place as index.html -->
+  <script src="conf.js"></script>
+  <script src="app.js"></script>
+  <script type="text/javascript">
+    function update_msg() {
+      get_free_table(label, function(one_table) {
+        if (one_table) {
+          $("#msg").html(one_table.participants.length);
+        } else {
+          $("#msg").html("0");
+        } 
+      });
+    }
+    function view() {
+      label = $.url('?label');
+      if (!label) {
+        label = 'default';
+      }
+      update_msg();
+      setInterval(update_msg, conf.button_update_interval);
+    }
+    $(function() { view(); });
+  </script> 
+</head>
+<body>
+<div id="msg"></div>
+</body>
+</html>
+
