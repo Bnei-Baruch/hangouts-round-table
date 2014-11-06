@@ -1,6 +1,6 @@
 <html>
 <head>
-<h1>Test Round Table</h1><br>
+<h1>(DEV) Test Round Table</h1><br>
   <!-- load JQuery -->
   <script type="text/javascript" src="jquery-1.8.3.min.js"></script>
   <script type="text/javascript" src="jquery.ba-bbq.js"></script>
@@ -11,18 +11,20 @@
   <script src="conf.js"></script>
   <script src="app.js"></script>
   <script type="text/javascript">
-    label = $.url('?label');
+    var label = $.url('?label');
     if (!label) {
-      label = '*';
+      label = 'default';
     }
-    setInterval(function() { tables(label, function(data) {
-      tables_dict = data;
-      now_date = new Date($.now());
-      new_div = "<div>" + now_date.toString() + "</div>";
-      $("#webdis").html(new_div);
-      $("#webdis").append("<br>A \"Round Table\" will be removed from table below after " +
+    // TODO(bbfsdev): extract interval function and execute it right away, so no delay
+    // on first load.
+    setInterval(function() { get_timestamp(function(time_now) { tables(label, function(data) {
+      var tables_dict = data;
+      var now_date = new Date($.now());
+      var new_div = "<div>" + now_date.toString() + "</div>";
+      $("#table_div").html(new_div);
+      $("#table_div").append("<br>A \"Round Table\" will be removed from table below after " +
                           parseInt(conf.table_delete_timeout/60) + " minutes.<br><br>");
-      table_str = "";
+      var table_str = "";
       table_str +="<table border='1'><tr><td>label</td><td>id</td>" +
         "<td>Table is \"live\" if seconds<br>since update less then " + conf.table_stays_alive +
         "</td><td>link</td><td>Participants</td></tr>";
@@ -31,10 +33,13 @@
           var one_table = $.deparam(data.MGET[index]);
           table_str += "<tr><td>" + one_table.label + "</td>";
           table_str += "<td>" + one_table.id + "</td>";
-          seconds_since_update = new Date().getTime()/1000 - parseInt(one_table.timestamp);
-          table_str += "<td align=\"center\">" + parseInt(seconds_since_update) + " seconds</td>"
+          seconds_since_update = time_now - parseInt(one_table.timestamp);
+          minutes_sice_update = seconds_since_update / 60;
+          seconds_since_update = seconds_since_update % 60;
+          table_str += "<td align=\"center\">" + parseInt(minutes_sice_update) + " min " +
+                       parseInt(seconds_since_update) + " sec</td>";
           table_str += "<td><a target=\"_blank\" href=\"https://plus.google.com/hangouts/_/" +
-            one_table.id + "?gid=" + conf.hangout_app_gid + "\">join</a></td>";
+            one_table.id + "?gid=" + conf.hangout_app_gid + "&gd=" + one_table.label + "\">join</a></td>";
           table_str += "<td>";
           for (var p_idx in one_table.participants) {
             table_str += one_table.participants[p_idx] + "<br>";
@@ -42,22 +47,23 @@
           table_str += "</td></tr>";
         }
       }
-      $("#webdis").append(table_str + "</table>")
-    })}, conf.button_update_interval); 
-  </script> 
-  <script type="text/javascript">
-    function add_click_log(text) {
-      $("#log").append("<span>"+text+"</span><br>");
-    }
+      $("#table_div").append(table_str + "</table>");
+    })})}, conf.button_update_interval); 
+
+    $(function() {
+      buttons_str = "<a href=\"//" + conf.host + "/user.html?label=" + label +
+                    "\" target=\"_blank\">User Link (label=" + label + ")</a><br>" +
+                    "<a href=\"//" + conf.host + "/admin.html?label=" + label +
+                    "\" target=\"_blank\">Admin Link (label=" + label + ")</a><br>" +
+                    "<a href=\"//" + conf.host + "/admin.html?onair=true&label=" + label +
+                    "\" target=\"_blank\">Admin Link (OnAir) (label=" + label + ")</a>";
+      $("#buttons").html(buttons_str);
+    });
   </script>
 </head>
 <body>
-<a href="http://bbworkshop.kbb1.com/user.html" target="_blank">User Link</a>
-<a href="http://bbworkshop.kbb1.com/admin.html" target="_blank">Admin Link</a>
-<a href="http://bbworkshop.kbb1.com/admin.html?onair=true" target="_blank">Admin Link (OnAir)</a>
+<div id="buttons"></div>
 <br>
-<div id="webdis"></div>
-<div id="log"></div>
-<!-- <iframe width="420" height="315" src="http://www.youtube.com/embed/sRxbzSFwQVA" frameborder="0" allowfullscreen></iframe> -->
+<div id="table_div"></div>
 </body>
 </html>

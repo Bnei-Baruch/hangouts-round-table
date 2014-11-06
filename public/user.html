@@ -11,19 +11,65 @@
   <script src="app.js"></script>
   <script type="text/javascript">
     function user_click() {
-      label = $.url('?label');
+      var label = $('<div/>').html(decodeURIComponent($.url('?label'))).text();
       if (!label) {
         label = 'default';
       }
-      $("#msg").append('<span>Looking for table...</span><br>');
-      on_user_click(label, function(action) {
-        if (action != null) {
-          window.location.href = action;
-        } else {
-          $("#msg").append('<span>No open tables found, yet, will try in few seconds.</span><br>');
-          setTimeout(user_click, 5000)
-        }
-      });
+      var create_if_not_exists = $.url('?create_if_not_exists');
+      if (create_if_not_exists) {
+        create_if_not_exists = true;
+      } else {
+        create_if_not_exists = false;
+      }
+
+      var delete_table = $.url('?delete_table');
+      if (delete_table) {
+        delete_table = true;
+      } else {
+        delete_table = false;
+      }
+
+      if (delete_table) {
+        var id = $.url('?id');
+        $("#msg").append('<span>Deleting table...</span><br>');
+        del_table(label, id, function(result) {
+          alert(result);
+          $("#msg").append('<span>Table deleted...</span><br>');
+        });
+      } else {
+        $("#msg").append('<span>Looking for table...</span><br>');
+	on_user_click(label, function(action) {
+	  if (action != null) {
+	    var stop = $.url('?stop');
+	    if (!stop) {
+	      window.location.href = action;
+	    }
+	  } else {
+	    if (create_if_not_exists) {
+	      onair = $.url('?onair')
+	      if (onair) {
+		onair = true;
+	      } else {
+		onair = false;
+	      }
+	      on_admin_click(onair, label, function(action) {
+		if (action != null) {
+		  var stop = $.url('?stop');
+		  if (!stop) {
+		    window.location.href = action;
+		  }
+		} else {
+		  $("#msg").append('<span>Cannot open new table, will try to join in few seconds.</span><br>');
+                  setTimeout(user_click, 5000)
+		}
+	      });
+	    } else {
+	      $("#msg").append('<span>No open tables found, yet, will try in few seconds.</span><br>');
+	      setTimeout(user_click, 5000)
+	    }
+	  }
+	});
+      }
     }
     $(function() { user_click(); });
   </script> 

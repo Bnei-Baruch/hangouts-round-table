@@ -20,7 +20,7 @@
       });
     }
     function view() {
-      label = $.url('?label');
+      var label = decodeURIComponent($.url('?label'));
       if (!label) {
         label = 'default';
       }

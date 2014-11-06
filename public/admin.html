@@ -11,7 +11,7 @@
   <script src="app.js"></script>
   <script type="text/javascript">
     function admin_click() {
-      label = $.url('?label');
+      var label = $('<div/>').html(decodeURIComponent($.url('?label'))).text();
       if (!label) {
         label = 'default';
       }
@@ -24,7 +24,10 @@
       $("#msg").append('<span>Opening new table...</span><br>');
       on_admin_click(onair, label, function(action) {
         if (action != null) {
-          window.location.href = action;
+          var stop = $.url('?stop');
+          if (!stop) {
+            window.location.href = action;
+          }
         } else {
           $("#msg").append('<span>Cannot open new table.</span><br>');
         }

@@ -1,0 +1,84 @@
+<html>
+<head>
+  <!-- load JQuery -->
+  <script type="text/javascript" src="jquery-1.8.3.min.js"></script>
+  <script type="text/javascript" src="jquery.ba-bbq.js"></script>
+  <script type="text/javascript" src="jquery-url.js"></script>
+  <!-- Fix $.ajax for IE8,9 -->
+  <script type="text/javascript" src="jquery.xdomainrequest.js"></script>
+  <!-- Assumes conf.js is in the same place as index.html -->
+  <script src="conf.js"></script>
+  <script src="app.js"></script>
+  <script type="text/javascript">
+    var label = $.url('?label');
+    if (!label) {
+      label = 'default';
+    }
+
+    var label_title = decodeURIComponent($.url('?label_title'));
+    if (!label_title) {
+      label_title = 'Room label';
+    }
+
+    var actions_title = decodeURIComponent($.url('?actions_title'));
+    if (!actions_title) {
+      actions_title = 'Actions';
+    }
+
+    var participants_title = decodeURIComponent($.url('?participants_title'));
+    if (!participants_title) {
+      participants_title = 'Participants';
+    }
+    
+    var join_title = decodeURIComponent($.url('?join_title'));
+    if (!join_title || join_title == null || join_title == "null") {
+      join_title = 'join';
+    }
+    
+    var remove_title = decodeURIComponent($.url('?remove_title'));
+    if (!remove_title || remove_title == null || remove_title == "null") {
+      remove_title = 'remove';
+    }
+
+    function common_prefix(w1, w2) {
+      var i = 0;
+      while(w1[i] == w2[i]) i++;
+      return w1.substring(0, i);
+    }
+    
+    function update_table() { get_timestamp(function(time_now) { tables(label, function(data) {
+      var tables_dict = data;
+      var table_str = "";
+      table_str += "<table border='1'><tr><td>" + label_title + "</td>";
+      table_str += "<td>" + actions_title + "</td><td>" + participants_title + "</td></tr>";
+      for (var index in data.MGET) {
+        if (data.MGET[index] != null) {
+	  var one_table = $.deparam(data.MGET[index]);
+          if (live_table(one_table, time_now)) {
+	    var label_prefix = common_prefix(one_table.label, label);
+	    var label_suffix = one_table.label.substring(label_prefix.length, one_table.label.length);
+	    table_str += "<tr><td>" + label_suffix + "</td>";
+	    table_str += "<td><a target=\"_blank\" href=\"https://plus.google.com/hangouts/_/" +
+	      one_table.id + "?gid=" + conf.hangout_app_gid + "&gd=" + one_table.label + "\">" + join_title + "</a>";
+	    table_str += "<br><a target=\"_blank\" href=\"" +
+	      "//" + conf.host + "/user.html?label=" + one_table.label + "&id=" + one_table.id + "&delete_table=true" + 
+	      "\">" + remove_title + "</a></td>"
+	    table_str += "<td>";
+	    for (var p_idx in one_table.participants) {
+	      table_str += one_table.participants[p_idx] + "<br>";
+	    }
+	    table_str += "</td></tr>";
+          }
+        }
+      }
+      $("#table_div").html(table_str + "</table>");
+    })})};
+    setInterval(function() { update_table(); }, conf.button_update_interval); 
+    update_table();
+  </script>
+</head>
+<body>
+<div id="table_div"></div>
+</body>
+</html>
+
