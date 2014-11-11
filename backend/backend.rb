@@ -6,6 +6,7 @@ require './config'
 require './nuve'
 
 
+set :json_content_type, :js
 set :bind, '0.0.0.0'
 
 # Initializing Nuve API
@@ -27,7 +28,14 @@ redis = Redis.new($redis_conf[:host] => "localhost", :port => $redis_conf[:db], 
 # Create Nuve token
 post '/nuve/tokens' do
     content_type :json
-    token = nuve.createToken(room['_id'], params[:user], 'participant')
+
+    request.body.rewind
+    data = JSON.parse request.body.read
+
+    user = data.fetch('user', 'participant')
+    role = data.fetch('role', 'partticipant')
+    token = nuve.createToken(room['_id'], user, role)
+
     { :token => token }.to_json
     status 201
 end
@@ -37,11 +45,44 @@ end
 get '/spaces/:space/tables/free' do
     table_id = get_free_table_id(params[:space])
     hangouts_url = "https://plus.google.com/hangouts/_/#{table_id}?gid=#{$hangout_conf[:hangout_app_gid]}&gd=#{params[:space]}";
-    { :hangouts_url => hangouts_url }.to_json
+    redirect hangouts_url
 end
+
+# Update table
+put '/spaces/:space/tables/:id' do
+    request.body.rewind
+    redis.set("table_#{params[:space]}_#{params[:id]}", request.body.read)
+end
+
 
 def get_free_table_id(space)
     keys = redis.keys("table_#{space}_*")
     time_now = redis.time
-    redis.mget(keys).each 
+
+    live_tables = []
+    redis.mget(keys).each do |one_table|
+        if one_table.timestamp + $hangout_conf[:table_delete_timeout] < time_now
+            redis.del("table_#{space}_#{one_table.id}")
+        else
+            if is_table_live(one_table, time_now)
+                live_tables << one_table
+            end
+        end
+    end
+
+    choose_table(tables, time_now)
+end
+
+def choose_table(tables, time_now)
+    small_tables = tables.select do |one_table|
+        one_table.participants.size < $hangout_conf[:table_min_participants_number]
+    end
+    if small_tables
+        return small_tables.min_by { |table| table.participants.size } 
+    end
+    return tables.max_by { |table| table.participants.size }
+end
+
+def is_table_live(table, time_now)
+    table.timestamp + $hangout_conf[:table_stays_live] > time_now
 end
