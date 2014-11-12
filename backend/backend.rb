@@ -2,7 +2,12 @@ require 'sinatra'
 require 'json'
 require 'redis'
 
-require './config'
+require './config/config'
+
+if ENV['RACK_ENV'] == 'test'
+    require './config/testing_config'
+end
+
 require './nuve'
 
 

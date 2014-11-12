@@ -3,3 +3,4 @@
 *.swn
 *~
 backend/config.rb
+backend/testing_config.rb

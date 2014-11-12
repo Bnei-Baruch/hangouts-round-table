@@ -4,7 +4,6 @@ require 'rspec'
 require 'rack/test'
 
 require './backend'
-require './testing_config'
 
 
 describe 'Round tables REST API backend' do
@@ -14,7 +13,11 @@ describe 'Round tables REST API backend' do
         Sinatra::Application
     end
 
-    it "should create Licode token" do
+    before do
+        $redis.flushdb
+    end
+
+    it "should create a Licode token" do
         body = { :user => "user" }.to_json
         post '/nuve/tokens', body
         expect(last_response).to be_created
@@ -25,6 +28,21 @@ describe 'Round tables REST API backend' do
 
     it "should update table" do
         participants = ["Haim", "Moshe", "Jude"]
-        put '/spaces/:space/tables/:id', participants.to_json
+        put '/spaces/fake-space/tables/fake-id', participants.to_json
+        expect(last_response).to be_ok
+        participants_from_db = JSON.parse($redis.get('table_fake-space_fake-id'))
+        expect(participants).to eq(participants_from_db)
+    end
+
+    it "should redirect to a free table" do
+    end
+
+    it "should create a table there are no tables" do
+    end
+
+    it "should create a table if all tables are full" do
+    end
+
+    it "should redirect to a free table" do
     end
 end
