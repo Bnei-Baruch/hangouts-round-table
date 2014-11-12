@@ -38,8 +38,16 @@ post '/nuve/tokens' do
     role = data.fetch('role', 'partticipant')
     token = nuve.createToken(room['_id'], user, role)
 
-    { :token => token }.to_json
     status 201
+
+    { :token => token }.to_json
+end
+
+
+# Update table
+put '/spaces/:space/tables/:id' do
+    request.body.rewind
+    $redis.set("table_#{params[:space]}_#{params[:id]}", request.body.read)
 end
 
 
@@ -49,13 +57,6 @@ get '/spaces/:space/tables/free' do
     hangouts_url = "https://plus.google.com/hangouts/_/#{table_id}?gid=#{CONFIG['hangout_app_gid']}&gd=#{params[:space]}";
     redirect hangouts_url
 end
-
-# Update table
-put '/spaces/:space/tables/:id' do
-    request.body.rewind
-    $redis.set("table_#{params[:space]}_#{params[:id]}", request.body.read)
-end
-
 
 table_config = CONFIG['table']
 
