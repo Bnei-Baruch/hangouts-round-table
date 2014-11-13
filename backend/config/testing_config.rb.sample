@@ -1,1 +1,1 @@
-CONFIG['redis']['db'] = 613
+CONFIG['redis']['db'] = 10
