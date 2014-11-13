@@ -2,5 +2,5 @@
 *.swo
 *.swn
 *~
-backend/config.rb
-backend/testing_config.rb
+backend/config/config.rb
+backend/config/testing_config.rb

@@ -81,7 +81,7 @@ def get_free_table_id(space)
         end
     end
 
-    choose_table(tables, time_now)
+    choose_table(live_tables, time_now)
 end
 
 def choose_table(tables, time_now)

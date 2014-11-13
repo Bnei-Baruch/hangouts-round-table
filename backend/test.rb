@@ -35,6 +35,21 @@ describe 'Round tables REST API backend' do
     end
 
     it "should redirect to a free table" do
+        update_fake_table(1, 3)
+        update_fake_table(2, 2)
+        verify_free_table_id(1)
+
+        update_fake_table(1, 3)
+        update_fake_table(2, 4)
+        verify_free_table_id(2)
+
+        update_fake_table(1, 6)
+        update_fake_table(2, 7)
+        verify_free_table_id(1)
+
+        update_fake_table(1, 6)
+        update_fake_table(2, 4)
+        verify_free_table_id(2)
     end
 
     it "should create a table there are no tables" do
@@ -44,5 +59,16 @@ describe 'Round tables REST API backend' do
     end
 
     it "should redirect to a free table" do
+    end
+
+    def update_fake_table(table_id, participants_number)
+        participants = ["Haim", "Moshe", "Jude", "Avi", "Moti", "Tzvika", "Oded"]
+        put '/spaces/fake-space/tables/1', participants[0..participants_number].to_json
+    end
+
+    def verify_free_table_id(table_id)
+        get '/spaces/fake-space/tables/free'
+        expect(last_response).to be_redirect
+        expect(last_response.url).to include("_/#{table_id}?")
     end
 end
