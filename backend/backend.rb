@@ -13,7 +13,8 @@ require './nuve'
 
 before do
     headers 'Access-Control-Allow-Origin' => '*', 
-        'Access-Control-Allow-Methods' => ['OPTIONS', 'GET', 'POST', 'PUT']  
+        'Access-Control-Allow-Methods' => ['OPTIONS', 'GET', 'POST', 'PUT'],
+        'Access-Control-Allow-Headers' => ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
 end
 
 
