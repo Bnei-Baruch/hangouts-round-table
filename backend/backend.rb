@@ -11,8 +11,15 @@ end
 require './nuve'
 
 
+before do
+    headers 'Access-Control-Allow-Origin' => '*', 
+        'Access-Control-Allow-Methods' => ['OPTIONS', 'GET', 'POST', 'PUT']  
+end
+
+
 set :json_content_type, :js
 set :bind, '0.0.0.0'
+set :protection, false
 
 # Initializing Nuve API
 licode_config = CONFIG['licode']
@@ -32,6 +39,10 @@ end
 redis_config = CONFIG['redis']
 $redis = Redis.new(redis_config['host'] => "localhost", :port => redis_config['port'], :db => redis_config['db'])
 
+options '/nuve/tokens' do
+    200
+end
+
 # Create Nuve token
 post '/nuve/tokens' do
     content_type :json
@@ -49,12 +60,20 @@ post '/nuve/tokens' do
 end
 
 
+options '/spaces/:space/tables/:id' do
+    200
+end
+
 # Update table
 put '/spaces/:space/tables/:id' do
     request.body.rewind
     $redis.set("table_#{params[:space]}_#{params[:id]}", request.body.read)
 end
 
+
+options '/spaces/:space/tables/free' do
+    200
+end
 
 # Get free table
 get '/spaces/:space/tables/free' do
