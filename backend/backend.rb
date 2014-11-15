@@ -59,17 +59,25 @@ post '/nuve/tokens' do
     { :token => token }.to_json
 end
 
-
+# Update table
 options '/spaces/:space/tables/:id' do
+    puts "OPTIONS"
+    puts params[:id]
+    puts request.body.read
+    puts params[:space]
+    request.body.rewind
+    $redis.set("table_#{params[:space]}_#{params[:id]}", request.body.read)
     200
 end
 
-# Update table
 put '/spaces/:space/tables/:id' do
+    puts "PUTS"
+    puts params[:id]
+    puts request.body.read
+    puts params[:space]
     request.body.rewind
     $redis.set("table_#{params[:space]}_#{params[:id]}", request.body.read)
 end
-
 
 options '/spaces/:space/tables/free' do
     200
