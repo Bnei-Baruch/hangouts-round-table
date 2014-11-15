@@ -62,12 +62,6 @@ end
 
 # Update table
 options '/spaces/:space/tables/:id' do
-    puts "OPTIONS"
-    puts params[:id]
-    puts request.body.read
-    puts params[:space]
-    request.body.rewind
-    $redis.set("table_#{params[:space]}_#{params[:id]}", request.body.read)
     200
 end
 
@@ -77,7 +71,10 @@ put '/spaces/:space/tables/:id' do
     puts request.body.read
     puts params[:space]
     request.body.rewind
-    $redis.set("table_#{params[:space]}_#{params[:id]}", request.body.read)
+    body = JSON.parse(request.body.read)
+    body['timestamp'] = $redis.time[0]
+    puts body
+    $redis.set("table_#{params[:space]}_#{params[:id]}", JSON.generate(body))
 end
 
 options '/spaces/:space/tables/free' do
@@ -87,24 +84,29 @@ end
 # Get free table
 get '/spaces/:space/tables/free' do
     table_id = get_free_table_id(params[:space])
+    puts table_id
+    if table_id.nil?
+      table_id = ""
+    end
     hangouts_url = "https://plus.google.com/hangouts/_/#{table_id}?gid=#{CONFIG['hangout_app_gid']}&gd=#{params[:space]}";
+    puts hangouts_url
     redirect hangouts_url
 end
 
-table_config = CONFIG['table']
+$table_config = CONFIG['table']
 
 def get_free_table_id(space)
     keys = $redis.keys("table_#{space}_*")
-    time_now = $redis.time
+    time_now = $redis.time[0]
 
     live_tables = []
     puts "#{keys} keys"
     $redis.mget(*keys).each do |one_table|
         puts one_table
-        var one_table = JSON.parse(one_table)
+        one_table = JSON.parse(one_table)
         puts one_table
-        if one_table.timestamp + table_config['time_to_live'] < time_now
-            $redis.del("table_#{space}_#{one_table.id}")
+        if one_table['timestamp'] + $table_config['time_to_live'] < time_now
+            $redis.del("table_#{space}_#{one_table['id']}")
         else
             if is_table_live(one_table, time_now)
                 live_tables << one_table
@@ -112,19 +114,21 @@ def get_free_table_id(space)
         end
     end if not keys.empty?
 
-    choose_table(live_tables, time_now)
+    table = choose_table(live_tables, time_now)
+    return table['id'] if table
+    nil
 end
 
 def choose_table(tables, time_now)
     small_tables = tables.select do |one_table|
-        one_table.participants.size < table_config['min_participants_number']
+        one_table['participants'].size < $table_config['min_participants_number']
     end
     if small_tables
-        return small_tables.min_by { |table| table.participants.size } 
+        return small_tables.min_by { |table| table['participants'].size } 
     end
-    return tables.max_by { |table| table.participants.size }
+    return tables.max_by { |table| table['participants'].size }
 end
 
 def is_table_live(table, time_now)
-    table.timestamp + table_config['polling_interval'] > time_now
+    table['timestamp'] + $table_config['polling_interval'] > time_now
 end

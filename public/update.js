@@ -10,8 +10,12 @@ function update_table(space, id, participants, callback) {
     contentType: "application/json; charset=utf-8",
     data: JSON.stringify(participants),
     dataType: "json",
-    error: function(xhr, status, errorThrown) { console.log(errorThrown+'\n'+status+'\n'+xhr.statusText); } ,
-    success: function(data) { console.log(data); },
+    error: function(xhr, status, errorThrown) {
+        console.log('XHR Error:'+errorThrown+'\n'+status+'\n'+xhr.statusText);
+    },
+    success: function(data) {
+        console.log('Success:' + data);
+    },
     url: location.protocol + "//bbworkshop.kbb1.com/round_table/spaces/" + space + "/tables/" + id
   });
 }
@@ -64,7 +68,7 @@ function only_one_update() {
 }
 
 function start_table_update() {
-  setInterval(function() { only_one_update(); }, 3000);
+  setInterval(function() { only_one_update(); }, 10000);
 }
 
 (function() {
