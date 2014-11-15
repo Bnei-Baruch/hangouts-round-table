@@ -10,16 +10,11 @@
 <body>
   <script src="//plus.google.com/hangouts/_/api/v1/hangout.js"></script>
 
-  <!-- Load development conf -->  
-  <script src="//bbworkshop.kbb1.com/dev/conf.js" type="text/javascript"></script>
-
   <!-- load JQuery -->
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
-  <script src="//bbworkshop.kbb1.com/jquery.ba-bbq.js" type="text/javascript"></script>
-  <script src="//bbworkshop.kbb1.com/app.js" type="text/javascript"></script>
   
   <!-- Add update round table information -->
-  <script src="//bbworkshop.kbb1.com/dev/update_table.js" type="text/javascript"></script>
+  <script src="//bbworkshop.kbb1.com/dev/update.js" type="text/javascript"></script>
   
   <!-- Add video streaming via Licode -->
   <script src="//bbworkshop.kbb1.com/dev/erizo.js" type="text/javascript"></script>

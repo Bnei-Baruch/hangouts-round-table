@@ -72,6 +72,9 @@ def get_free_table_id(space)
     live_tables = []
     puts "#{keys} keys"
     $redis.mget(*keys).each do |one_table|
+        puts one_table
+        var one_table = JSON.parse(one_table)
+        puts one_table
         if one_table.timestamp + table_config['time_to_live'] < time_now
             $redis.del("table_#{space}_#{one_table.id}")
         else
@@ -79,7 +82,7 @@ def get_free_table_id(space)
                 live_tables << one_table
             end
         end
-    end
+    end if not keys.empty?
 
     choose_table(live_tables, time_now)
 end

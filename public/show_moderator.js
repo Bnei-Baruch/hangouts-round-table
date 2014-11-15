@@ -1,15 +1,5 @@
 // This library enables to connect licode moderator video and audio to hangouts.
 
-// TODO: Add option to pass sound/video to mobile devices.
-/**
-  * Get video URI
-  */
-function getVideoURI(stream) {
-  //$('video').prop('src');
-  var myURL = window.URL || webkitURL;
-  var stream_url = myURL.createObjectURL(stream);
-}
-
 /**
  * Create required DOM elements and listeners.
  */
@@ -65,8 +55,7 @@ function connect() {
         for (var index in streams) {
             var stream = streams[index];
             if (stream.getAttributes().role == 'broadcaster') {
-                //room.subscribe(stream);
-                room.subscribe(stream, {audio: true, video: false});
+                room.subscribe(stream);
             }
         }
     }
