@@ -66,14 +66,9 @@ options '/spaces/:space/tables/:id' do
 end
 
 put '/spaces/:space/tables/:id' do
-    puts "PUTS"
-    puts params[:id]
-    puts request.body.read
-    puts params[:space]
     request.body.rewind
     body = JSON.parse(request.body.read)
     body['timestamp'] = $redis.time[0]
-    puts body
     $redis.set("table_#{params[:space]}_#{params[:id]}", JSON.generate(body))
 end
 
@@ -123,10 +118,10 @@ def choose_table(tables, time_now)
     small_tables = tables.select do |one_table|
         one_table['participants'].size < $table_config['min_participants_number']
     end
-    if small_tables
-        return small_tables.min_by { |table| table['participants'].size } 
+    if !small_tables.empty?
+        return small_tables.max_by { |table| table['participants'].size } 
     end
-    return tables.max_by { |table| table['participants'].size }
+    return tables.min_by { |table| table['participants'].size }
 end
 
 def is_table_live(table, time_now)

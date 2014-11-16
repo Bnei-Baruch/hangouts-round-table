@@ -27,11 +27,19 @@ describe 'Round tables REST API backend' do
     end
 
     it "should update table" do
-        participants = ["Haim", "Moshe", "Jude"]
-        put '/spaces/fake-space/tables/fake-id', participants.to_json
+        test_table = {
+            "id" => "fake-id",
+            "lang" => "en",
+            "space" => "fake-space",
+            "participants" => ["Haim", "Moshe", "Jude"],
+        }
+        put '/spaces/fake-space/tables/fake-id', JSON.generate(test_table)
         expect(last_response).to be_ok
-        participants_from_db = JSON.parse($redis.get('table_fake-space_fake-id'))
-        expect(participants).to eq(participants_from_db)
+        table_test_from_db = JSON.parse($redis.get('table_fake-space_fake-id'))
+        # 1416028759 - Sat, 15 Nov 2014 05:19:19 GMT
+        expect(table_test_from_db['timestamp']).to be > 1416028759
+        table_test_from_db.delete('timestamp')
+        expect(test_table).to eq(table_test_from_db)
     end
 
     it "should redirect to a free table" do
@@ -62,13 +70,19 @@ describe 'Round tables REST API backend' do
     end
 
     def update_fake_table(table_id, participants_number)
-        participants = ["Haim", "Moshe", "Jude", "Avi", "Moti", "Tzvika", "Oded"]
-        put '/spaces/fake-space/tables/1', participants[0..participants_number].to_json
+        test_table = {
+            "id" => table_id.to_s,
+            "lang" => "en",
+            "space" => "fake-space",
+            "participants" => ["Haim", "Moshe", "Jude", "Avi", "Moti", "Tzvika", "Oded"],
+        }
+        test_table['participants'] = test_table['participants'][0..participants_number-1]
+        put "/spaces/fake-space/tables/#{table_id}", JSON.generate(test_table)
     end
 
     def verify_free_table_id(table_id)
         get '/spaces/fake-space/tables/free'
         expect(last_response).to be_redirect
-        expect(last_response.url).to include("_/#{table_id}?")
+        expect(last_response.location).to include("_/#{table_id}?")
     end
 end
