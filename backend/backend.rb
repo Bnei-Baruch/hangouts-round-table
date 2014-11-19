@@ -79,7 +79,6 @@ end
 # Get free table
 get '/spaces/:space/tables/free' do
     table_id = get_free_table_id(params[:space])
-    puts table_id
     if table_id.nil?
       table_id = ""
     end
@@ -90,25 +89,29 @@ end
 
 $table_config = CONFIG['table']
 
-def get_free_table_id(space)
-    keys = $redis.keys("table_#{space}_*")
-    time_now = $redis.time[0]
+def get_space_tables(space, time_now)
+    keys = $redis.keys("table_#{space}_*" )
 
     live_tables = []
-    puts "#{keys} keys"
     $redis.mget(*keys).each do |one_table|
         puts one_table
         one_table = JSON.parse(one_table)
-        puts one_table
         if one_table['timestamp'] + $table_config['time_to_live'] < time_now
-            $redis.del("table_#{space}_#{one_table['id']}")
+            table_id = "table_#{one_table['space']}_#{one_table['id']}"
+            puts "Deleting old tables #{table_id}"
+            $redis.del(table_id)
         else
             if is_table_live(one_table, time_now)
                 live_tables << one_table
             end
         end
     end if not keys.empty?
+    live_tables
+end
 
+def get_free_table_id(space)
+    time_now = $redis.time[0]
+    live_tables = get_space_tables(space, time_now)
     table = choose_table(live_tables, time_now)
     return table['id'] if table
     nil
@@ -118,12 +121,36 @@ def choose_table(tables, time_now)
     small_tables = tables.select do |one_table|
         one_table['participants'].size < $table_config['min_participants_number']
     end
-    if !small_tables.empty?
-        return small_tables.max_by { |table| table['participants'].size } 
+    puts small_tables
+    return small_tables.max_by { |table| table['participants'].size } if !small_tables.empty?
+    not_full_tables = tables.select do |one_table|
+      one_table['participants'].size < $table_config['max_participants_number']
     end
-    return tables.min_by { |table| table['participants'].size }
+    puts not_full_tables
+    return not_full_tables.min_by { |table| table['participants'].size } if !not_full_tables.empty?
+    return nil
 end
 
 def is_table_live(table, time_now)
     table['timestamp'] + $table_config['polling_interval'] > time_now
+end
+
+options '/spaces/:space/tables' do
+    200
+end
+
+get '/spaces/:space/tables' do
+    time_now = $redis.time[0]
+    live_tables = get_space_tables(params[:space], time_now)
+    JSON.generate(live_tables)
+end
+
+options '/spaces/tables' do
+    200
+end
+
+get '/spaces/tables' do
+    time_now = $redis.time[0]
+    live_tables = get_space_tables("*", time_now)
+    JSON.generate(live_tables)
 end

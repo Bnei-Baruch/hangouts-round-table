@@ -61,28 +61,49 @@ describe 'Round tables REST API backend' do
     end
 
     it "should create a table there are no tables" do
+        verify_free_table_id("")
     end
 
     it "should create a table if all tables are full" do
+        update_fake_table(1, 10)
+        update_fake_table(2, 10)
+        verify_free_table_id("")
     end
 
-    it "should redirect to a free table" do
-    end
-
-    def update_fake_table(table_id, participants_number)
+    def update_fake_table(table_id, participants_number, space="fake-space")
         test_table = {
             "id" => table_id.to_s,
             "lang" => "en",
-            "space" => "fake-space",
-            "participants" => ["Haim", "Moshe", "Jude", "Avi", "Moti", "Tzvika", "Oded"],
+            "space" => space,
+            "participants" => ["Haim", "Moshe", "Jude", "Avi", "Moti", "Tzvika", "Oded", "Valik", "Misha", "Igor"],
         }
         test_table['participants'] = test_table['participants'][0..participants_number-1]
-        put "/spaces/fake-space/tables/#{table_id}", JSON.generate(test_table)
+        put "/spaces/#{space}/tables/#{table_id}", JSON.generate(test_table)
     end
 
     def verify_free_table_id(table_id)
         get '/spaces/fake-space/tables/free'
         expect(last_response).to be_redirect
         expect(last_response.location).to include("_/#{table_id}?")
+    end
+
+    it "should return space tables" do
+      update_fake_table(1, 5, "space1")
+      update_fake_table(2, 6, "space2")
+      update_fake_table(3, 7, "space1")
+      get "/spaces/space1/tables"
+      tables = JSON.parse(last_response.body)
+      expect(tables.size).to be 2
+      expect(tables.map { |table| table['id'] }.sort!).to eq(["1", "3"])
+    end
+
+    it "should return all tables" do
+      update_fake_table(1, 5, "space1")
+      update_fake_table(2, 6, "space2")
+      update_fake_table(3, 7, "space1")
+      get "/spaces/tables"
+      tables = JSON.parse(last_response.body)
+      expect(tables.size).to be 3
+      expect(tables.map { |table| table['id'] }.sort!).to eq(["1", "2", "3"])
     end
 end
