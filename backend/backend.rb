@@ -52,7 +52,7 @@ post '/nuve/tokens' do
     data = JSON.parse request.body.read
 
     user = data.fetch('user', 'participant')
-    role = data.fetch('role', 'partticipant')
+    role = data.fetch('role', 'participant')
     token = nuve.createToken(room['_id'], user, role)
 
     status 201

@@ -16,7 +16,7 @@ function getToken(callback) {
   $.ajax({
     type: "POST",
     cache: false,
-    url: "https://galaxy-trial.socio2.net/api/tokens",
+    url: "https://bbworkshop.kbb1.com/round_table/nuve/tokens",
     data: JSON.stringify({user: 'kolmanv'}),
     contentType: "application/json; charset=utf-8",
     dataType: "json",
