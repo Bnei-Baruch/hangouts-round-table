@@ -1,0 +1,27 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
+
+<polymer-element name="table-list" attributes="space">
+  <template id="table-list">
+      <link rel="stylesheet" href="table_list.css">
+
+      <h1>List of workshops for {{ space }}</h1>
+
+      <core-ajax
+           id="getTables"
+           url="https://bbworkshop.kbb1.com/round_table/spaces/{{ space }}/tables",
+           method="GET"
+           contentType="application/json"
+           handleAs="json"
+           on-core-response="{{ setTables }}">
+      </core-ajax>
+
+      <template repeat="{{ table, tableIndex in tables }}">
+        {{ table.id }}
+        {{ table.language }}
+        {{ table.participants }}
+      </template>
+  </template>
+
+  <script src="table_list.js"></script>
+</polymer-element>
