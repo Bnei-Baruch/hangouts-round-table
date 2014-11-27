@@ -72,24 +72,27 @@ put '/spaces/:space/tables/:id' do
     $redis.set("table_#{params[:space]}_#{params[:id]}", JSON.generate(body))
 end
 
-options '/spaces/:space/tables/free' do
+options '/spaces/:space/tables/:language/free' do
     200
 end
 
 # Get free table
-get '/spaces/:space/tables/free' do
-    table_id = get_free_table_id(params[:space])
+get '/spaces/:space/tables/:language/free' do
+    table_id = get_free_table_id(params[:space], params[:language])
     if table_id.nil?
       table_id = ""
     end
-    hangouts_url = "https://plus.google.com/hangouts/_/#{table_id}?gid=#{CONFIG['hangout_app_gid']}&gd=#{params[:space]}";
+
+    app_data = { :space => params[:space], :language => params[:language] }.to_json
+    escaped = URI.escape(app_data)
+    hangouts_url = "https://plus.google.com/hangouts/_/#{table_id}?gid=#{CONFIG['hangout_app_gid']}&gd=#{escaped}";
     puts hangouts_url
     redirect hangouts_url
 end
 
 $table_config = CONFIG['table']
 
-def get_space_tables(space, time_now)
+def get_space_tables(space, language, time_now)
     keys = $redis.keys("table_#{space}_*" )
 
     live_tables = []
@@ -101,7 +104,7 @@ def get_space_tables(space, time_now)
             puts "Deleting old tables #{table_id}"
             $redis.del(table_id)
         else
-            if is_table_live(one_table, time_now)
+            if is_table_live(one_table, time_now) and (language.nil? or language == one_table['lang'])
                 live_tables << one_table
             end
         end
@@ -109,9 +112,9 @@ def get_space_tables(space, time_now)
     live_tables
 end
 
-def get_free_table_id(space)
+def get_free_table_id(space, language)
     time_now = $redis.time[0]
-    live_tables = get_space_tables(space, time_now)
+    live_tables = get_space_tables(space, language, time_now)
     table = choose_table(live_tables, time_now)
     return table['id'] if table
     nil
@@ -141,7 +144,7 @@ end
 
 get '/spaces/:space/tables' do
     time_now = $redis.time[0]
-    live_tables = get_space_tables(params[:space], time_now)
+    live_tables = get_space_tables(params[:space], nil, time_now)
     JSON.generate(live_tables)
 end
 
@@ -151,6 +154,6 @@ end
 
 get '/spaces/tables' do
     time_now = $redis.time[0]
-    live_tables = get_space_tables("*", time_now)
+    live_tables = get_space_tables("*", nil, time_now)
     JSON.generate(live_tables)
 end

@@ -16,7 +16,7 @@ function update_table(space, id, participants, callback) {
     success: function(data) {
         console.log('Success:' + data);
     },
-    url: location.protocol + "//bbworkshop.kbb1.com/round_table/spaces/" + space + "/tables/" + id
+    url: location.protocol + "//bbworkshop.kbb1.com/round_table/backend/spaces/" + space + "/tables/" + id
   });
 }
 

@@ -60,6 +60,15 @@ describe 'Round tables REST API backend' do
         verify_free_table_id(2)
     end
 
+    it "should redirect to a free table for selected language" do
+        update_fake_table(1, 3, language: 'en')
+        update_fake_table(2, 2, language: 'en')
+        update_fake_table(3, 3, language: 'he')
+        update_fake_table(4, 2, language: 'he')
+        verify_free_table_id(1, 'en')
+        verify_free_table_id(3, 'he')
+    end
+
     it "should create a table there are no tables" do
         verify_free_table_id("")
     end
@@ -70,10 +79,10 @@ describe 'Round tables REST API backend' do
         verify_free_table_id("")
     end
 
-    def update_fake_table(table_id, participants_number, space="fake-space")
+    def update_fake_table(table_id, participants_number, space: "fake-space", language: "fake-language")
         test_table = {
             "id" => table_id.to_s,
-            "lang" => "en",
+            "lang" => language,
             "space" => space,
             "participants" => ["Haim", "Moshe", "Jude", "Avi", "Moti", "Tzvika", "Oded", "Valik", "Misha", "Igor"],
         }
@@ -81,16 +90,16 @@ describe 'Round tables REST API backend' do
         put "/spaces/#{space}/tables/#{table_id}", JSON.generate(test_table)
     end
 
-    def verify_free_table_id(table_id)
-        get '/spaces/fake-space/tables/free'
+    def verify_free_table_id(table_id, language="fake-language")
+        get "/spaces/fake-space/tables/#{language}/free"
         expect(last_response).to be_redirect
         expect(last_response.location).to include("_/#{table_id}?")
     end
 
     it "should return space tables" do
-      update_fake_table(1, 5, "space1")
-      update_fake_table(2, 6, "space2")
-      update_fake_table(3, 7, "space1")
+      update_fake_table(1, 5, space: "space1")
+      update_fake_table(2, 6, space: "space2")
+      update_fake_table(3, 7, space: "space1")
       get "/spaces/space1/tables"
       tables = JSON.parse(last_response.body)
       expect(tables.size).to be 2
@@ -98,9 +107,9 @@ describe 'Round tables REST API backend' do
     end
 
     it "should return all tables" do
-      update_fake_table(1, 5, "space1")
-      update_fake_table(2, 6, "space2")
-      update_fake_table(3, 7, "space1")
+      update_fake_table(1, 5, space: "space1")
+      update_fake_table(2, 6, space: "space2")
+      update_fake_table(3, 7, space: "space1")
       get "/spaces/tables"
       tables = JSON.parse(last_response.body)
       expect(tables.size).to be 3

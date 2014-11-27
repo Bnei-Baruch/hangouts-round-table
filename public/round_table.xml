@@ -14,13 +14,13 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
 
   <!-- Add update round table information -->
-  <script src="//bbworkshop.kbb1.com/dev/update.js" type="text/javascript"></script>
+  <script src="//bbworkshop.kbb1.com/round_table/public/update.js" type="text/javascript"></script>
 
   <!-- Add video streaming via Licode -->
-  <script src="//bbworkshop.kbb1.com/hacks/set-undocumented-flags.js"></script>
-  <script src="//bbworkshop.kbb1.com/dev/erizo.js" type="text/javascript"></script>
-  <script src="//bbworkshop.kbb1.com/hacks/disable-erizo-bar.js"></script>
-  <script src="//bbworkshop.kbb1.com/dev/show_moderator.js" type="text/javascript"></script>
+  <script src="//bbworkshop.kbb1.com/round_table/public/hacks/set-undocumented-flags.js"></script>
+  <script src="//bbworkshop.kbb1.com/round_table/public/erizo.js" type="text/javascript"></script>
+  <script src="//bbworkshop.kbb1.com/round_table/public/hacks/disable-erizo-bar.js"></script>
+  <script src="//bbworkshop.kbb1.com/round_table/public/show_moderator.js" type="text/javascript"></script>
 
   <h3>Moderator video</h3>
   <div id="js-local-video">No broadcast yet</div>
