@@ -5,11 +5,9 @@
   <template id="table-list">
       <link rel="stylesheet" href="table_list.css">
 
-      <h1>List of workshops for {{ space }}</h1>
-
       <core-ajax
            id="getTables"
-           url="https://bbworkshop.kbb1.com/round_table/spaces/{{ space }}/tables",
+           url="https://bbworkshop.kbb1.com/round_table/backend/spaces/{{ space }}/tables",
            method="GET"
            contentType="application/json"
            handleAs="json"
