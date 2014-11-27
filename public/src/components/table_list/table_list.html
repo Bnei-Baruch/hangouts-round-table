@@ -16,11 +16,22 @@
            on-core-response="{{ setTables }}">
       </core-ajax>
 
-      <template repeat="{{ table, tableIndex in tables }}">
-        {{ table.id }}
-        {{ table.language }}
-        {{ table.participants }}
-      </template>
+      <table>
+        <thead>
+          <th>Link</th>
+          <th>Language</th>
+          <th>Participants</th>
+        </thead>
+        <tbody>
+          <template repeat="{{ table, tableIndex in tables }}">
+            <tr>
+              <td><a href="https://plus.google.com/hangouts/_/{{ table.id }}?gid=979640007671&gd={{ space }}" target="_blank">join</a></td>
+              <td>{{ table.lang }}</td>
+              <td>{{ table.participants }}</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
   </template>
 
   <script src="table_list.js"></script>
