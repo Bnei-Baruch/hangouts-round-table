@@ -20,6 +20,8 @@
   "curly": true,
   "globals": {
     "window": false,
+    "$": false,
+    "gapi": false,
     "document": false,
     "alert": false,
     "Polymer": false,
