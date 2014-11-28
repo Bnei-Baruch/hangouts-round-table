@@ -83,14 +83,16 @@ get '/spaces/:space/tables/:language/free' do
       table_id = ""
     end
 
-    app_data = { :space => params[:space], :language => params[:language] }.to_json
-    escaped = URI.escape(app_data)
-    hangouts_url = "https://plus.google.com/hangouts/_/#{table_id}?gid=#{CONFIG['hangout_app_gid']}&gd=#{escaped}";
-    puts hangouts_url
-    redirect hangouts_url
+    redirect get_hangouts_url(table_id, params[:space], params[:language])
 end
 
 $table_config = CONFIG['table']
+
+def get_hangouts_url(table_id, space, language)
+    app_data = { :space => space, :language => language }.to_json
+    escaped = URI.escape(app_data)
+    "https://plus.google.com/hangouts/_/#{table_id}?gid=#{CONFIG['hangout_app_gid']}&gd=#{escaped}"
+end
 
 def get_space_tables(space, language, time_now)
     keys = $redis.keys("table_#{space}_*" )
@@ -105,6 +107,9 @@ def get_space_tables(space, language, time_now)
             $redis.del(table_id)
         else
             if is_table_live(one_table, time_now) and (language.nil? or language == one_table['lang'])
+                one_table['hangouts_url'] = get_hangouts_url(one_table['id'],
+                                                             one_table['space'],
+                                                             one_table['lang'])
                 live_tables << one_table
             end
         end
