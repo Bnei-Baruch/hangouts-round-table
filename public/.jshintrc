@@ -19,6 +19,8 @@
   "validthis": true,
   "curly": true,
   "globals": {
+    "kurentoClient": false,
+    "kurentoUtils": false,
     "window": false,
     "$": false,
     "gapi": false,
