@@ -16,14 +16,14 @@
 
       <table>
         <thead>
-          <!--<th>Link</th>-->
+          <th>Link</th>
           <th>Language</th>
           <th>Participants</th>
         </thead>
         <tbody>
           <template repeat="{{ table, tableIndex in tables }}">
             <tr>
-              <!--<td><a href="https://plus.google.com/hangouts/_/{{ table.id }}?gid=979640007671&gd={{ space }}" target="_blank">join</a></td>-->
+              <td><a href="{{ table.hangouts_url }}" target="_blank">join</a></td>
               <td>{{ table.lang }}</td>
               <td>{{ table.participants }}</td>
             </tr>
