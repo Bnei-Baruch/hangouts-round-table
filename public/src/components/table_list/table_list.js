@@ -13,7 +13,7 @@
         that.$.getTables.go();
       }
       refreshTables();
-      setInterval(refreshTables, 5000);
+      setInterval(refreshTables, 10000);
     },
     select: function () {
     },

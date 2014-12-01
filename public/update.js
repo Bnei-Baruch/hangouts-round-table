@@ -28,8 +28,8 @@ function get_id() {
 function get_participants() {
   var ret = new Object();
   ret.id = get_id();
-  ret.lang = "en";
-  ret.space = get_space();
+  ret.lang = get_table_info().language;
+  ret.space = get_table_info().space;
   ret.participants = new Array();
   var participants = gapi.hangout.getParticipants();
   for (var index in participants) {
@@ -41,13 +41,9 @@ function get_participants() {
   return ret;
 }
 
-function get_space() {
-  var space = gadgets.views.getParams()['appData'];
-  space = $('<div/>').html(space).text();
-  if (!space) {
-    space = 'default';
-  }
-  return space;
+function get_table_info() {
+  var app_data = gadgets.views.getParams()['appData'];
+  return JSON.parse(app_data);
 }
 
 // Make sure only one participant updated the table data.
@@ -63,7 +59,7 @@ function only_one_update() {
     } 
   }
   if (should_update) {
-    update_table(get_space(), get_id(), get_participants());
+    update_table(get_table_info().space, get_id(), get_participants());
   }
 }
 

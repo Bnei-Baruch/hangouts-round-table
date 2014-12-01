@@ -26,6 +26,7 @@ function connect() {
     console.log("Got token", data.token);
 
     var room = Erizo.Room(data);
+    var tableLanguage = get_table_info().language;
 
     room.addEventListener("room-connected", function (roomEvent) {
       subscribeBroadcasterStream(roomEvent.streams);
@@ -42,7 +43,7 @@ function connect() {
         $('#js-local-video').html('');
         stream.play('js-local-video');
 
-        if (LANGUAGE !== 'he') {
+        if (tableLanguage !== 'he') {
           stream.stream.getAudioTracks()[0].enabled = false;
         }
       }
@@ -54,7 +55,7 @@ function connect() {
         var attrs = stream.getAttributes();
 
         var isRightTranslation = (attrs.role === 'translator' &&
-            LANGUAGE == attrs.language);
+            tableLanguage == attrs.language);
 
         if (attrs.role === 'broadcaster' || isRightTranslation) {
           room.subscribe(stream);
