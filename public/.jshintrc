@@ -21,6 +21,7 @@
   "globals": {
     "kurentoClient": false,
     "kurentoUtils": false,
+    "WebSocket": false,
     "window": false,
     "prompt": false,
     "$": false,

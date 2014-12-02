@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra-websocket'
 require 'json'
 require 'redis'
 
@@ -18,6 +19,8 @@ before do
 end
 
 
+set :server, 'thin'
+set :sockets, []
 set :json_content_type, :js
 set :bind, '0.0.0.0'
 set :protection, false
@@ -84,6 +87,37 @@ get '/spaces/:space/tables/:language/free' do
     end
 
     redirect get_hangouts_url(table_id, params[:space], params[:language])
+end
+
+master_endpoint_id = nil
+
+# Websocket
+get '/socket' do
+  if !request.websocket?
+    status 400
+    { }.to_json
+  else
+    request.websocket do |ws|
+      ws.onopen do
+        settings.sockets << ws
+      end
+      ws.onmessage do |msg|
+        message = JSON.parse(msg)
+
+        case message['id']
+        when 'master'
+            master_endpoint_id = message['endpointId']
+            # EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
+        when 'viewer'
+            ws.send({ :id => 'viewerResponse', :endpointId => master_endpoint_id }.to_json)
+        end
+      end
+      ws.onclose do
+        warn("websocket closed")
+        settings.sockets.delete(ws)
+      end
+    end
+  end
 end
 
 $table_config = CONFIG['table']

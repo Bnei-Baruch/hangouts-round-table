@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem "rack", "~> 1.6.0.beta"
 gem "sinatra"
+gem "sinatra-websocket"
 gem "rack-test"
 gem "rspec"
 gem "redis"

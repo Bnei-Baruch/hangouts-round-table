@@ -3,25 +3,38 @@
 (function () {
   Polymer({
     publish: {
-      wsUri: 'ws://webrtc-dev.socio2.net:8888/kurento',
+      kurentoWsUri: 'ws://webrtc-dev.socio2.net:8888/kurento',
+      backendWsUri: 'ws://localhost:4567/socket'
     },
-    created: function () {
-    },
+    webRtcEndpointId: null,
     ready: function() {
+      var that = this;
+
+      this.backendWs = new WebSocket(this.backendWsUri);
+
+      this.backendWs.onmessage = function (message) {
+        var parsedMessage = JSON.parse(message.data);
+        if (parsedMessage.id === 'viewerResponse') {
+          that.webRtcEndpointId = parsedMessage.endpointId;
+          that.initKurento();
+        }
+      };
+
+      this.backendWs.onopen = function () {
+        that.sendMessage({id: 'viewer'});
+      };
+    },
+    initKurento: function () {
       var that = this;
 
       this.webRtcPeer = kurentoUtils.WebRtcPeer.startRecvOnly(
         this.$.remoteVideo, function (sdpOffer) {
-          kurentoClient(that.wsUri, function(error, kurentoClient) {
+          kurentoClient(that.kurentoWsUri, function(error, kurentoClient) {
             if(error) {
               return that.onError(error);
             }
 
-            // var webRtcEndpointId = "WebRtcEndpoint_MediaPipeline_a7520ad3-0f8b-4788-92d4-8ffb277041e6/a795f1ba-cdd5-4cc5-9a52-08586e982934";
-
-            var webRtcEndpointId = prompt("WebRTC endpoint ID");
-
-            kurentoClient.getMediaobjectById(webRtcEndpointId, function(error, webRtcMaster) {
+            kurentoClient.getMediaobjectById(that.webRtcEndpointId, function(error, webRtcMaster) {
               if(error) {
                 return that.onError(error);
               }
@@ -67,6 +80,10 @@
     onError: function (error) {
       alert(error);
     },
+    sendMessage: function (message) {
+      var jsonMessage = JSON.stringify(message);
+      this.backendWs.send(jsonMessage);
+    }
   });
 
 })();

@@ -3,16 +3,19 @@
 (function () {
   Polymer({
     publish: {
-      wsUri: 'ws://webrtc-dev.socio2.net:8888/kurento',
+      kurentoWsUri: 'ws://webrtc-dev.socio2.net:8888/kurento',
+      backendWsUri: 'ws://localhost:4567/socket'
     },
     created: function () {
     },
     ready: function() {
       var that = this;
 
+      this.backendWs = new WebSocket(this.backendWsUri);
+
       this.webRtcPeer = kurentoUtils.WebRtcPeer.startSendOnly(
         this.$.localVideo, function (sdpOffer) {
-          kurentoClient(that.wsUri, function(error, kurentoClient) {
+          kurentoClient(that.kurentoWsUri, function(error, kurentoClient) {
             if(error) {
               return that.onError(error);
             }
@@ -26,7 +29,7 @@
                 if(error) {
                   return that.onError(error);
                 }
-                that.webRtcEndpointId = webRtc.id;
+                that.sendMessage({id: 'master', endpointId: webRtc.id});
 
                 webRtc.processOffer(sdpOffer, function(error, sdpAnswer){
                   if(error) {
@@ -44,6 +47,10 @@
     onError: function (error) {
       alert(error);
     },
+    sendMessage: function (message) {
+      var jsonMessage = JSON.stringify(message);
+      this.backendWs.send(jsonMessage);
+    }
   });
 
 })();
