@@ -89,7 +89,7 @@ get '/spaces/:space/tables/:language/free' do
     redirect get_hangouts_url(table_id, params[:space], params[:language])
 end
 
-master_endpoint_id = nil
+$master_endpoint_id = nil
 
 # Websocket
 get '/socket' do
@@ -106,10 +106,11 @@ get '/socket' do
 
         case message['id']
         when 'master'
-            master_endpoint_id = message['endpointId']
-            # EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
+            $master_endpoint_id = message['endpointId']
+            viewer_response = get_viewer_response()
+            EM.next_tick { settings.sockets.each{|s| s.send(viewer_response) } }
         when 'viewer'
-            ws.send({ :id => 'viewerResponse', :endpointId => master_endpoint_id }.to_json)
+            ws.send(get_viewer_response())
         end
       end
       ws.onclose do
@@ -118,6 +119,13 @@ get '/socket' do
       end
     end
   end
+end
+
+def get_viewer_response
+    {
+        :id => 'viewerResponse',
+        :endpointId => $master_endpoint_id
+    }.to_json
 end
 
 $table_config = CONFIG['table']

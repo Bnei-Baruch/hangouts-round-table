@@ -27,6 +27,11 @@
     initKurento: function () {
       var that = this;
 
+      if (this.webRtcPeer) {
+        this.webRtcPeer.dispose();
+        this.webRtcPeer = null;
+      }
+
       this.webRtcPeer = kurentoUtils.WebRtcPeer.startRecvOnly(
         this.$.remoteVideo, function (sdpOffer) {
           kurentoClient(that.kurentoWsUri, function(error, kurentoClient) {
