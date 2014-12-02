@@ -9,9 +9,26 @@
     created: function () {
     },
     ready: function() {
+      this.initBackendSocket();
+    },
+    initBackendSocket: function () {
       var that = this;
 
       this.backendWs = new WebSocket(this.backendWsUri);
+
+      this.backendWs.onopen = function () {
+        that.initKurento();
+      };
+
+      this.backendWs.onclose = function () {
+        window.setTimeout(function () {
+          console.log("Reconnecting to the backend...");
+          that.initBackendSocket();
+        }, 1000);
+      };
+    },
+    initKurento: function () {
+      var that = this;
 
       this.webRtcPeer = kurentoUtils.WebRtcPeer.startSendOnly(
         this.$.localVideo, function (sdpOffer) {
