@@ -4,9 +4,13 @@
   <template>
     <p></p>
     <video id="localVideo" autoplay width="320px" height="240px"></video>
+
+    <div>
+      WebRTC Endpoint ID: <input type="text" value="{{ webRtcEndpointId }}"  onclick="this.select()" readonly />
+    </div>
   </template>
 
-  <script src="https://rawgit.com/GoogleChrome/webrtc/master/samples/web/js/adapter.js"></script>
+  <script src="https://apprtc.appspot.com/js/adapter.js"></script>
   <script src="../../bower_components/kurento-client/js/kurento-client.js"></script>
   <script src="../../bower_components/kurento-utils/js/kurento-utils.js"></script>
   <script src="publisher.js"></script>

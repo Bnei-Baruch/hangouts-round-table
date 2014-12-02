@@ -22,6 +22,7 @@
     "kurentoClient": false,
     "kurentoUtils": false,
     "window": false,
+    "prompt": false,
     "$": false,
     "gapi": false,
     "document": false,

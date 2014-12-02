@@ -26,6 +26,7 @@
                 if(error) {
                   return that.onError(error);
                 }
+                that.webRtcEndpointId = webRtc.id;
 
                 webRtc.processOffer(sdpOffer, function(error, sdpAnswer){
                   if(error) {
@@ -35,13 +36,6 @@
                   that.webRtcPeer.processSdpAnswer(sdpAnswer);
                 });
 
-                webRtc.connect(webRtc, function(error){
-                  if(error) {
-                    return that.onError(error);
-                  }
-
-                  console.log('Loopback established');
-                });
               });
             });
           });
