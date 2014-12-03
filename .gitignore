@@ -2,5 +2,7 @@
 *.swo
 *.swn
 *~
+backend/Gemfile.lock
 backend/config/config.rb
 backend/config/testing_config.rb
+frontend/src/bower_components/

@@ -1,0 +1,4 @@
+{
+  "kurento_url": "http://localhost:8888",
+  "backend_url": "http://localhost:4567"
+}
