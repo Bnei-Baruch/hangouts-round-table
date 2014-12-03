@@ -5,4 +5,7 @@
 backend/Gemfile.lock
 backend/config/config.rb
 backend/config/testing_config.rb
+frontend/node_modules
 frontend/src/bower_components/
+frontend/config.json
+frontend/src/components/app-config/app-config.html
