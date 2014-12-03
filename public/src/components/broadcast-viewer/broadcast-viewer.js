@@ -1,4 +1,4 @@
-'use strict';
+/* jshint strict:false */
 
 (function () {
   Polymer({
@@ -6,6 +6,7 @@
     initBackendSocket: function () {
       var that = this;
 
+      // Doesn't work in 'strict' mode
       this.super();
 
       this.backendWs.onmessage = function (message) {
@@ -54,13 +55,6 @@
             }));
           }));
         }, this.onError);
-    },
-    onError: function (error) {
-      alert(error);
-    },
-    sendMessage: function (message) {
-      var jsonMessage = JSON.stringify(message);
-      this.backendWs.send(jsonMessage);
     }
   });
 

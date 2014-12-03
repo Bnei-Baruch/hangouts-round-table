@@ -28,14 +28,19 @@
     initKurento: function () {
     },
     cancelOnError: function(func) {
+      var that = this;
+
       return function () {
         var error = arguments[0];
         if (error) {
-          console.error(error);
+          that.onError(error);
         } else {
           func.apply(this, arguments);
         }
       };
+    },
+    onError: function (error) {
+      console.error(error);
     },
     sendMessage: function (message) {
       var jsonMessage = JSON.stringify(message);
