@@ -1,13 +1,14 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../broadcast-base/broadcast-base.html">
 
-<polymer-element name="rt-subscriber" attributes="">
+<polymer-element name="broadcast-master" extends="broadcast-base" attributes="">
   <template>
     <p></p>
-    <video id="remoteVideo" autoplay width="320px" height="240px"></video>
+    <video id="localVideo" autoplay width="320px" height="240px"></video>
   </template>
 
   <script src="https://apprtc.appspot.com/js/adapter.js"></script>
   <script src="../../bower_components/kurento-client/js/kurento-client.js"></script>
   <script src="../../bower_components/kurento-utils/js/kurento-utils.js"></script>
-  <script src="subscriber.js"></script>
+  <script src="broadcast-master.js"></script>
 </polymer-element>
