@@ -1,35 +1,40 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../app-config/app-config.html" />
 
 <polymer-element name="table-list" attributes="space">
   <template id="table-list">
-      <link rel="stylesheet" href="table_list.css">
 
-      <core-ajax
-           id="getTables"
-           url="https://bbworkshop.kbb1.com/round_table/backend/spaces/{{ space }}/tables",
-           method="GET"
-           contentType="application/json"
-           handleAs="json"
-           on-core-response="{{ setTables }}">
-      </core-ajax>
+  <app-config id="config"></app-config>
 
-      <table>
-        <thead>
-          <th>Link</th>
-          <th>Language</th>
-          <th>Participants</th>
-        </thead>
-        <tbody>
-          <template repeat="{{ table, tableIndex in tables }}">
-            <tr>
-              <td><a href="{{ table.hangouts_url }}" target="_blank">join</a></td>
-              <td>{{ table.lang }}</td>
-              <td>{{ table.participants }}</td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
+  <link rel="stylesheet" href="table-list.css">
+
+  <core-ajax
+    id="getTables"
+    url="{{ $.config.backendUrl }}/spaces/{{ space }}/tables",
+    method="GET"
+    contentType="application/json"
+    handleAs="json"
+    on-core-response="{{ setTables }}">
+  </core-ajax>
+
+  <table>
+    <thead>
+      <th>Link</th>
+      <th>Language</th>
+      <th>Participants</th>
+    </thead>
+    <tbody>
+      <template repeat="{{ table, tableIndex in tables }}">
+      <tr>
+        <td><a href="{{ table.hangouts_url }}" target="_blank">join</a></td>
+        <td>{{ table.lang }}</td>
+        <td>{{ table.participants }}</td>
+      </tr>
+      </template>
+    </tbody>
+  </table>
+
   </template>
 
   <script src="table-list.js"></script>
