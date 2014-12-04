@@ -1,83 +1,58 @@
-var handle_error = function(err) {
-  // Uncomment for debuging XHR (ajax). 
-  // alert(err);
-};
+'use strict';
 
-// Update the table via backend call
-function update_table(space, id, participants, callback) {
-  $.ajax({
-    type: "PUT",
-    contentType: "application/json; charset=utf-8",
-    data: JSON.stringify(participants),
-    dataType: "json",
-    error: function(xhr, status, errorThrown) {
-        console.log('XHR Error:'+errorThrown+'\n'+status+'\n'+xhr.statusText);
+(function () {
+  Polymer({
+    create: function () {
+      var urlArray = gapi.hangout.getHangoutUrl().split('/');
+      this.tableId = urlArray[urlArray.length - 1];
+
+      var appData = gadgets.views.getParams().appData;
+      this.appData = JSON.parse(appData);
     },
-    success: function(data) {
-        console.log('Success:' + data);
+    ready: function () {
+      gapi.hangout.onApiReady.add(this.initHangouts);
     },
-    url: location.protocol + "//bbworkshop.kbb1.com/round_table/backend/spaces/" + space + "/tables/" + id
-  });
-}
-
-function get_id() {
-  var url_arr = gapi.hangout.getHangoutUrl().split("/");
-  return url_arr[url_arr.length - 1];
-}
-
-function get_participants() {
-  var ret = new Object();
-  ret.id = get_id();
-  ret.lang = get_table_info().language;
-  ret.space = get_table_info().space;
-  ret.participants = new Array();
-  var participants = gapi.hangout.getParticipants();
-  for (var index in participants) {
-    var participant = participants[index];
-    if (participant.person) {
-      ret.participants.push(participant.person.displayName);
-    }
-  }
-  return ret;
-}
-
-function get_table_info() {
-  var app_data = gadgets.views.getParams()['appData'];
-  return JSON.parse(app_data);
-}
-
-// Make sure only one participant updated the table data.
-function only_one_update() {
-  var participants = gapi.hangout.getEnabledParticipants();
-  var local_participant_id = gapi.hangout.getLocalParticipantId();
-  var should_update = true;
-  for (var index in participants) {
-    var participant = participants[index];
-    if (participant.id < local_participant_id) {
-      should_update = false;
-      break;
-    } 
-  }
-  if (should_update) {
-    update_table(get_table_info().space, get_id(), get_participants());
-  }
-}
-
-function start_table_update() {
-  setInterval(function() { only_one_update(); }, 10000);
-}
-
-(function() {
-  if (gapi && gapi.hangout) {
-
-    var initHangout = function(apiInitEvent) {
+    initHangouts: function (apiInitEvent) {
       if (apiInitEvent.isApiReady) {
-        start_table_update();
+        this.startUpdatingTable();
 
-        gapi.hangout.onApiReady.remove(initHangout);
+        gapi.hangout.onApiReady.remove(this.initHangouts);
       }
-    };
+    },
+    startUpdatingTable: function () {
+      setInterval(this.updateIfRequired, this.$.config.updateTableInterval);
+    },
+    updateIfRequired: function () {
+      var updateRequired = true;
 
-    gapi.hangout.onApiReady.add(initHangout);
-  }
+      var localParticipantId = gapi.hangout.getLocalParticipantId();
+      var participants = gapi.hangout.getEnabledParticipants();
+
+      for (var index in participants) {
+        var participant = participants[index];
+
+        if (participant.id < localParticipantId) {
+          updateRequired = false;
+          break;
+        }
+      }
+
+      if (updateRequired) {
+        this.$.updateTable.body = this.getParticipantsJSON();
+        this.$.updateTable.go();
+      }
+    },
+    getParticipantsJSON: function () {
+      var participants = [];
+
+      var hangoutParticipants = gapi.hangout.getParticipants();
+      for (var index in hangoutParticipants) {
+        var hangoutParticipant = hangoutParticipants[index];
+        if (hangoutParticipant.person) {
+          participants.push(hangoutParticipant.person.displayName);
+        }
+      }
+      return JSON.stringify(participants);
+    }
+  });
 })();

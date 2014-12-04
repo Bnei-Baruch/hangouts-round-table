@@ -1,9 +1,19 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../app-config/app-config.html" />
 
-<polymer-element name="update-table" attributes="">
+<polymer-element name="update-table">
   <template>
+
   <app-config id="config"></app-config>
+
+  <core-ajax
+    id="updateTable"
+    url="{{ $.config.backendUrl }}/spaces/{{ appData.space }}/tables/{{ tableId }}",
+    method="PUT"
+    contentType="application/json"
+    handleAs="json">
+  </core-ajax>
+
   </template>
 
   <!-- Hangouts API -->

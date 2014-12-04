@@ -2,5 +2,6 @@
   "backendUrl": "http://localhost:4567",
   "kurentoWsUri": "ws://webrtc-dev.socio2.net:8888/kurento",
   "backendWsUri": "ws://localhost:4567/socket",
+  "updateTableInterval": 10000,
   "hangoutsAppGid": "979640007671"
 }
