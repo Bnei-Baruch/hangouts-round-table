@@ -9,13 +9,12 @@
 <html>
   <head>
     <script src="bower_components/webcomponentsjs/webcomponents.js"></script>
-    <link rel="import" href="components/app-config.html" />
     <link rel="import" href="components/update-table/update-table.html" />
     <link rel="import" href="components/broadcast-viewer/broadcast-viewer.html" />
   </head>
 <body>
   <update-table></update-table>
-  <broadcast-viewer space="{{ $.globals.space }}"></broadcast-viewer>
+  <broadcast-viewer></broadcast-viewer>
 </body>
 ]]>
   </Content>
