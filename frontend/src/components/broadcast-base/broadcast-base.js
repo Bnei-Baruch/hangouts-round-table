@@ -2,17 +2,13 @@
 
 (function () {
   Polymer({
-    publish: {
-      kurentoWsUri: 'ws://webrtc-dev.socio2.net:8888/kurento',
-      backendWsUri: 'ws://localhost:4567/socket'
-    },
     ready: function() {
       this.initBackendSocket();
     },
     initBackendSocket: function () {
       var that = this;
 
-      this.backendWs = new WebSocket(this.backendWsUri);
+      this.backendWs = new WebSocket(this.$.config.backendWsUri);
 
       this.backendWs.onopen = function () {
         that.initKurento();

@@ -7,7 +7,7 @@
 
       this.webRtcPeer = kurentoUtils.WebRtcPeer.startSendOnly(
         this.$.localVideo, function (sdpOffer) {
-          kurentoClient(that.kurentoWsUri, that.cancelOnError(function(error, kurentoClient) {
+          kurentoClient(that.$.config.kurentoWsUri, that.cancelOnError(function(error, kurentoClient) {
 
             kurentoClient.create('MediaPipeline', that.cancelOnError(function(error, pipeline) {
 

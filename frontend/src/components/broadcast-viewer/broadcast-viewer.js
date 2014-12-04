@@ -31,7 +31,7 @@
 
       this.webRtcPeer = kurentoUtils.WebRtcPeer.startRecvOnly(
         this.$.remoteVideo, function (sdpOffer) {
-          kurentoClient(that.kurentoWsUri, that.cancelOnError(function(error, kurentoClient) {
+          kurentoClient(that.$.config.kurentoWsUri, that.cancelOnError(function(error, kurentoClient) {
 
             kurentoClient.getMediaobjectById(that.webRtcEndpointId, that.cancelOnError(function(error, webRtcMaster) {
 
