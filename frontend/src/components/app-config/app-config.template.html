@@ -1,4 +1,7 @@
-<polymer-element name="app-config">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../app-globals/app-globals.html">
+
+<polymer-element name="app-config" noscript>
   <template>
   <app-globals id="config"
      <% _.forEach(settings, function (value, key) { %><%= key %>="<%= value %>"
