@@ -7,21 +7,18 @@ var $ = require('gulp-load-plugins')({
 });
 
 gulp.task('scripts', function () {
-  return gulp.src('src/{app,components}/**/*.js')
+  return gulp.src('src/components/**/*.js')
     .pipe($.jshint())
     .pipe($.jshint.reporter('jshint-stylish'))
     .pipe($.size());
 });
 
-gulp.task('partials', function () {
-  return gulp.src('src/{app,components}/**/*.html')
+gulp.task('html', function () {
+  return gulp.src('src/components/**/*.html')
     .pipe($.minifyHtml({
       empty: true,
       spare: true,
       quotes: true
-    }))
-    .pipe($.ngHtml2js({
-      moduleName: 'trs'
     }))
     .pipe(gulp.dest('.tmp'))
     .pipe($.size());
@@ -34,7 +31,7 @@ gulp.task('html', ['scripts', 'partials'], function () {
   var assets;
 
   return gulp.src('src/*.html')
-    .pipe($.inject(gulp.src('.tmp/{app,components}/**/*.js'), {
+    .pipe($.inject(gulp.src('.tmp/components/**/*.js'), {
       read: false,
       starttag: '<!-- inject:partials -->',
       addRootSlash: false,
