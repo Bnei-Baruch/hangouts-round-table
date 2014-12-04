@@ -13,14 +13,19 @@ gulp.task('scripts', function () {
     .pipe($.size());
 });
 
-gulp.task('html', function () {
-  return gulp.src('src/components/**/*.html')
+gulp.task('components', function () {
+  return gulp.src(['src/components/**/*.html', '!**/*.template.html', '!**/demo.html'])
     .pipe($.minifyHtml({
       empty: true,
       spare: true,
       quotes: true
     }))
-    .pipe(gulp.dest('.tmp'))
+    .pipe($.vulcanize({
+      dest: '.tmp/components',
+      strip: true
+    }))
+    .pipe($.rev())
+    .pipe(gulp.dest('.tmp/components'))
     .pipe($.size());
 });
 
