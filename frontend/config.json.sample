@@ -1,4 +1,5 @@
 {
-  "kurento_url": "http://localhost:8888",
-  "backend_url": "http://localhost:4567"
+  "kurentoUrl": "http://localhost:8888",
+  "backendUrl": "http://localhost:4567",
+  "hangoutsAppGid": "979640007671"
 }

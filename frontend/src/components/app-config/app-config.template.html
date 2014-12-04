@@ -1,11 +1,17 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../app-globals/app-globals.html">
 
-<polymer-element name="app-config" noscript>
-  <template>
-  <app-globals id="config"
-     <% _.forEach(settings, function (value, key) { %><%= key %>="<%= value %>"
-     <% }); %>>
-  </app-globals>
-  </template>
+<polymer-element name="app-config">
+<script>
+  (function() {
+    var values = <%= config %>;
+
+    Polymer({
+      ready: function() {
+        for (var key in values) {
+          this[key] = values[key];
+        }
+      }
+    });
+  })();
+</script>
 </polymer-element>
