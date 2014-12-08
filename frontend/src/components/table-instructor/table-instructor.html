@@ -1,0 +1,13 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../broadcast-master/broadcast-master.html">
+
+<polymer-element name="table-instructor" extends="broadcast-master" attributes="">
+  <template>
+    <shadow></shadow>
+
+    <paper-button raised on-click="{{ toggleBroadcast }}" disabled?="">Pause</paper-button>
+  </template>
+
+  <script src="table-instructor.js"></script>
+</polymer-element

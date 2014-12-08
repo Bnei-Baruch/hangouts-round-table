@@ -17,15 +17,6 @@ describe 'Round tables REST API backend' do
         $redis.flushdb
     end
 
-    it "should create a Licode token" do
-        body = { :user => "user" }.to_json
-        post '/nuve/tokens', body
-        expect(last_response).to be_created
-        json_response = JSON.parse(last_response.body)
-        expect(json_response).to include('token')
-        expect(json_response['token'].empty?).to be_falsy
-    end
-
     it "should update table" do
         test_table = {
             "id" => "fake-id",

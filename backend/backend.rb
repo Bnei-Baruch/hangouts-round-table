@@ -9,8 +9,6 @@ if ENV['RACK_ENV'] == 'test'
     require './config/testing_config'
 end
 
-require './nuve'
-
 
 before do
     headers 'Access-Control-Allow-Origin' => '*', 
@@ -25,43 +23,10 @@ set :json_content_type, :js
 set :bind, '0.0.0.0'
 set :protection, false
 
-# Initializing Nuve API
-licode_config = CONFIG['licode']
-nuve = Nuve.new licode_config['service'], licode_config['key'], licode_config['url']
-
-# Getting a room
-rooms_json = nuve.getRooms()
-
-rooms = JSON.parse(rooms_json)
-room = rooms.find { |item| item['name'] == licode_config['new_room_name'] }
-
-if room.nil?
-    room_json = nuve.createRoom(licode_config['new_room_name'])
-    room = JSON.parse(room_json)
-end
 
 redis_config = CONFIG['redis']
 $redis = Redis.new(redis_config['host'] => "localhost", :port => redis_config['port'], :db => redis_config['db'])
 
-options '/nuve/tokens' do
-    200
-end
-
-# Create Nuve token
-post '/nuve/tokens' do
-    content_type :json
-
-    request.body.rewind
-    data = JSON.parse request.body.read
-
-    user = data.fetch('user', 'participant')
-    role = data.fetch('role', 'participant')
-    token = nuve.createToken(room['_id'], user, role)
-
-    status 201
-
-    { :token => token }.to_json
-end
 
 # Update table
 options '/spaces/:space/tables/:id' do
