@@ -106,11 +106,9 @@ def get_space_tables(space, language, time_now)
 
     live_tables = []
     $redis.mget(*keys).each do |one_table|
-        puts one_table
         one_table = JSON.parse(one_table)
         if one_table['timestamp'] + $table_config['time_to_live'] < time_now
             table_id = "table_#{one_table['space']}_#{one_table['id']}"
-            puts "Deleting old tables #{table_id}"
             $redis.del(table_id)
         else
             if is_table_live(one_table, time_now) and (language.nil? or language == one_table['lang'])
@@ -136,12 +134,10 @@ def choose_table(tables, time_now)
     small_tables = tables.select do |one_table|
         one_table['participants'].size < $table_config['min_participants_number']
     end
-    puts small_tables
     return small_tables.max_by { |table| table['participants'].size } if !small_tables.empty?
     not_full_tables = tables.select do |one_table|
       one_table['participants'].size < $table_config['max_participants_number']
     end
-    puts not_full_tables
     return not_full_tables.min_by { |table| table['participants'].size } if !not_full_tables.empty?
     return nil
 end

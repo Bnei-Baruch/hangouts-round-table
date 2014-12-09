@@ -1,6 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../sound-level-indicator/sound-level-indicator.html">
 <link rel="import" href="../broadcast-master/broadcast-master.html">
 
 <polymer-element name="table-instructor" extends="broadcast-master" attributes="">
@@ -17,8 +17,8 @@
     <paper-button raised on-click="{{ toggleMute }}" disabled?="{{ broadcastReady }}">Mute</paper-button>
 
     <div style="clear: both"></div>
-    <paper-progress id="microphoneLevel" style="width: 320px;" value="0"></paper-progress>
+    <sound-level-indicator stream="{{ webRtcPeer.stream }}" style="width: 320px;"></sound-level-indicator>
   </template>
 
   <script src="table-instructor.js"></script>
-</polymer-element
+</polymer-element>

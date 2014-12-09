@@ -6,6 +6,7 @@
     "browser-sync": "^1.7.2",
     "gulp": "^3.8.0",
     "gulp-data": "^1.0.2",
+    "gulp-jshint": "^1.9.0",
     "gulp-load-plugins": "^0.7.1",
     "gulp-minify-html": "^0.1.7",
     "gulp-rename": "^1.2.0",

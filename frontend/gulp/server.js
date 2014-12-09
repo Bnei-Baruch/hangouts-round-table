@@ -8,7 +8,7 @@ function browserSyncInit(baseDir, files, browser) {
   browser = browser === undefined ? 'default' : browser;
 
   browserSync.instance = browserSync.init(files, {
-    startPath: '/',
+    startPath: '/instructor.html',
     server: {
       baseDir: baseDir,
       directory: true
