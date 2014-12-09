@@ -1,13 +1,23 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../broadcast-master/broadcast-master.html">
 
 <polymer-element name="table-instructor" extends="broadcast-master" attributes="">
   <template>
+    <style>
+      :host::shadow video {
+        float: left;
+      }
+    </style>
+
     <shadow></shadow>
 
-    <paper-button raised on-click="{{ toggleBroadcast }}" disabled?="">Pause</paper-button>
-    <paper-button raised on-click="{{ toggleMute }}" disabled?="">Mute</paper-button>
+    <paper-button raised on-click="{{ toggleBroadcast }}" disabled?="{{ broadcastReady }}">{{ toggleBroadcastLabel }}</paper-button>
+    <paper-button raised on-click="{{ toggleMute }}" disabled?="{{ broadcastReady }}">Mute</paper-button>
+
+    <div style="clear: both"></div>
+    <paper-progress id="microphoneLevel" style="width: 320px;" value="0"></paper-progress>
   </template>
 
   <script src="table-instructor.js"></script>

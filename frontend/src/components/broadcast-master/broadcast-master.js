@@ -16,12 +16,16 @@
 
                 webRtc.processOffer(sdpOffer, that.cancelOnError(function(error, sdpAnswer){
                   that.webRtcPeer.processSdpAnswer(sdpAnswer);
+                  that.onMasterReady();
                 }));
               }));
             }));
           }));
         }, this.onError);
     },
+    onMasterReady: function () {
+      console.log("Not implemented");
+    }
   });
 
 })();
