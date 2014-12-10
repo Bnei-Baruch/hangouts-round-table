@@ -18,22 +18,24 @@
         float: left;
       }
 
-      .controls paper-button {
+      .controls toggle-button {
         display: block;
         margin-bottom: 10px;
       }
 
+      .controls toggle-button[active] {
+        color: white;
+        background-color: red;
+      }
     </style>
 
     <shadow></shadow>
 
     <div class="controls">
-      <toggle-button raised pressed="{{ hold }}"
-        label-pressed="Pause" label-released="Resume" disabled?="{{ !broadcastIsReady }}">Start
+      <toggle-button raised labelPressed="Pause" labelReleased="Resume" disabled?="{{ !broadcastIsReady }}">Start
       </toggle-button>
 
-      <toggle-button raised pressed="{{ mute }}"
-        label-pressed="Unmute" disabled?="{{ !broadcastIsReady }}">Mute
+      <toggle-button raised labelPressed="Unmute" disabled?="{{ !broadcastIsReady }}">Mute
       </toggle-button>
 
     </div>

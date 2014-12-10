@@ -2,15 +2,17 @@
 
 (function () {
   Polymer({
-    pressed: {value: false, reflect: true},
-    downAction: function (e) {
+    ready: function () {
+      this.labelReleased = this.labelReleased || this.innerHTML;
+    },
+    downAction: function () {
       this.super();
-      var value = this.pressed.value;
-      this.pressed.value = !value;
-      console.log(1);
+      if (this.active) {
+        this.innerHTML = this.labelPressed;
+      } else {
+        this.innerHTML = this.labelReleased;
+      }
     }
   });
 
 })();
-
-
