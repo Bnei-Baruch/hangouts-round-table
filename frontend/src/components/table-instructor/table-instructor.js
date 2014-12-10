@@ -2,7 +2,14 @@
 
 (function () {
   Polymer({
-    toggleBroadcastLabel: "Start"
+    toggleBroadcastLabel: "Start",
+    toggleBroadcast: function () {
+    },
+    toggleAudio: function () {
+    },
+    onBroadcastReady: function () {
+      this.broadcastIsReady = true;
+    }
   });
 
 })();

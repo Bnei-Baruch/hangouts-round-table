@@ -13,8 +13,8 @@
 
     <shadow></shadow>
 
-    <paper-button raised on-click="{{ toggleBroadcast }}" disabled?="{{ broadcastReady }}">{{ toggleBroadcastLabel }}</paper-button>
-    <paper-button raised on-click="{{ toggleMute }}" disabled?="{{ broadcastReady }}">Mute</paper-button>
+    <paper-button raised on-click="{{ toggleBroadcast }}" disabled?="{{ !broadcastIsReady }}">{{ toggleBroadcastLabel }}</paper-button>
+    <paper-button raised on-click="{{ toggleAudio }}" disabled?="{{ !broadcastIsReady }}">Mute</paper-button>
 
     <div style="clear: both"></div>
     <sound-level-indicator stream="{{ webRtcPeer.stream }}" style="width: 320px;"></sound-level-indicator>
