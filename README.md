@@ -1,7 +1,7 @@
 Hangouts Round Table
 ====================
 
-App for managing round tables (google hangouts).
+An app for managing round tables based on Google Hangouts.
 
 ```bash
 $ git clone https://github.com/bbfsdev/round_table.git
