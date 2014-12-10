@@ -18,11 +18,14 @@
                   that.webRtcPeer.processSdpAnswer(sdpAnswer);
                   console.log(that.webRtcPeer);
                   that.onBroadcastReady();
+                  console.log(that.webRtcPeer);
                 }));
               }));
             }));
           }));
         }, this.onError);
+    },
+    toggleBroadcast: function (resume) {
     },
     onBroadcastReady: function () {
       console.log("Not implemented");

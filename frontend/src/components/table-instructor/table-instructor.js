@@ -7,6 +7,8 @@
     },
     toggleAudio: function () {
     },
+    holdChanged: function () {
+    },
     onBroadcastReady: function () {
       this.broadcastIsReady = true;
     }

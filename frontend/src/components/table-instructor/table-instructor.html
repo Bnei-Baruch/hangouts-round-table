@@ -1,5 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../toggle-button/toggle-button.html">
 <link rel="import" href="../sound-level-indicator/sound-level-indicator.html">
 <link rel="import" href="../broadcast-master/broadcast-master.html">
 
@@ -9,15 +9,37 @@
       :host::shadow video {
         float: left;
       }
+
+      sound-level-indicator {
+        width: 320px;
+      }
+
+      .controls {
+        float: left;
+      }
+
+      .controls paper-button {
+        display: block;
+        margin-bottom: 10px;
+      }
+
     </style>
 
     <shadow></shadow>
 
-    <paper-button raised on-click="{{ toggleBroadcast }}" disabled?="{{ !broadcastIsReady }}">{{ toggleBroadcastLabel }}</paper-button>
-    <paper-button raised on-click="{{ toggleAudio }}" disabled?="{{ !broadcastIsReady }}">Mute</paper-button>
+    <div class="controls">
+      <toggle-button raised pressed="{{ hold }}"
+        label-pressed="Pause" label-released="Resume" disabled?="{{ !broadcastIsReady }}">Start
+      </toggle-button>
+
+      <toggle-button raised pressed="{{ mute }}"
+        label-pressed="Unmute" disabled?="{{ !broadcastIsReady }}">Mute
+      </toggle-button>
+
+    </div>
 
     <div style="clear: both"></div>
-    <sound-level-indicator stream="{{ webRtcPeer.stream }}" style="width: 320px;"></sound-level-indicator>
+    <sound-level-indicator stream="{{ webRtcPeer.stream }}"></sound-level-indicator>
   </template>
 
   <script src="table-instructor.js"></script>
