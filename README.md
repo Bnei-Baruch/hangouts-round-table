@@ -1,5 +1,5 @@
-round_table
-===========
+Hangouts Round Table
+====================
 
 App for managing round tables (google hangouts).
 
