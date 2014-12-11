@@ -1,5 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../toggle-button/toggle-button.html">
+<link rel="import" href="../toggle-label-button/toggle-label-button.html">
 <link rel="import" href="../sound-level-indicator/sound-level-indicator.html">
 <link rel="import" href="../broadcast-master/broadcast-master.html">
 
@@ -18,12 +18,12 @@
         float: left;
       }
 
-      .controls toggle-button {
+      .controls toggle-label-button {
         display: block;
         margin-bottom: 10px;
       }
 
-      .controls toggle-button[active] {
+      .controls toggle-label-button[active] {
         color: white;
         background-color: red;
       }
@@ -32,11 +32,11 @@
     <shadow></shadow>
 
     <div class="controls">
-      <toggle-button raised labelPressed="Pause" labelReleased="Resume" disabled?="{{ !broadcastIsReady }}">Start
-      </toggle-button>
+      <toggle-label-button raised labelPressed="Pause" labelReleased="Resume" disabled?="{{ !broadcastIsReady }}">Start
+      </toggle-label-button>
 
-      <toggle-button raised labelPressed="Unmute" disabled?="{{ !broadcastIsReady }}">Mute
-      </toggle-button>
+      <toggle-label-button raised labelPressed="Unmute" disabled?="{{ !broadcastIsReady }}">Mute
+      </toggle-label-button>
 
     </div>
 
