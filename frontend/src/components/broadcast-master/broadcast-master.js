@@ -2,11 +2,16 @@
 
 (function () {
   Polymer({
+    isReady: false,
+    isMuted: false,
+    isOnHold: false,
     initKurento: function () {
       var that = this;
 
       this.webRtcPeer = kurentoUtils.WebRtcPeer.startSendOnly(
         this.$.localVideo, function (sdpOffer) {
+          that.toggleBroadcast(false);
+
           kurentoClient(that.$.config.kurentoWsUri, that.cancelOnError(function(error, kurentoClient) {
 
             kurentoClient.create('MediaPipeline', that.cancelOnError(function(error, pipeline) {
@@ -16,19 +21,31 @@
 
                 webRtc.processOffer(sdpOffer, that.cancelOnError(function(error, sdpAnswer){
                   that.webRtcPeer.processSdpAnswer(sdpAnswer);
-                  console.log(that.webRtcPeer);
-                  that.onBroadcastReady();
-                  console.log(that.webRtcPeer);
+                  that.isReady = true;
                 }));
               }));
             }));
           }));
         }, this.onError);
     },
-    toggleBroadcast: function (resume) {
+    isOnHoldChanged: function () {
+      this.toggleBroadcast(this.isOnHold);
     },
-    onBroadcastReady: function () {
-      console.log("Not implemented");
+    isMutedChanged: function () {
+      var audioTracks = this.webRtcPeer.stream.getAudioTracks();
+      audioTracks[0].enabled = !(this.isMuted || this.isOnHold);
+    },
+    toggleBroadcast: function (enabled) {
+      var tracks = this.webRtcPeer.stream.getTracks();
+      for (var trackIndex in tracks) {
+        var track = tracks[trackIndex];
+
+        if (track.kind === 'audio' && enabled) {
+          track.enabled = !this.isMuted;
+        } else {
+          track.enabled = enabled;
+        }
+      }
     }
   });
 

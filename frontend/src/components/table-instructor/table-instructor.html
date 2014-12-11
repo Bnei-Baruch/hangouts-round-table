@@ -32,10 +32,10 @@
     <shadow></shadow>
 
     <div class="controls">
-      <toggle-label-button raised labelPressed="Pause" labelReleased="Resume" disabled?="{{ !broadcastIsReady }}">Start
+      <toggle-label-button raised active="{{ isOnHold }}" labelPressed="Pause" labelReleased="Resume" disabled?="{{ !isReady }}">Start
       </toggle-label-button>
 
-      <toggle-label-button raised labelPressed="Unmute" disabled?="{{ !broadcastIsReady }}">Mute
+      <toggle-label-button raised active="{{ isMuted }}" labelPressed="Unmute" disabled?="{{ !isReady }}">Mute
       </toggle-label-button>
 
     </div>
