@@ -54,7 +54,8 @@ get '/spaces/:space/tables/:language/free' do
     redirect get_hangouts_url(table_id, params[:space], params[:language])
 end
 
-$master_endpoint_id = nil
+$sockets = Hash.new { |sockets, space| sockets[space] = []; }
+$master_endpoint_ids = { }
 
 # Websocket
 get '/socket' do
@@ -63,34 +64,41 @@ get '/socket' do
     { }.to_json
   else
     request.websocket do |ws|
-      ws.onopen do
-        settings.sockets << ws
-      end
       ws.onmessage do |msg|
         message = JSON.parse(msg)
 
-        case message['id']
-        when 'master'
-            $master_endpoint_id = message['endpointId']
-            viewer_response = get_viewer_response()
-            EM.next_tick { settings.sockets.each{|s| s.send(viewer_response) } }
-        when 'viewer'
-            ws.send(get_viewer_response())
+        $sockets[message['space']] << ws
+
+        case message['action']
+        when 'registerMaster'
+            $master_endpoint_ids[message['space']] = message['endpointId']
+            viewer_response = get_viewer_response(message['space'])
+            EM.next_tick { $sockets[message['space']].each{|s| s.send(viewer_response) } }
+        when 'registerViewer'
+            viewer_response = get_viewer_response(message['space'])
+            unless viewer_response.nil?
+                ws.send(viewer_response)
+            end
         end
       end
       ws.onclose do
-        warn("websocket closed")
-        settings.sockets.delete(ws)
+        sockets = $sockets.values.select { |values| values.include? ws }
+        sockets.delete(ws)
+        warn("Websocket closed")
       end
     end
   end
 end
 
-def get_viewer_response
-    {
-        :id => 'viewerResponse',
-        :endpointId => $master_endpoint_id
-    }.to_json
+def get_viewer_response(space)
+    if $master_endpoint_ids.include? space
+        {
+            :action => 'assignMasterEndpoint',
+            :endpointId => $master_endpoint_ids[space]
+        }.to_json
+    else
+        nil
+    end
 end
 
 $table_config = CONFIG['table']

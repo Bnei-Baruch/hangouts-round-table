@@ -10,16 +10,15 @@
 
       this.webRtcPeer = kurentoUtils.WebRtcPeer.startSendOnly(
         this.$.localVideo, function (sdpOffer) {
-          that.toggleBroadcast(false);
-
           kurentoClient(that.$.config.kurentoWsUri, that.cancelOnError(function(error, kurentoClient) {
 
             kurentoClient.create('MediaPipeline', that.cancelOnError(function(error, pipeline) {
 
               pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, webRtc){
-                that.sendMessage({id: 'master', endpointId: webRtc.id});
+                that.sendMessage({action: 'registerMaster', endpointId: webRtc.id});
 
                 webRtc.processOffer(sdpOffer, that.cancelOnError(function(error, sdpAnswer){
+                  that.toggleBroadcast(false);
                   that.webRtcPeer.processSdpAnswer(sdpAnswer);
                   that.isReady = true;
                 }));

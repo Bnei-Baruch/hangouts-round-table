@@ -2,6 +2,9 @@
 
 (function () {
   Polymer({
+    publish: {
+      space: 'default',
+    },
     ready: function() {
       this.initBackendSocket();
     },
@@ -39,6 +42,7 @@
       console.error(error);
     },
     sendMessage: function (message) {
+      message.space = this.space;
       var jsonMessage = JSON.stringify(message);
       this.backendWs.send(jsonMessage);
     }

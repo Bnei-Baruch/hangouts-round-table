@@ -11,14 +11,15 @@
 
       this.backendWs.onmessage = function (message) {
         var parsedMessage = JSON.parse(message.data);
-        if (parsedMessage.id === 'viewerResponse') {
+        console.log(parsedMessage );
+        if (parsedMessage.action === 'assignMasterEndpoint') {
           that.webRtcEndpointId = parsedMessage.endpointId;
           that.initKurento();
         }
       };
 
       this.backendWs.onopen = function () {
-        that.sendMessage({id: 'viewer'});
+        that.sendMessage({action: 'registerViewer'});
       };
     },
     initKurento: function () {
