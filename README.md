@@ -1,57 +1,56 @@
-round_table
-===========
+Hangouts Round Table
+====================
 
-App for managing round tables (google hangouts).
+An app for managing round tables based on Google Hangouts.
 
-First step is to write embeddable html button which opens google hangout (round table).
-The google hangout app will send data to round_table server.
-This way when another person presses the button will send it to already existing hangout.
+```bash
+$ git clone https://github.com/bbfsdev/round_table.git
+$ cd round_table
+```
 
-Second step is to divide uses by language (let them select).
-Third step, write embeddable html table with data about all users and all round tables.
+# Backend
 
-Installing:
+## Redis:
 
-# Install redis
-wget http://download.redis.io/redis-stable.tar.gz
-tar xvzf redis-stable.tar.gz
-cd redis-stable
-make-test
-make
+```bash
+$ sudo apt-get install redis
+```
 
-sudo cp src/redis-server /usr/local/bin/
-sudo cp src/redis-cli /usr/local/bin/
+## Sinatra
 
-#Install webdis (Redis with http/json interface)
+```bash
+$ cd backend
+$ bundle install
+$ ruby backend.rb
+```
 
-# Prerequesites
-sudo apt-get install libevent-dev
-sudo brew install libevent (on MacOS)
+# Frontend
 
-wget http://download.redis.io/redis-stable.tar.gz
-cd webdis/
-make
+```bash
+$ cd ../frontend
+```
 
-# Run webdis ().
-./webdis &
+Install Gulp and Bower globally:
 
-# Test it works.
-curl http://127.0.0.1:7379/SET/hello/world
-→ {"SET":[true,"OK"]}
+```bash
+$ sudo npm install -g gulp bower
+```
 
-curl http://127.0.0.1:7379/GET/hello
-→ {"GET":"world"}
+Install dependencies:
+```bash
+$ npm install
+```
 
-curl -d "GET/hello" http://127.0.0.1:7379/
-→ {"GET":"world"}
+Create config.json, use config.json.sample as an example.
+Then wire the config to the application:
 
-# Install nginx
-...
+```bash
+$ gulp config
+```
 
+Launch local dev server:
+```bash
+$ gulp serve
+```
 
-# Configure and Run nginx
-...
-
-
-# How to create a google hangout application.
-https://developers.google.com/+/hangouts/getting-started
+It will open your default browser at the instructor page.
