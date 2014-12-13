@@ -20,9 +20,12 @@ var template = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
 /* Generate Hangouts app XML */
 gulp.task('xml', function () {
 
+  var config = require('../config.json', true);
+
   gulp.src('src/hangouts.html')
     .pipe($.wrap(template))
     .pipe($.template())
+    .pipe($.replace(/%frontend_uri%/g, config.frontendUri))
     .pipe($.rename('hangouts.xml'))
     .pipe(gulp.dest('src/'));
 });
