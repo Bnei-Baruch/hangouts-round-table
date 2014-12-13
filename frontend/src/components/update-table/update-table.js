@@ -10,14 +10,15 @@
       this.appData = JSON.parse(appData);
     },
     ready: function () {
-      gapi.hangout.onApiReady.add(this.initHangouts);
-    },
-    initHangouts: function (apiInitEvent) {
-      if (apiInitEvent.isApiReady) {
-        this.startUpdatingTable();
+      var that = this;
 
-        gapi.hangout.onApiReady.remove(this.initHangouts);
-      }
+      var initHangouts = function (apiInitEvent) {
+        if (apiInitEvent.isApiReady) {
+          that.startUpdatingTable();
+          gapi.hangout.onApiReady.remove(initHangouts);
+        }
+      };
+      gapi.hangout.onApiReady.add(initHangouts);
     },
     startUpdatingTable: function () {
       setInterval(this.updateIfRequired, this.$.config.updateTableInterval);
