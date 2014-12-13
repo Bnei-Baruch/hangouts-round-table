@@ -1,9 +1,15 @@
 <html>
   <body>
+    <!-- Hangouts API -->
     <script src="//plus.google.com/hangouts/_/api/v1/hangout.js"></script>
+
+    <!-- Polyfills -->
     <script src="%frontend_uri%bower_components/webcomponentsjs/webcomponents.js"></script>
+
+    <!-- Component dependencies -->
     <link rel="import" href="%frontend_uri%components/update-table/update-table.html" />
     <link rel="import" href="%frontend_uri%components/broadcast-viewer/broadcast-viewer.html" />
+
     <update-table id="table"></update-table>
     <broadcast-viewer></broadcast-viewer>
   </body>
