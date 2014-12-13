@@ -10,9 +10,12 @@ if ENV['RACK_ENV'] == 'test'
 end
 
 before do
-    headers 'Access-Control-Allow-Origin' => '*', 
+    headers_list = {
+        'Access-Control-Allow-Origin' => '*', 
         'Access-Control-Allow-Methods' => ['OPTIONS', 'GET', 'POST', 'PUT'],
         'Access-Control-Allow-Headers' => ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
+    }
+    headers headers_list
 end
 
 set :server, 'thin'
@@ -24,20 +27,16 @@ set :protection, false
 redis_config = CONFIG['redis']
 $redis = Redis.new(redis_config['host'] => "localhost", :port => redis_config['port'], :db => redis_config['db'])
 
-# Update table
-options '/spaces/:space/tables/:id' do
+options '/*' do
     200
 end
 
+# Update table
 put '/spaces/:space/tables/:id' do
     request.body.rewind
     body = JSON.parse(request.body.read)
     body['timestamp'] = $redis.time[0]
     $redis.set("table_#{params[:space]}_#{params[:id]}", JSON.generate(body))
-end
-
-options '/spaces/:space/tables/:language/free' do
-    200
 end
 
 # Get free table
@@ -150,18 +149,10 @@ def is_table_live(table, time_now)
     table['timestamp'] + $table_config['polling_interval'] > time_now
 end
 
-options '/spaces/:space/tables' do
-    200
-end
-
 get '/spaces/:space/tables' do
     time_now = $redis.time[0]
     live_tables = get_space_tables(params[:space], nil, time_now)
     JSON.generate(live_tables)
-end
-
-options '/spaces/tables' do
-    200
 end
 
 get '/spaces/tables' do
