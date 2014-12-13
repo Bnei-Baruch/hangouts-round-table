@@ -2,16 +2,10 @@
 
 (function () {
   Polymer({
-    create: function () {
-      var urlArray = gapi.hangout.getHangoutUrl().split('/');
-      this.tableId = urlArray[urlArray.length - 1];
-
-      var appData = gadgets.views.getParams().appData;
-      this.appData = JSON.parse(appData);
-    },
     ready: function () {
       var that = this;
 
+      this.fetchUrlParams();
       var initHangouts = function (apiInitEvent) {
         if (apiInitEvent.isApiReady) {
           that.startUpdatingTable();
@@ -20,8 +14,20 @@
       };
       gapi.hangout.onApiReady.add(initHangouts);
     },
+    fetchUrlParams: function () {
+      var urlArray = gapi.hangout.getHangoutUrl().split('/');
+      this.tableId = urlArray[urlArray.length - 1];
+
+      var appData = gadgets.views.getParams().appData;
+      this.appData = JSON.parse(appData);
+      console.log(this.appData);
+    },
     startUpdatingTable: function () {
-      setInterval(this.updateIfRequired, this.$.config.updateTableInterval);
+      var that = this;
+      var updateIfRequired = function () {
+        that.updateIfRequired();
+      };
+      setInterval(updateIfRequired, this.$.config.updateTableInterval);
     },
     updateIfRequired: function () {
       var updateRequired = true;
