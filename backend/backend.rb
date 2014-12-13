@@ -9,13 +9,11 @@ if ENV['RACK_ENV'] == 'test'
     require './config/testing_config'
 end
 
-
 before do
     headers 'Access-Control-Allow-Origin' => '*', 
         'Access-Control-Allow-Methods' => ['OPTIONS', 'GET', 'POST', 'PUT'],
         'Access-Control-Allow-Headers' => ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
 end
-
 
 set :server, 'thin'
 set :sockets, []
@@ -23,10 +21,8 @@ set :json_content_type, :js
 set :bind, '0.0.0.0'
 set :protection, false
 
-
 redis_config = CONFIG['redis']
 $redis = Redis.new(redis_config['host'] => "localhost", :port => redis_config['port'], :db => redis_config['db'])
-
 
 # Update table
 options '/spaces/:space/tables/:id' do
