@@ -1,7 +1,8 @@
 {
-  "backendUrl": "http://localhost:4567",
-  "kurentoWsUri": "ws://webrtc-dev.kbb1.com:8888/kurento",
-  "backendWsUri": "ws://localhost:4567/socket",
+  "backendUrl": "https://rt-dev.kbb1.com/backend",
+  "frontendUrl": "https://rt-dev.kbb1.com/",
+  "kurentoWsUri": "wss://webrtc-dev.kbb1.com:8433/kurento",
+  "backendWsUri": "wss://rt-dev.kbb1.com/backend/socket",
   "updateTableInterval": 10000,
   "hangoutsAppGid": "979640007671"
 }
