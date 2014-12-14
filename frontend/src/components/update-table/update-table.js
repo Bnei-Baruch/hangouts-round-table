@@ -50,16 +50,19 @@
       }
     },
     getParticipantsJSON: function () {
-      var participants = [];
+      var result = {
+        language: this.appData.language,
+        participants: []
+      };
 
       var hangoutParticipants = gapi.hangout.getParticipants();
       for (var index in hangoutParticipants) {
         var hangoutParticipant = hangoutParticipants[index];
         if (hangoutParticipant.person) {
-          participants.push(hangoutParticipant.person.displayName);
+          result.participants.push(hangoutParticipant.person.displayName);
         }
       }
-      return JSON.stringify(participants);
+      return JSON.stringify(result);
     }
   });
 })();

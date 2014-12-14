@@ -35,6 +35,8 @@ end
 put '/spaces/:space/tables/:id' do
     request.body.rewind
     body = JSON.parse(request.body.read)
+    body['id'] = params[:id]
+    body['space'] = params[:space]
     body['timestamp'] = $redis.time[0]
     $redis.set("table_#{params[:space]}_#{params[:id]}", JSON.generate(body))
 end
@@ -114,10 +116,10 @@ def get_space_tables(space, language, time_now)
             table_id = "table_#{one_table['space']}_#{one_table['id']}"
             $redis.del(table_id)
         else
-            if is_table_live(one_table, time_now) and (language.nil? or language == one_table['lang'])
+            if is_table_live(one_table, time_now) and (language.nil? or language == one_table['language'])
                 one_table['hangouts_url'] = get_hangouts_url(one_table['id'],
                                                              one_table['space'],
-                                                             one_table['lang'])
+                                                             one_table['language'])
                 live_tables << one_table
             end
         end
