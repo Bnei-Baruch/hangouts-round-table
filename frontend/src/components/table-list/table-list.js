@@ -16,7 +16,6 @@
     setTables: function (e) {
       var that = this;
       that.tables = e.detail.response;
-      console.log(that.tables);
     }
   });
 
