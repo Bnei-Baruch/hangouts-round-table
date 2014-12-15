@@ -25,7 +25,7 @@ gulp.task('xml', function () {
   gulp.src('src/hangouts.html')
     .pipe($.wrap(template))
     .pipe($.template())
-    .pipe($.replace(/%frontend_uri%/g, config.frontendUri))
+    .pipe($.replace(/%frontend_url%/g, config.frontendUrl))
     .pipe($.rename('hangouts.xml'))
     .pipe(gulp.dest('src/'));
 });

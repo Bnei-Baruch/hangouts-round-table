@@ -2,25 +2,32 @@
 
 (function () {
   Polymer({
-    create: function () {
+    ready: function () {
+      var that = this;
+
+      this.fetchUrlParams();
+      var initHangouts = function (apiInitEvent) {
+        if (apiInitEvent.isApiReady) {
+          that.startUpdatingTable();
+          gapi.hangout.onApiReady.remove(initHangouts);
+        }
+      };
+      gapi.hangout.onApiReady.add(initHangouts);
+    },
+    fetchUrlParams: function () {
       var urlArray = gapi.hangout.getHangoutUrl().split('/');
       this.tableId = urlArray[urlArray.length - 1];
 
       var appData = gadgets.views.getParams().appData;
       this.appData = JSON.parse(appData);
-    },
-    ready: function () {
-      gapi.hangout.onApiReady.add(this.initHangouts);
-    },
-    initHangouts: function (apiInitEvent) {
-      if (apiInitEvent.isApiReady) {
-        this.startUpdatingTable();
-
-        gapi.hangout.onApiReady.remove(this.initHangouts);
-      }
+      console.log(this.appData);
     },
     startUpdatingTable: function () {
-      setInterval(this.updateIfRequired, this.$.config.updateTableInterval);
+      var that = this;
+      var updateIfRequired = function () {
+        that.updateIfRequired();
+      };
+      setInterval(updateIfRequired, this.$.config.updateTableInterval);
     },
     updateIfRequired: function () {
       var updateRequired = true;
@@ -43,16 +50,19 @@
       }
     },
     getParticipantsJSON: function () {
-      var participants = [];
+      var result = {
+        language: this.appData.language,
+        participants: []
+      };
 
       var hangoutParticipants = gapi.hangout.getParticipants();
       for (var index in hangoutParticipants) {
         var hangoutParticipant = hangoutParticipants[index];
         if (hangoutParticipant.person) {
-          participants.push(hangoutParticipant.person.displayName);
+          result.participants.push(hangoutParticipant.person.displayName);
         }
       }
-      return JSON.stringify(participants);
+      return JSON.stringify(result);
     }
   });
 })();

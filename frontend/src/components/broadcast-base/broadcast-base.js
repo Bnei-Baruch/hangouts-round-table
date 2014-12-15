@@ -26,6 +26,11 @@
     },
     initKurento: function () {
     },
+    setBandwidth: function (sdp) {
+      sdp = sdp.replace(/a=mid:audio\r\n/g, 'a=mid:audio\r\nb=AS:64\r\n');
+      sdp = sdp.replace(/a=mid:video\r\n/g, 'a=mid:video\r\nb=AS:256\r\n');
+      return sdp;
+    },
     cancelOnError: function(func) {
       var that = this;
 
