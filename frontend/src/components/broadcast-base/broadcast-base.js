@@ -2,6 +2,8 @@
 
 (function () {
   Polymer({
+    backendHandlers: {
+    },
     publish: {
       space: 'default',
     },
@@ -15,6 +17,18 @@
 
       this.backendWs.onopen = function () {
         that.initKurento();
+      };
+
+      this.backendWs.onmessage = function (message) {
+        var parsedMessage = JSON.parse(message.data);
+        console.debug("New message from the backend:", parsedMessage);
+
+        var handler = that.backendHandlers[parsedMessage.action];
+        if (handler !== undefined) {
+          handler.apply(that, [parsedMessage]);
+        } else {
+          console.debug("No message handler found");
+        }
       };
 
       this.backendWs.onclose = function () {
