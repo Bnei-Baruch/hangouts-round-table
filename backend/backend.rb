@@ -70,7 +70,6 @@ get '/socket' do
         when 'registerMaster'
             $master_endpoint_ids[message['space']] = message['endpointId']
             viewer_response = get_viewer_response(message['space'])
-            EM.next_tick { $sockets[message['space']].each{|s| s.send(viewer_response) } }
         when 'registerViewer'
             viewer_response = get_viewer_response(message['space'])
             unless viewer_response.nil?
@@ -85,6 +84,11 @@ get '/socket' do
       end
     end
   end
+end
+
+
+def broadcast_message(space, message)
+    EM.next_tick { $sockets[space].each{|s| s.send(message) } }
 end
 
 def get_viewer_response(space)

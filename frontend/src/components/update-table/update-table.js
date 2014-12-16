@@ -20,7 +20,6 @@
 
       var appData = gadgets.views.getParams().appData;
       this.appData = JSON.parse(appData);
-      console.log(this.appData);
     },
     startUpdatingTable: function () {
       var that = this;

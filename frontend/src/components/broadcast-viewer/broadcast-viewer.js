@@ -11,7 +11,6 @@
 
       this.backendWs.onmessage = function (message) {
         var parsedMessage = JSON.parse(message.data);
-        console.log(parsedMessage );
         if (parsedMessage.action === 'assignMasterEndpoint') {
           that.webRtcEndpointId = parsedMessage.endpointId;
           that.initKurento();
