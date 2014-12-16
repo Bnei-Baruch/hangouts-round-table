@@ -128,9 +128,11 @@ def get_space_tables(space, language, time_now)
       $redis.del(table_id)
     else
       if is_table_live(one_table, time_now) and (language.nil? or language == one_table['language'])
-        one_table['hangouts_url'] = get_hangouts_url(one_table['id'],
-                                                     one_table['space'],
-                                                     one_table['language'])
+        one_table['hangouts_url'] = get_hangouts_url(
+          one_table['id'],
+          one_table['space'],
+          one_table['language']
+        )
         live_tables << one_table
       end
     end
@@ -150,11 +152,15 @@ def choose_table(tables, time_now)
   small_tables = tables.select do |one_table|
     one_table['participants'].size < $table_config['min_participants_number']
   end
-  return small_tables.max_by { |table| table['participants'].size } if !small_tables.empty?
+  return small_tables.max_by {
+    |table| table['participants'].size
+  } if !small_tables.empty?
   not_full_tables = tables.select do |one_table|
     one_table['participants'].size < $table_config['max_participants_number']
   end
-  return not_full_tables.min_by { |table| table['participants'].size } if !not_full_tables.empty?
+  return not_full_tables.min_by {
+    |table| table['participants'].size
+  } if !not_full_tables.empty?
   return nil
 end
 
