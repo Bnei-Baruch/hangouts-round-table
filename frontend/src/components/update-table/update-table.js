@@ -6,6 +6,7 @@
       var that = this;
 
       this.fetchUrlParams();
+
       var initHangouts = function (apiInitEvent) {
         if (apiInitEvent.isApiReady) {
           that.startUpdatingTable();
@@ -20,6 +21,7 @@
 
       var appData = gadgets.views.getParams().appData;
       this.appData = JSON.parse(appData);
+      console.debug("App data:", this.appData);
     },
     startUpdatingTable: function () {
       var that = this;
