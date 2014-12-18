@@ -2,14 +2,12 @@
 
 (function () {
   Polymer({
-    backendHandlers: {
-      masterResumed: function () {
+    onMasterResumedMessage: function () {
 
-      },
-      masterPaused: function () {
-        gapi.hangout.hideApp();
-      },
-    }
+    },
+    onMasterPausedMessage: function () {
+      gapi.hangout.hideApp();
+    },
   });
 
 })();

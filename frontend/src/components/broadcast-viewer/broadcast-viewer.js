@@ -3,11 +3,9 @@
 (function () {
   Polymer({
     webRtcEndpointId: null,
-    backendHandlers: {
-      assignMasterEndpoint: function (message) {
-        this.webRtcEndpointId = message.endpointId;
-        this.initKurento();
-      }
+    onAssignMasterEndpointMessage: function (message) {
+      this.webRtcEndpointId = message.endpointId;
+      this.initKurento();
     },
     initBackendSocket: function () {
       var that = this;

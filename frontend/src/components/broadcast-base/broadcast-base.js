@@ -2,12 +2,11 @@
 
 (function () {
   Polymer({
-    backendHandlers: {
-    },
     publish: {
       space: 'default',
     },
     ready: function() {
+      console.log(this.onAssignMasterEndpointMessage);
       this.initBackendSocket();
     },
     initBackendSocket: function () {
@@ -23,7 +22,12 @@
         var parsedMessage = JSON.parse(message.data);
         console.debug("New message from the backend:", parsedMessage);
 
-        var handler = that.backendHandlers[parsedMessage.action];
+        var capitalizedAction = parsedMessage.action.charAt(0).toUpperCase() +
+          parsedMessage.action.slice(1);
+
+        var handler = that['on' + capitalizedAction + 'Message'];
+        console.log('on' + capitalizedAction + 'Message', handler);
+
         if (handler !== undefined) {
           handler.apply(that, [parsedMessage]);
         } else {
