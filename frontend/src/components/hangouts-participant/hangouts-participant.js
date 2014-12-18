@@ -2,18 +2,6 @@
 
 (function () {
 
-  var runIfHangoutsReady = function(func) {
-    var that = this;
-
-    return function () {
-      if (that.isHangoutsApiReady) {
-        func.apply(this, arguments);
-      } else {
-        console.debug("Hangouts API is not ready yet");
-      }
-    };
-  };
-
   Polymer({
     isHangoutsApiReady: false,
     created: function () {
@@ -28,12 +16,16 @@
 
       gapi.hangout.onApiReady.add(_initHangouts);
     },
-    onMasterResumedMessage: runIfHangoutsReady(function () {
-      gapi.hangout.av.setMicrophoneMute(true);
-    }),
-    onMasterPausedMessage: runIfHangoutsReady(function () {
-      gapi.hangout.hideApp();
-    }),
+    onMasterResumedMessage: function () {
+      if (this.isHangoutsApiReady) {
+        gapi.hangout.av.setMicrophoneMute(true);
+      }
+    },
+    onMasterPausedMessage: function () {
+      if (this.isHangoutsApiReady) {
+        gapi.hangout.hideApp();
+      }
+    },
   });
 
 })();
