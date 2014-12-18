@@ -4,12 +4,13 @@
 <polymer-element name="broadcast-viewer" extends="broadcast-base" attributes="">
   <template>
     <style>
-      :host #remoteVideo: {
+      :host #remoteVideo {
         height: 100%;
+        background: center transparent url('./spinner.gif') no-repeat;
       }
     </style>
 
-    <video id="remoteVideo" autoplay style="height: 100%"></video>
+    <video id="remoteVideo" poster="components/broadcast-viewer/transparent-1x1.png" autoplay></video>
     <shadow></shadow>
   </template>
 

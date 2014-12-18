@@ -6,6 +6,7 @@
       space: 'default',
     },
     ready: function() {
+      console.log(this.onAssignMasterEndpointMessage);
       this.initBackendSocket();
     },
     initBackendSocket: function () {
@@ -15,6 +16,23 @@
 
       this.backendWs.onopen = function () {
         that.initKurento();
+      };
+
+      this.backendWs.onmessage = function (message) {
+        var parsedMessage = JSON.parse(message.data);
+        console.debug("New message from the backend:", parsedMessage);
+
+        var capitalizedAction = parsedMessage.action.charAt(0).toUpperCase() +
+          parsedMessage.action.slice(1);
+
+        var handler = that['on' + capitalizedAction + 'Message'];
+        console.log('on' + capitalizedAction + 'Message', handler);
+
+        if (handler !== undefined) {
+          handler.apply(that, [parsedMessage]);
+        } else {
+          console.debug("No message handler found");
+        }
       };
 
       this.backendWs.onclose = function () {

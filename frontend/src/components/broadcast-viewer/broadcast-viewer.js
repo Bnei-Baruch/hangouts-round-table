@@ -3,20 +3,15 @@
 (function () {
   Polymer({
     webRtcEndpointId: null,
+    onAssignMasterEndpointMessage: function (message) {
+      this.webRtcEndpointId = message.endpointId;
+      this.initKurento();
+    },
     initBackendSocket: function () {
       var that = this;
 
       // Doesn't work in 'strict' mode
       this.super();
-
-      this.backendWs.onmessage = function (message) {
-        var parsedMessage = JSON.parse(message.data);
-        console.log(parsedMessage );
-        if (parsedMessage.action === 'assignMasterEndpoint') {
-          that.webRtcEndpointId = parsedMessage.endpointId;
-          that.initKurento();
-        }
-      };
 
       this.backendWs.onopen = function () {
         that.sendMessage({action: 'registerViewer'});
