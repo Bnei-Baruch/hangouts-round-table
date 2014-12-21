@@ -47,11 +47,8 @@ end
 # Get free table
 get '/spaces/:space/tables/:language/free' do
   table_id = get_free_table_id(params[:space], params[:language])
-  if table_id.nil?
-    table_id = ""
-  end
-
-  redirect get_hangouts_url(table_id, params[:space], params[:language])
+  redirect get_hangouts_url(table_id, params[:space],
+                            params[:language], params[:onair])
 end
 
 $sockets = Hash.new { |sockets, space| sockets[space] = []; }
@@ -111,10 +108,18 @@ end
 
 $table_config = CONFIG['table']
 
-def get_hangouts_url(table_id, space, language)
+def get_hangouts_url(table_id, space, language, onair=false)
   app_data = { :space => space, :language => language }.to_json
   escaped = URI.escape(app_data)
-  "https://plus.google.com/hangouts/_/#{table_id}?gid=#{CONFIG['hangout_app_gid']}&gd=#{escaped}"
+
+  if table_id.nil?
+    table_id = ""
+  end
+
+  onair_param = if onair then "&hso=0" else "" end
+
+  "https://plus.google.com/hangouts/_/#{table_id}?" \
+  "gid=#{CONFIG['hangout_app_gid']}&gd=#{escaped}#{onair_param}"
 end
 
 def get_space_tables(space, language, time_now)
@@ -137,6 +142,7 @@ def get_space_tables(space, language, time_now)
       end
     end
   end if not keys.empty?
+
   live_tables
 end
 
