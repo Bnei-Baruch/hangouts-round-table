@@ -1,5 +1,8 @@
 CONFIG = {
     'hangout_app_gid' => '979640007671',
+    'auth' => {
+      'session_ttl' => 60 * 60 * 24,
+    },
     'table' => {
         'time_to_live' => 7200,
         'polling_interval' => 60,
@@ -10,11 +13,5 @@ CONFIG = {
         'host' => "127.0.0.1",
         'port' => 6379,
         'db' => 0
-    },
-    'licode' => {
-        'service' => '53d8535f0f795a55a47beeac',
-        'key' => '4890',
-        'url' => 'http://licode.socio2.net:3000/',
-        'new_room_name' => 'my-round-tables-room'
     }
 }

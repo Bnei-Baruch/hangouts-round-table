@@ -1,5 +1,7 @@
 ENV['RACK_ENV'] = 'test'
 
+require 'bcrypt'
+
 require 'rspec'
 require 'rack/test'
 
@@ -15,6 +17,29 @@ describe 'Round tables REST API backend' do
 
   before do
     $redis.flushdb
+
+    create_sample_user
+  end
+
+  it "should authenticate a user" do
+    body = {
+      :user => "invalid",
+      :password => "user"
+    }.to_json
+
+    post '/auth/tokens', body
+    expect(last_response).to be_unauthorized
+
+    body = {
+      :user => "user",
+      :password => "swordfish"
+    }.to_json
+
+    post '/auth/tokens', body
+    expect(last_response).to be_created
+    json_response = JSON.parse(last_response.body)
+    expect(json_response).to include('token')
+    expect(json_response['token'].empty?).to be_falsy
   end
 
   it "should update table" do
@@ -75,6 +100,35 @@ describe 'Round tables REST API backend' do
     expect(table_url).to include("&hso=0")
   end
 
+  it "should return space tables" do
+    update_fake_table(1, 5, space: "space1")
+    update_fake_table(2, 6, space: "space2")
+    update_fake_table(3, 7, space: "space1")
+    get "/spaces/space1/tables"
+    tables = JSON.parse(last_response.body)
+    expect(tables.size).to be 2
+    expect(tables.map { |table| table['id'] }.sort!).to eq(["1", "3"])
+  end
+
+  it "should return all tables" do
+    update_fake_table(1, 5, space: "space1")
+    update_fake_table(2, 6, space: "space2")
+    update_fake_table(3, 7, space: "space1")
+    get "/spaces/tables"
+    tables = JSON.parse(last_response.body)
+    expect(tables.size).to be 3
+    expect(tables.map { |table| table['id'] }.sort!).to eq(["1", "2", "3"])
+  end
+
+  def create_sample_user
+    sample_user = {
+      :password => BCrypt::Password.create("swordfish"),
+      :space => "default"
+    }.to_json
+
+    $redis.set('auth_user_user', sample_user)
+  end
+
   def update_fake_table(table_id, participants_number, space: "fake-space", language: "fake-language")
     test_table = {
       "id" => table_id.to_s,
@@ -98,23 +152,4 @@ describe 'Round tables REST API backend' do
     last_response.location
   end
 
-  it "should return space tables" do
-    update_fake_table(1, 5, space: "space1")
-    update_fake_table(2, 6, space: "space2")
-    update_fake_table(3, 7, space: "space1")
-    get "/spaces/space1/tables"
-    tables = JSON.parse(last_response.body)
-    expect(tables.size).to be 2
-    expect(tables.map { |table| table['id'] }.sort!).to eq(["1", "3"])
-  end
-
-  it "should return all tables" do
-    update_fake_table(1, 5, space: "space1")
-    update_fake_table(2, 6, space: "space2")
-    update_fake_table(3, 7, space: "space1")
-    get "/spaces/tables"
-    tables = JSON.parse(last_response.body)
-    expect(tables.size).to be 3
-    expect(tables.map { |table| table['id'] }.sort!).to eq(["1", "2", "3"])
-  end
 end

@@ -1,3 +1,5 @@
+require 'bcrypt'
+require 'securerandom'
 require 'sinatra'
 require 'sinatra-websocket'
 require 'json'
@@ -34,9 +36,29 @@ options '/*' do
   200
 end
 
+# Create token
+post '/auth/tokens' do
+  body = JSON.parse(request.body.read)
+  user = $redis.get("auth_user_#{body['user']}")
+  if user.nil? or user['password'] != BCrypt::Password.create(body['password'])
+    status 403
+    { :error => "Invalid user name or password" }.to_json
+  else
+    token = SecureRandom.urlsafe_base64
+    key = "auth_session_#{token}"
+    $redis.set(key, true)
+    $redis.expire(key, CONFIG['auth']['session_ttl'])
+
+    status 201
+    {
+      :token => token,
+      :space => user['space']
+    }.to_json
+  end
+end
+
 # Update table
 put '/spaces/:space/tables/:id' do
-  request.body.rewind
   body = JSON.parse(request.body.read)
   body['id'] = params[:id]
   body['space'] = params[:space]
@@ -49,6 +71,18 @@ get '/spaces/:space/tables/:language/free' do
   table_id = get_free_table_id(params[:space], params[:language])
   redirect get_hangouts_url(table_id, params[:space],
                             params[:language], params[:onair])
+end
+
+get '/spaces/:space/tables' do
+  time_now = $redis.time[0]
+  live_tables = get_space_tables(params[:space], nil, time_now)
+  JSON.generate(live_tables)
+end
+
+get '/spaces/tables' do
+  time_now = $redis.time[0]
+  live_tables = get_space_tables("*", nil, time_now)
+  JSON.generate(live_tables)
 end
 
 $sockets = Hash.new { |sockets, space| sockets[space] = []; }
@@ -172,16 +206,4 @@ end
 
 def is_table_live(table, time_now)
   table['timestamp'] + $table_config['polling_interval'] > time_now
-end
-
-get '/spaces/:space/tables' do
-  time_now = $redis.time[0]
-  live_tables = get_space_tables(params[:space], nil, time_now)
-  JSON.generate(live_tables)
-end
-
-get '/spaces/tables' do
-  time_now = $redis.time[0]
-  live_tables = get_space_tables("*", nil, time_now)
-  JSON.generate(live_tables)
 end
