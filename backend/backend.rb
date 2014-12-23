@@ -36,24 +36,33 @@ options '/*' do
   200
 end
 
-# Create token
+# Create auth token
 post '/auth/tokens' do
   body = JSON.parse(request.body.read)
-  user = $redis.get("auth_user_#{body['user']}")
-  if user.nil? or user['password'] != BCrypt::Password.create(body['password'])
-    status 403
-    { :error => "Invalid user name or password" }.to_json
-  else
-    token = SecureRandom.urlsafe_base64
-    key = "auth_session_#{token}"
-    $redis.set(key, true)
-    $redis.expire(key, CONFIG['auth']['session_ttl'])
+  user_json = $redis.get("auth_user_#{body['user']}")
 
-    status 201
-    {
-      :token => token,
-      :space => user['space']
-    }.to_json
+  auth_error = { :error => "Invalid user name or password" }
+  bad_request_response = [400, [auth_error.to_json]]
+
+  if user_json.nil?
+    bad_request_response
+  else
+    user = JSON.parse(user_json)
+
+    if BCrypt::Password.new(user['password']) == body['password']
+      token = SecureRandom.urlsafe_base64
+      key = "auth_session_#{token}"
+      $redis.set(key, true)
+      $redis.expire(key, CONFIG['auth']['session_ttl'])
+
+      status 201
+      {
+        :token => token,
+        :space => user['space']
+      }.to_json
+    else
+      bad_request_response
+    end
   end
 end
 

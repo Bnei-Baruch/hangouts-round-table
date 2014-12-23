@@ -28,7 +28,7 @@ describe 'Round tables REST API backend' do
     }.to_json
 
     post '/auth/tokens', body
-    expect(last_response).to be_unauthorized
+    expect(last_response).to be_bad_request
 
     body = {
       :user => "user",
@@ -36,7 +36,7 @@ describe 'Round tables REST API backend' do
     }.to_json
 
     post '/auth/tokens', body
-    expect(last_response).to be_created
+    expect(last_response).to be_successful
     json_response = JSON.parse(last_response.body)
     expect(json_response).to include('token')
     expect(json_response['token'].empty?).to be_falsy
