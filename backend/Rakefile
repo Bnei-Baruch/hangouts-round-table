@@ -1,0 +1,15 @@
+require 'rspec/core/rake_task'
+
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = 'spec/**/*_spec.rb'
+end
+
+RSpec::Core::RakeTask.new(:coverage) do |spec|
+  spec.pattern = 'spec/**/*_spec.rb'
+end
+
+task :run do
+  exec("bundle exec thin start -p 9393 -V -D")
+end
+
+task :default => :run
