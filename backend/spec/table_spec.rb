@@ -9,8 +9,7 @@ describe RoundTable::API do
   end
 
   before(:all) do
-    require 'pry'; binding.pry
-    app.instance.redis.flushdb
+    app.settings.redis.flushdb
     create_sample_user
   end
 
@@ -44,7 +43,7 @@ describe RoundTable::API do
     }
     put '/spaces/fake-space/tables/fake-id', JSON.generate(test_table)
     expect(last_response).to be_ok
-    table_test_from_db = JSON.parse(@@redis.get('table_fake-space_fake-id'))
+    table_test_from_db = JSON.parse(app.settings.redis.get('table_fake-space_fake-id'))
     # 1416028759 - Sat, 15 Nov 2014 05:19:19 GMT
     expect(table_test_from_db['timestamp']).to be > 1416028759
     table_test_from_db.delete('timestamp')
@@ -119,7 +118,7 @@ describe RoundTable::API do
       :space => "default"
     }.to_json
 
-    @@redis.set('auth_user_user', sample_user)
+    app.settings.redis.set('auth_user_user', sample_user)
   end
 
   def update_fake_table(table_id, participants_number, space: "fake-space", language: "fake-language")

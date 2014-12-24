@@ -6,26 +6,25 @@ class RoundTable::API
     body = JSON.parse(request.body.read)
     body['id'] = params[:id]
     body['space'] = params[:space]
-    body['timestamp'] = @@redis.time[0]
-    @@redis.set("table_#{params[:space]}_#{params[:id]}", JSON.generate(body))
+    body['timestamp'] = settings.redis.time[0]
+    settings.redis.set("table_#{params[:space]}_#{params[:id]}", JSON.generate(body))
   end
 
   # Get free table
   get '/spaces/:space/tables/:language/free' do
-    require 'pry'; binding.pry
     table_id = get_free_table_id(params[:space], params[:language])
     redirect get_hangouts_url(table_id, params[:space],
                               params[:language], params[:onair])
   end
 
   get '/spaces/:space/tables' do
-    time_now = @@redis.time[0]
+    time_now = settings.redis.time[0]
     live_tables = get_space_tables(params[:space], nil, time_now)
     JSON.generate(live_tables)
   end
 
   get '/spaces/tables' do
-    time_now = @@redis.time[0]
+    time_now = settings.redis.time[0]
     live_tables = get_space_tables("*", nil, time_now)
     JSON.generate(live_tables)
   end
@@ -45,14 +44,14 @@ class RoundTable::API
   end
 
   def get_space_tables(space, language, time_now)
-    keys = @@redis.keys("table_#{space}_*" )
+    keys = settings.redis.keys("table_#{space}_*" )
 
     live_tables = []
-    @@redis.mget(*keys).each do |one_table|
+    settings.redis.mget(*keys).each do |one_table|
       one_table = JSON.parse(one_table)
       if one_table['timestamp'] + @@table_config['time_to_live'] < time_now
         table_id = "table_#{one_table['space']}_#{one_table['id']}"
-        @@redis.del(table_id)
+        settings.redis.del(table_id)
       else
         if is_table_live(one_table, time_now) and (language.nil? or language == one_table['language'])
           one_table['hangouts_url'] = get_hangouts_url(
@@ -69,7 +68,7 @@ class RoundTable::API
   end
 
   def get_free_table_id(space, language)
-    time_now = @@redis.time[0]
+    time_now = settings.redis.time[0]
     live_tables = get_space_tables(space, language, time_now)
     table = choose_table(live_tables, time_now)
     return table['id'] if table
