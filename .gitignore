@@ -3,6 +3,7 @@
 *.swn
 *~
 backend/Gemfile.lock
+backend/coverage
 backend/config/config.rb
 backend/config/testing_config.rb
 frontend/.tmp
