@@ -1,11 +1,16 @@
 source 'https://rubygems.org'
 
-gem 'rack', '~> 1.5.2'
+gem 'rack', '~> 1.6.0'
 gem 'sinatra'
 gem 'sinatra-websocket'
-gem 'rack-test'
-gem 'rspec'
 gem 'redis'
 gem 'warden'
 gem 'bcrypt'
-gem 'pry'
+
+group :development, :test do
+  gem 'awesome_print'
+  gem 'pry'
+  gem 'rspec'
+  gem 'rack-test'
+  gem 'simplecov', require: false
+end

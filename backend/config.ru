@@ -5,5 +5,5 @@ if ENV['RACK_ENV'].eql? :production
 end
 
 map '/' do
-  run RoundTable::App
+  run RoundTable::API
 end

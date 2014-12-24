@@ -1,23 +1,16 @@
-ENV['RACK_ENV'] = 'test'
-
 require 'bcrypt'
 
-require 'rspec'
-require 'rack/test'
-
-require './backend'
+require_relative 'spec_helper'
 
 
-describe 'Round tables REST API backend' do
-  include Rack::Test::Methods
-
+describe RoundTable::API do
   def app
-    Sinatra::Application
+    RoundTable::API.new
   end
 
-  before do
-    $redis.flushdb
-
+  before(:all) do
+    require 'pry'; binding.pry
+    app.instance.redis.flushdb
     create_sample_user
   end
 
@@ -51,7 +44,7 @@ describe 'Round tables REST API backend' do
     }
     put '/spaces/fake-space/tables/fake-id', JSON.generate(test_table)
     expect(last_response).to be_ok
-    table_test_from_db = JSON.parse($redis.get('table_fake-space_fake-id'))
+    table_test_from_db = JSON.parse(@@redis.get('table_fake-space_fake-id'))
     # 1416028759 - Sat, 15 Nov 2014 05:19:19 GMT
     expect(table_test_from_db['timestamp']).to be > 1416028759
     table_test_from_db.delete('timestamp')
@@ -126,7 +119,7 @@ describe 'Round tables REST API backend' do
       :space => "default"
     }.to_json
 
-    $redis.set('auth_user_user', sample_user)
+    @@redis.set('auth_user_user', sample_user)
   end
 
   def update_fake_table(table_id, participants_number, space: "fake-space", language: "fake-language")
