@@ -1,9 +1,6 @@
-require_relative 'spec_helper'
+require_relative '../spec_helper'
 
 describe RoundTable::API do
-  def app; RoundTable::API.new; end
-  def redis; app.helpers.redis; end
-
   before(:all) do
     redis.flushdb
     create_sample_user

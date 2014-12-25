@@ -20,5 +20,5 @@ end
 
 require_relative '../app/main'
 
-describe RoundTable::API do
-end
+def app; RoundTable::API.new; end
+def redis; app.helpers.redis; end
