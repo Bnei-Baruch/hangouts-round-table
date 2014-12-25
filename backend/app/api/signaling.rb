@@ -1,6 +1,6 @@
 class RoundTable::API
-  @sockets = Hash.new { |sockets, space| sockets[space] = []; }
-  @master_endpoint_ids = { }
+  @@sockets = Hash.new { |sockets, space| sockets[space] = []; }
+  @@master_endpoint_ids = { }
 
   # Websocket
   get '/socket' do
@@ -14,13 +14,13 @@ class RoundTable::API
         ws.onmessage do |msg|
           message = JSON.parse(msg)
 
-          @sockets[message['space']] << ws
+          @@sockets[message['space']] << ws
 
           case message['action']
           when 'masterResumed', 'masterPaused'
             broadcast_message(message['space'], message)
           when 'registerMaster'
-            @master_endpoint_ids[message['space']] = message['endpointId']
+            @@master_endpoint_ids[message['space']] = message['endpointId']
             viewer_response = get_viewer_response(message['space'])
             broadcast_message(message['space'], viewer_response)
           when 'registerViewer'
@@ -31,7 +31,7 @@ class RoundTable::API
           end
         end
         ws.onclose do
-          sockets = @sockets.values.select { |values| values.include? ws }
+          sockets = @@sockets.values.select { |values| values.include? ws }
           sockets.delete(ws)
           warn("Websocket closed")
         end
@@ -42,14 +42,14 @@ class RoundTable::API
 
   def broadcast_message(space, message)
     encoded_message = message.to_json
-    EM.next_tick { @sockets[space].each{|sock| sock.send(encoded_message) } }
+    EM.next_tick { @@sockets[space].each{|sock| sock.send(encoded_message) } }
   end
 
   def get_viewer_response(space)
-    if @master_endpoint_ids.include? space
+    if @@master_endpoint_ids.include? space
       {
         :action => 'assignMasterEndpoint',
-        :endpointId => @master_endpoint_ids[space]
+        :endpointId => @@master_endpoint_ids[space]
       }
     else
       nil
