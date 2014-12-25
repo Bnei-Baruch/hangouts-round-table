@@ -1,6 +1,6 @@
-require 'sinatra'
-require 'json'
-require 'redis'
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require(:default, ENV['RACK_ENV'] || :development)
 
 require_relative '../config/config'
 

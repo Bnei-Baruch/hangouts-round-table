@@ -1,6 +1,3 @@
-require 'sinatra-websocket'
-
-
 class RoundTable::API
   @sockets = Hash.new { |sockets, space| sockets[space] = []; }
   @master_endpoint_ids = { }
@@ -9,7 +6,9 @@ class RoundTable::API
   get '/socket' do
     if !request.websocket?
       status 400
-      { }.to_json
+      {
+        :error => "The resource should be accessed via WebSockets API"
+      }.to_json
     else
       request.websocket do |ws|
         ws.onmessage do |msg|

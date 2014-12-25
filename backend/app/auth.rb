@@ -1,7 +1,3 @@
-require 'bcrypt'
-require 'securerandom'
-
-
 class RoundTable::API
   # Create auth token
   post '/auth/tokens' do
