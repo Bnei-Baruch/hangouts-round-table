@@ -5,7 +5,7 @@ class RoundTable::API
     user_json = redis.get("auth_user_#{body['user']}")
 
     if user_json.nil?
-      response_bad_request
+      response_auth_error
     else
       user = JSON.parse(user_json)
 
@@ -16,7 +16,7 @@ class RoundTable::API
           :space => user['space']
         }.to_json
       else
-        response_bad_request
+        response_auth_error
       end
     end
   end
@@ -29,7 +29,7 @@ class RoundTable::API
     token
   end
 
-  def response_bad_request
+  def response_auth_error
     auth_error = { :error => "Invalid user name or password" }
     [400, [auth_error.to_json]]
   end
