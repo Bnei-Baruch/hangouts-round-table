@@ -5,10 +5,10 @@ require_relative 'spec_helper'
 
 describe RoundTable::API do
   def app; RoundTable::API.new; end
+  def redis; app.helpers.redis; end
 
   before do
-    require 'pry'; binding.pry
-    app.helpers.redis.flushdb
+    redis.flushdb
   end
 
   it "should update table" do
@@ -20,7 +20,7 @@ describe RoundTable::API do
     }
     put '/spaces/fake-space/tables/fake-id', JSON.generate(test_table)
     expect(last_response).to be_ok
-    table_test_from_db = JSON.parse(app.settings.redis.get('table_fake-space_fake-id'))
+    table_test_from_db = JSON.parse(redis.get('table_fake-space_fake-id'))
     # 1416028759 - Sat, 15 Nov 2014 05:19:19 GMT
     expect(table_test_from_db['timestamp']).to be > 1416028759
     table_test_from_db.delete('timestamp')

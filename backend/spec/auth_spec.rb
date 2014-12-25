@@ -2,9 +2,10 @@ require_relative 'spec_helper'
 
 describe RoundTable::API do
   def app; RoundTable::API.new; end
+  def redis; app.helpers.redis; end
 
   before(:all) do
-    app.settings.redis.flushdb
+    redis.flushdb
     create_sample_user
   end
 
@@ -35,7 +36,7 @@ describe RoundTable::API do
       :space => "default"
     }.to_json
 
-    app.settings.redis.set('auth_user_user', sample_user)
+    redis.set('auth_user_user', sample_user)
   end
 
 end

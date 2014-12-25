@@ -9,7 +9,7 @@ require_relative 'helpers/redis'
 
 class RoundTable::API < Sinatra::Base
   helpers RoundTable::Helpers::Config
-  helpers RoundTable::Helpers::Redis
+  helpers RoundTable::Helpers::DB
   helpers RoundTable::Helpers
 
   before do

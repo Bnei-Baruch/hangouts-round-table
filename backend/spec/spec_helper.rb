@@ -10,6 +10,7 @@ Bundler.setup :default, :test
 require 'rack/test'
 require 'pry'
 require 'json'
+require 'yaml'
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods

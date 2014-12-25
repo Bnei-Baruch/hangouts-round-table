@@ -1,12 +1,17 @@
 module RoundTable::Helpers
-  module Redis
+  module DB
     @@client = nil
 
     def redis
-      @@client ||= Redis.new(:host => config[:redis][:host],
-                             :port => config[:redis][:port],
-                             :db => config[:redis][:db])
+      if ENV['RACK_ENV'] == 'test'
+        redis_config = config['redis']
+      else
+        redis_config = config['redis_test']
+      end
+
+      @@client ||= Redis.new(:host => redis_config['host'],
+                             :port => redis_config['port'],
+                             :db => redis_config['db'])
     end
   end
 end
-

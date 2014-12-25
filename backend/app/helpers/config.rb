@@ -1,5 +1,3 @@
-require 'yaml'
-
 module RoundTable::Helpers
   module Config
     CONFIG_FILE = "./config.yaml"
