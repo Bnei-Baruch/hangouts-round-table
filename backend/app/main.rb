@@ -2,10 +2,10 @@ require 'sinatra'
 require 'json'
 require 'redis'
 
-require './config/config'
+require_relative '../config/config'
 
 if ENV['RACK_ENV'] == 'test'
-  require './config/testing_config'
+  require_relative '../config/testing_config'
 end
 
 
@@ -46,3 +46,4 @@ end
 
 require_relative 'table'
 require_relative 'auth'
+require_relative 'signaling'
