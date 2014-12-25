@@ -12,8 +12,6 @@ end
 module RoundTable; end
 
 class RoundTable::API < Sinatra::Application
-  @@redis = nil
-
   before do
     headers_list = {
       'Access-Control-Allow-Origin' => '*', 
