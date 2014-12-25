@@ -2,16 +2,16 @@ require 'rubygems'
 require 'bundler/setup'
 Bundler.require(:default, ENV['RACK_ENV'] || :development)
 
-require_relative '../config/config'
-
-if ENV['RACK_ENV'] == 'test'
-  require_relative '../config/testing_config'
-end
-
-
 module RoundTable; end
 
-class RoundTable::API < Sinatra::Application
+require_relative 'helpers/config'
+require_relative 'helpers/redis'
+
+class RoundTable::API < Sinatra::Base
+  helpers RoundTable::Helpers::Config
+  helpers RoundTable::Helpers::Redis
+  helpers RoundTable::Helpers
+
   before do
     headers_list = {
       'Access-Control-Allow-Origin' => '*', 
@@ -28,20 +28,13 @@ class RoundTable::API < Sinatra::Application
       :sockets => [],
       :bind => '0.0.0.0',
       :protection => false
-
-    redis_config = CONFIG['redis']
-    set :redis => Redis.new(redis_config['host'] => "localhost",
-                            :port => redis_config['port'],
-                            :db => redis_config['db'])
   end
-
-  use Rack::Deflater
 
   options '/*' do
     200
   end
 end
 
-require_relative 'table'
-require_relative 'auth'
-require_relative 'signaling'
+require_relative 'api/table'
+require_relative 'api/auth'
+require_relative 'api/signaling'

@@ -1,6 +1,4 @@
 class RoundTable::API
-  @@table_config = CONFIG['table']
-
   # Update table
   put '/spaces/:space/tables/:id' do
     body = JSON.parse(request.body.read)

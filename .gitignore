@@ -4,8 +4,7 @@
 *~
 backend/Gemfile.lock
 backend/coverage
-backend/config/config.rb
-backend/config/testing_config.rb
+backend/config.yaml
 frontend/.tmp
 frontend/node_modules
 frontend/src/bower_components/

@@ -7,7 +7,8 @@ describe RoundTable::API do
   def app; RoundTable::API.new; end
 
   before do
-    app.settings.redis.flushdb
+    require 'pry'; binding.pry
+    app.helpers.redis.flushdb
   end
 
   it "should update table" do
