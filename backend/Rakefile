@@ -12,4 +12,17 @@ task :run do
   exec("bundle exec thin start -p 9393 -V -D")
 end
 
+task :adduser do
+  require 'yaml'
+  require_relative 'app/main'
+  app = RoundTable::API.new
+
+  user_json = {
+    :password => BCrypt::Password.create("swordfish"),
+    :space => "default"
+  }.to_json
+
+  app.helpers.redis.set('auth_user_user', user_json)
+end
+
 task :default => :run
