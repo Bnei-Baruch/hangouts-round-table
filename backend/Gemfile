@@ -5,7 +5,6 @@ gem 'rack', '~> 1.6.0'
 gem 'sinatra'
 gem 'sinatra-websocket'
 gem 'redis'
-gem 'warden'
 gem 'bcrypt'
 
 group :development, :test do

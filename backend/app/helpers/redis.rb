@@ -4,9 +4,9 @@ module RoundTable::Helpers
 
     def redis
       if ENV['RACK_ENV'] == 'test'
-        redis_config = config['redis']
-      else
         redis_config = config['redis_test']
+      else
+        redis_config = config['redis']
       end
 
       @@client ||= Redis.new(:host => redis_config['host'],
