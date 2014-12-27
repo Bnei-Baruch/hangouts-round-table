@@ -21,7 +21,7 @@ task :adduser, [:login, :space] do |t, user|
 
   if user.has_key?(:login) and user.has_key?(:space)
     puts "New password: "
-    password = STDIN.noecho(&:gets)
+    password = STDIN.noecho(&:gets).chomp
 
     user_json = {
       :password => BCrypt::Password.create(password),

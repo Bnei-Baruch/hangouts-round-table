@@ -3,8 +3,8 @@ class RoundTable::API
     @auth ||=  Rack::Auth::Basic::Request.new(request.env)
 
     if @auth.provided? and @auth.basic? and @auth.credentials
-      user, password = *@auth.credentials
-      user_json = redis.get("auth_user_#{user}")
+      login, password = *@auth.credentials
+      user_json = redis.get("auth_user_#{login}")
 
       if user_json.nil?
         not_authorized
