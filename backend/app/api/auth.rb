@@ -1,27 +1,21 @@
 class RoundTable::API
-  get '/auth/basic' do
-    @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+  post '/auth/tokens' do
+    body = JSON.parse(request.body.read)
+    user_json = redis.get("auth_user_#{body['login']}")
 
-    if @auth.provided? and @auth.basic? and @auth.credentials
-      login, password = *@auth.credentials
-      user_json = redis.get("auth_user_#{login}")
-
-      if user_json.nil?
-        not_authorized
-      else
-        user = JSON.parse(user_json)
-
-        if BCrypt::Password.new(user['password']) == password
-          halt 201, {
-            :token => create_auth_token,
-            :space => user['space']
-          }.to_json
-        else
-          not_authorized
-        end
-      end
+    if user_json.nil?
+      response_auth_error
     else
-      not_authorized
+      user = JSON.parse(user_json)
+
+      if BCrypt::Password.new(user['password']) == body['password']
+        halt 201, {
+          :token => create_auth_token,
+          :space => user['space']
+        }.to_json
+      else
+        response_auth_error
+      end
     end
   end
 
@@ -33,9 +27,8 @@ class RoundTable::API
     token
   end
 
-  def not_authorized
-    headers 'WWW-Authenticate' => 'Basic realm="Restricted Area"'
-    halt 401, { "error" => "Not authorized" }.to_json
+  def response_auth_error
+    halt 400, { :error => "Invalid user name or password" }
   end
 
 end

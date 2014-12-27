@@ -7,17 +7,22 @@ describe RoundTable::API do
     create_sample_user
   end
 
-  it "should ask for authentication" do
-    expect_ask_for_auth
-
-    auth_header("user", "invalid")
-    expect_ask_for_auth
+  it "should report invalid credentials" do
+    body = {
+      :login => "user",
+      :password => "invalid"
+    }.to_json
+    post '/auth/tokens', body
+    expect(last_response).to be_bad_request
   end
 
   it "should authenticate a user" do
-    auth_header("user", "swordfish")
+    body = {
+      :login => "user",
+      :password => "swordfish"
+    }.to_json
 
-    get '/auth/basic'
+    post '/auth/tokens', body
     expect(last_response).to be_successful
 
     json_response = JSON.parse(last_response.body)
@@ -33,16 +38,5 @@ describe RoundTable::API do
     }.to_json
 
     redis.set('auth_user_user', sample_user)
-  end
-
-  def expect_ask_for_auth
-    get '/auth/basic'
-    expect(last_response.status).to eq(401)
-    expect(last_response.header).to include("WWW-Authenticate")
-  end
-
-  def auth_header(login, password)
-    encoded = Base64.encode64("#{login}:#{password}")
-    header "Authorization", "Basic #{encoded}"
   end
 end
