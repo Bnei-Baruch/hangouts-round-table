@@ -1,0 +1,21 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../app-config/app-config.html" />
+
+<polymer-element name="user-auth">
+  <template>
+
+  <app-config id="config"></app-config>
+
+  <core-ajax
+    auto
+    url="{{ $.config.backendUrl }}/auth/basic",
+    handleAs="json"
+    on-core-response={{handleResponse}}
+    >
+  </core-ajax>
+
+  </template>
+
+  <script src="user-auth.js"></script>
+</polymer-element>

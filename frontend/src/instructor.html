@@ -6,6 +6,7 @@
     <script src="bower_components/webcomponentsjs/webcomponents.js"></script>
     <link rel="import" href="bower_components/core-header-panel/core-header-panel.html" />
     <link rel="import" href="bower_components/core-toolbar/core-toolbar.html" />
+    <link rel="import" href="components/user-auth/user-auth.html" />
     <link rel="import" href="components/table-list/table-list.html" />
     <link rel="import" href="components/table-instructor/table-instructor.html" />
     <style shim-shadowdom>
@@ -34,13 +35,14 @@
   </head>
 
   <body unresolved>
-    <core-header-panel>
-    <div class="core-header">Broadcast</div>
-    <div class="content" fit>
-      <table-instructor space="default"></table-instructor>
-      <table-list space="default"></table-list>
-    </div>
-    </core-header-panel>
+    <user-auth />
+    <!-- <core&#45;header&#45;panel> -->
+    <!-- <div class="core&#45;header">Broadcast</div> -->
+    <!-- <div class="content" fit> -->
+    <!--   <table&#45;instructor space="default"></table&#45;instructor> -->
+    <!--   <table&#45;list space="default"></table&#45;list> -->
+    <!-- </div> -->
+    <!-- </core&#45;header&#45;panel> -->
 
   </body>
 
