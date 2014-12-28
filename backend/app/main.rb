@@ -8,10 +8,6 @@ require_relative 'helpers/config'
 require_relative 'helpers/redis'
 
 class RoundTable::API < Sinatra::Base
-  helpers RoundTable::Helpers::Config
-  helpers RoundTable::Helpers::DB
-  helpers RoundTable::Helpers
-
   before do
     headers_list = {
       'Access-Control-Allow-Origin' => '*', 
@@ -33,6 +29,10 @@ class RoundTable::API < Sinatra::Base
   options '/*' do
     200
   end
+
+  helpers RoundTable::Helpers::Config
+  helpers RoundTable::Helpers::DB
+  helpers RoundTable::Helpers
 end
 
 require_relative 'api/table'

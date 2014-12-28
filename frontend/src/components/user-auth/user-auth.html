@@ -1,5 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../../bower_components/paper-action-dialog/paper-action-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/polymer-cookie/polymer-cookie.html">
 <link rel="import" href="../app-config/app-config.html" />
 
 <polymer-element name="user-auth">
@@ -7,14 +10,22 @@
 
   <app-config id="config"></app-config>
 
+  <polymer-cookie name="session" id="cookie"></polymer-cookie>
+
   <core-ajax
-    auto
-    url="{{ $.config.backendUrl }}/auth/basic",
+    id="createToken"
+    method="POST"
+    url="{{ $.config.backendUrl }}/auth/tokens",
+    contentType="application/json"
     handleAs="json"
     on-core-response={{handleResponse}}
     >
   </core-ajax>
 
+  <paper-action-dialog backdrop autoCloseDisabled layered="false">
+    <p>Please login</p>
+    <paper-button affirmative autofocus>log in</paper-button>
+  </paper-action-dialog>
   </template>
 
   <script src="user-auth.js"></script>
