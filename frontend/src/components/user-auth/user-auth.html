@@ -1,4 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/font-roboto/roboto.html" >
+
 <link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-action-dialog.html">
@@ -9,37 +11,43 @@
 
 <polymer-element name="user-auth">
   <template>
+  <style>
+    #errorText {
+      color: red;
+    }
+  </style>
 
   <app-config id="config"></app-config>
 
   <polymer-cookie name="session" id="cookie"></polymer-cookie>
 
-  <core-ajax
-    id="createToken"
-    method="POST"
-    url="{{ $.config.backendUrl }}/auth/tokens",
-    contentType="application/json"
-    handleAs="json"
-    on-core-response={{handleResponse}}
-    >
-  </core-ajax>
-
   <paper-action-dialog id="loginModal" backdrop autoCloseDisabled layered="false">
-    <p>Enter your credentials</p>
-    <form is="ajax-form"
+    <form id="loginForm"
+        is="ajax-form"
         method="POST"
         action="{{ $.config.backendUrl }}/auth/tokens"
         enctype="application/json"
         on-submitted="{{handleResponse}}">
+
+      <template if="{{errorText}}">
+      <div id="errorText">{{ errorText }}</div>
+      </template>
+
       <div>
-        <paper-input label="Login" name="login"></paper-input>
+        <paper-input-decorator label="Login" floatingLabel autoValidate>
+        <input is="core-input" name="login" required>
+        </paper-input-decorator>
       </div>
       <div>
-        <paper-input label="Password" name="password" type="password"></paper-input>
+        <paper-input-decorator label="Password" floatingLabel autoValidate>
+        <input is="core-input" type="password" name="password" required>
+        </paper-input-decorator>
       </div>
     </form>
-    <paper-button affirmative autofocus>log in</paper-button>
+
+    <paper-button on-tap="{{submit}}" autofocus>log in</paper-button>
   </paper-action-dialog>
+
   </template>
 
   <script src="user-auth.js"></script>

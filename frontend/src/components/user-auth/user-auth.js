@@ -5,8 +5,29 @@
     ready: function () {
       this.$.loginModal.toggle();
     },
-    handleResponse: function (p1, p2) {
-      console.debug(p1, p2);
+    submit: function () {
+      this.$.loginForm.submit();
     },
+    handleResponse: function (e, xhr) {
+      var response = JSON.parse(xhr.response);
+
+      switch (xhr.status) {
+        case 201:
+          this.$.cookie.value = xhr.response;
+          this.$.cookie.save();
+          this.$.loginModal.toggle();
+          break;
+        case 400:
+          this.errorText = response.error;
+          break;
+        default:
+          this.errorText = "Unknown error";
+      }
+    },
+    saveAuthData: function (data) {
+      for (var key in values) {
+        this[key] = values[key];
+      }
+    }
   });
 })();

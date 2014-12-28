@@ -28,7 +28,7 @@ class RoundTable::API
   end
 
   def response_auth_error
-    halt 400, { :error => "Invalid user name or password" }
+    halt 400, { :error => "Invalid user name or password" }.to_json
   end
 
 end
