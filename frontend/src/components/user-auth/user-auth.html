@@ -1,8 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
-<link rel="import" href="../../bower_components/paper-action-dialog/paper-action-dialog.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-action-dialog.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/polymer-cookie/polymer-cookie.html">
+<link rel="import" href="../../bower_components/ajax-form/ajax-form.html">
 <link rel="import" href="../app-config/app-config.html" />
 
 <polymer-element name="user-auth">
@@ -22,8 +24,20 @@
     >
   </core-ajax>
 
-  <paper-action-dialog backdrop autoCloseDisabled layered="false">
-    <p>Please login</p>
+  <paper-action-dialog id="loginModal" backdrop autoCloseDisabled layered="false">
+    <p>Enter your credentials</p>
+    <form is="ajax-form"
+        method="POST"
+        action="{{ $.config.backendUrl }}/auth/tokens"
+        enctype="application/json"
+        on-submitted="{{handleResponse}}">
+      <div>
+        <paper-input label="Login" name="login"></paper-input>
+      </div>
+      <div>
+        <paper-input label="Password" name="password" type="password"></paper-input>
+      </div>
+    </form>
     <paper-button affirmative autofocus>log in</paper-button>
   </paper-action-dialog>
   </template>
