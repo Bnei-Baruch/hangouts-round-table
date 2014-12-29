@@ -26,6 +26,7 @@
     "kurento-client": "~5.0.4",
     "kurento-utils": "~5.0.4",
     "polymer-cookie": "PolymerLabs/polymer-cookie#~0.3.0",
-    "ajax-form": "~1.4.0"
+    "ajax-form": "~1.4.0",
+    "app-router": "~2.3.2"
   }
 }
