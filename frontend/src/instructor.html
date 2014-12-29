@@ -35,14 +35,15 @@
   </head>
 
   <body unresolved>
-    <user-auth />
-    <!-- <core&#45;header&#45;panel> -->
-    <!-- <div class="core&#45;header">Broadcast</div> -->
-    <!-- <div class="content" fit> -->
-    <!--   <table&#45;instructor space="default"></table&#45;instructor> -->
-    <!--   <table&#45;list space="default"></table&#45;list> -->
-    <!-- </div> -->
-    <!-- </core&#45;header&#45;panel> -->
+    <user-auth id="user"></user-auth>
+
+    <core-header-panel if="{{ $.user.loggedIn }}">
+      <div class="core-header">Broadcast</div>
+      <div class="content" fit>
+        <table-instructor></table-instructor>
+        <table-list space="{{ $.user.space }}"></table-list>
+      </div>
+    </core-header-panel>
 
   </body>
 

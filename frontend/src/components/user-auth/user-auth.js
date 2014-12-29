@@ -2,32 +2,41 @@
 
 (function () {
   Polymer({
+    loggedIn: false,
     ready: function () {
-      this.$.loginModal.toggle();
+      var cookieValue = this.$.cookie.value;
+
+      if (cookieValue) {
+        this.saveAuthData(JSON.parse(cookieValue));
+      } else {
+        this.$.loginModal.toggle();
+      }
     },
     submit: function () {
       this.$.loginForm.submit();
     },
     handleResponse: function (e, xhr) {
-      var response = JSON.parse(xhr.response);
+      var parsedResponse = JSON.parse(xhr.response);
 
       switch (xhr.status) {
         case 201:
           this.$.cookie.value = xhr.response;
           this.$.cookie.save();
+          this.saveAuthData(parsedResponse);
           this.$.loginModal.toggle();
           break;
         case 400:
-          this.errorText = response.error;
+          this.errorText = parsedResponse.error;
           break;
         default:
           this.errorText = "Unknown error";
       }
     },
-    saveAuthData: function (data) {
-      for (var key in values) {
-        this[key] = values[key];
+    saveAuthData: function (authData) {
+      for (var key in authData) {
+        this[key] = authData[key];
       }
+      this.loggedIn = true;
     }
   });
 })();

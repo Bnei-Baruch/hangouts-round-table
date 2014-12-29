@@ -6,8 +6,10 @@
       space: 'default',
     },
     ready: function() {
-      console.log(this.onAssignMasterEndpointMessage);
       this.initBackendSocket();
+    },
+    spaceChanged: function () {
+      console.error("SPACE CHANGED!!!");
     },
     initBackendSocket: function () {
       var that = this;
