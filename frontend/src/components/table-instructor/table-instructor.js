@@ -6,7 +6,7 @@
       this.super();
 
       this.sendMessage({
-        action: this.isEnabled ? 'masterResumed': 'masterPaused'
+        action: this.isEnabled ? 'master-resumed': 'master-paused'
       });
     },
   });

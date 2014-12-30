@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../broadcast-base/broadcast-base.html">
 
-<polymer-element name="broadcast-viewer" extends="broadcast-base" attributes="">
+<polymer-element name="broadcast-viewer" extends="broadcast-base" on-assign-master-endpoint={{assignMasterEndpoint}}>
   <template>
     <style>
       :host #remoteVideo {
@@ -10,7 +10,7 @@
       }
     </style>
 
-    <video id="remoteVideo" poster="components/broadcast-viewer/transparent-1x1.png" autoplay></video>
+    <video id="remoteVideo" poster="transparent-1x1.png" autoplay></video>
     <shadow></shadow>
   </template>
 

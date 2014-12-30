@@ -3,7 +3,7 @@
 (function () {
   Polymer({
     webRtcEndpointId: null,
-    onAssignMasterEndpointMessage: function (message) {
+    assignMasterEndpoint: function (e, message) {
       this.webRtcEndpointId = message.endpointId;
       this.initKurento();
     },
@@ -14,7 +14,7 @@
       this.super();
 
       this.backendWs.onopen = function () {
-        that.sendMessage({action: 'registerViewer'});
+        that.sendMessage({action: 'register-viewer'});
       };
     },
     initKurento: function () {

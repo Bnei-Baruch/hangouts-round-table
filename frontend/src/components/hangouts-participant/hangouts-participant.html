@@ -1,9 +1,16 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../broadcast-viewer/broadcast-viewer.html">
 
-<polymer-element name="hangouts-participant" extends="broadcast-viewer" attributes="">
+<polymer-element name="hangouts-participant">
   <template>
-    <shadow></shadow>
+    <update-table id="table"></update-table>
+    <template if="{{ $.table.isHangoutsApiReady }}">
+      <broadcast-viewer
+          space="{{ $.table.appData.space }}"
+          on-master-resumed="{{mute}}"
+          on-master-paused="{{hide}}">
+      </broadcast-viewer>
+    </template>
   </template>
 
   <script src="hangouts-participant.js"></script>

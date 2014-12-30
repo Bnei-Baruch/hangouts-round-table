@@ -27,7 +27,7 @@
             kurentoClient.create('MediaPipeline', that.cancelOnError(function(error, pipeline) {
 
               pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, webRtc){
-                that.sendMessage({action: 'registerMaster', endpointId: webRtc.id});
+                that.sendMessage({action: 'register-master', endpointId: webRtc.id});
 
                 sdpOffer = that.setBandwidth(sdpOffer);
 

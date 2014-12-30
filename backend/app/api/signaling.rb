@@ -17,13 +17,13 @@ class RoundTable::API
           @@sockets[message['space']] |= [ws]
 
           case message['action']
-          when 'masterResumed', 'masterPaused'
+          when 'master-resumed', 'master-paused'
             broadcast_message(message['space'], message)
-          when 'registerMaster'
+          when 'register-master'
             @@master_endpoint_ids[message['space']] = message['endpointId']
             viewer_response = get_viewer_response(message['space'])
             broadcast_message(message['space'], viewer_response)
-          when 'registerViewer'
+          when 'register-viewer'
             viewer_response = get_viewer_response(message['space'])
             unless viewer_response.nil?
               ws.send(viewer_response.to_json)
@@ -48,7 +48,7 @@ class RoundTable::API
   def get_viewer_response(space)
     if @@master_endpoint_ids.include? space
       {
-        :action => 'assignMasterEndpoint',
+        :action => 'assign-master-endpoint',
         :endpointId => @@master_endpoint_ids[space]
       }
     else

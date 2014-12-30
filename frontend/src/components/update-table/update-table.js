@@ -2,6 +2,7 @@
 
 (function () {
   Polymer({
+    isHangoutsApiReady: false,
     ready: function () {
       var that = this;
 
@@ -9,6 +10,7 @@
 
       var initHangouts = function (apiInitEvent) {
         if (apiInitEvent.isApiReady) {
+          that.isHangoutsApiReady = true;
           that.startUpdatingTable();
           gapi.hangout.onApiReady.remove(initHangouts);
         }
