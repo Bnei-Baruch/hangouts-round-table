@@ -21,7 +21,7 @@
 
   <polymer-cookie name="session" id="cookie"></polymer-cookie>
 
-  <paper-action-dialog id="loginModal" backdrop autoCloseDisabled layered="false">
+  <paper-action-dialog id="loginModal" backdrop autoCloseDisabled closeSelector="[dismissive]" layered="false">
     <form id="loginForm"
         is="ajax-form"
         method="POST"
@@ -45,7 +45,7 @@
       </div>
     </form>
 
-    <paper-button on-tap="{{submit}}" autofocus>log in</paper-button>
+    <paper-button on-tap="{{submit}}" affirmative autofocus>log in</paper-button>
   </paper-action-dialog>
 
   </template>

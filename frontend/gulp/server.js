@@ -4,6 +4,11 @@ var gulp = require('gulp');
 
 var browserSync = require('browser-sync');
 
+function setCorsHeaders(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+}
+
 function browserSyncInit(baseDir, files, browser, https) {
   browser = browser === undefined ? 'default' : browser;
 
@@ -20,11 +25,6 @@ function browserSyncInit(baseDir, files, browser, https) {
     https: https
   });
 
-}
-
-function setCorsHeaders(req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  next();
 }
 
 function serveSource(https) {
