@@ -7,7 +7,7 @@
   <template>
     <user-auth id="user"></user-auth>
     <template if="{{ $.user.loggedIn }}">
-      <table-instructor></table-instructor>
+      <table-instructor space="{{ $.user.space }}"></table-instructor>
       <table-list space="{{ $.user.space }}"></table-list>
     </template>
   </template>

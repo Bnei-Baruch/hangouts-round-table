@@ -8,9 +8,6 @@
     ready: function() {
       this.initBackendSocket();
     },
-    spaceChanged: function () {
-      console.error("SPACE CHANGED!!!");
-    },
     initBackendSocket: function () {
       var that = this;
 
