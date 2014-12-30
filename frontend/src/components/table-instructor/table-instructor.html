@@ -3,10 +3,10 @@
 <link rel="import" href="../sound-level-indicator/sound-level-indicator.html">
 <link rel="import" href="../broadcast-master/broadcast-master.html">
 
-<polymer-element name="table-instructor" extends="broadcast-master" attributes="">
+<polymer-element name="table-instructor" noscript>
   <template>
     <style>
-      :host::shadow video {
+      #master::shadow video {
         float: left;
       }
 
@@ -29,20 +29,21 @@
       }
     </style>
 
-    <shadow></shadow>
+    <user-auth id="user"></user-auth>
+
+    <broadcast-master id="master" space="{{ $.user.space }}"></broadcast-master>
 
     <div class="controls">
-      <toggle-label-button raised active="{{ isEnabled }}" labelPressed="Pause" labelReleased="Resume" disabled?="{{ !isReady }}">Start
+      <toggle-label-button raised active="{{ $.master.isEnabled }}" labelPressed="Pause" labelReleased="Resume" disabled?="{{ !$.master.isReady }}">Start
       </toggle-label-button>
 
-      <toggle-label-button raised active="{{ isMuted }}" labelPressed="Unmute" disabled?="{{ !isReady }}">Mute
+      <toggle-label-button raised active="{{ $.master.isMuted }}" labelPressed="Unmute" disabled?="{{ !$.master.isReady }}">Mute
       </toggle-label-button>
 
     </div>
 
     <div style="clear: both"></div>
-    <sound-level-indicator stream="{{ webRtcPeer.stream }}"></sound-level-indicator>
+    <sound-level-indicator stream="{{ $.master.webRtcPeer.stream }}"></sound-level-indicator>
   </template>
 
-  <script src="table-instructor.js"></script>
 </polymer-element>

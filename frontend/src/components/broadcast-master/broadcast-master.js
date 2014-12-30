@@ -43,6 +43,10 @@
     },
     isEnabledChanged: function () {
       this.toggleBroadcast();
+
+      this.sendMessage({
+        action: this.isEnabled ? 'masterResumed': 'masterPaused'
+      });
     },
     isMutedChanged: function () {
       this.toggleBroadcast(true);
