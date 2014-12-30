@@ -14,7 +14,7 @@ class RoundTable::API
         ws.onmessage do |msg|
           message = JSON.parse(msg)
 
-          @@sockets[message['space']] << ws
+          @@sockets[message['space']] |= [ws]
 
           case message['action']
           when 'masterResumed', 'masterPaused'
