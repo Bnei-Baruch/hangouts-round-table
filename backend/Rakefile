@@ -19,27 +19,42 @@ desc "Create a new user"
 task :adduser, [:login, :space] do |t, user|
   app = RoundTable::API.new
 
-  if user.has_key?(:login) and user.has_key?(:space)
-    puts "New password: "
-    password = STDIN.noecho(&:gets).chomp
-
-    user_json = {
-      :password => BCrypt::Password.create(password),
-      :space => user[:space]
-    }.to_json
-
-    app.helpers.redis.set("auth_user_#{user[:login]}", user_json)
-    puts "User created successfully"
-  else
-    puts "Please provide login and space arguments"
+  if user.to_hash.length != 2
+    abort "Please provide login and space arguments"
   end
+
+  user_key = "auth_user_#{user[:login]}"
+
+  if app.helpers.redis.exists(user_key)
+    abort "User #{user[:login]} already exists"
+  end
+
+  puts "New password: "
+  password = STDIN.noecho(&:gets).chomp
+
+  user_json = {
+    :password => BCrypt::Password.create(password),
+    :space => user[:space]
+  }.to_json
+
+  app.helpers.redis.set(user_key, user_json)
+  puts "User created successfully"
 end
 
 desc "Delete a user by login"
 task :deluser, [:login] do |t, user|
   app = RoundTable::API.new
-  app.helpers.redis.del("auth_user_#{user[:login]}")
-  puts "User #{user[:login]} deleted successfully"
+
+  if !user.has_key?(:login)
+    abort "Please specify login argument"
+  end
+
+  keys_num = app.helpers.redis.del("auth_user_#{user[:login]}")
+  if keys_num > 0
+    puts "User #{user[:login]} deleted successfully"
+  else
+    abort "User #{user[:login]} doesn't exist"
+  end
 end
 
 task :default => :run
