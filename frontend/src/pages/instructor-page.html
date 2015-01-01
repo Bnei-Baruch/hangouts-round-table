@@ -1,14 +1,17 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../layouts/header-layout.html">
 <link rel="import" href="../components/user-auth/user-auth.html" />
 <link rel="import" href="../components/table-list/table-list.html" />
 <link rel="import" href="../components/table-instructor/table-instructor.html" />
 
 <polymer-element name="instructor-page" noscript>
   <template>
-    <user-auth id="user"></user-auth>
-    <template if="{{ $.user.loggedIn }}">
-      <table-instructor space="{{ $.user.space }}"></table-instructor>
-      <table-list space="{{ $.user.space }}"></table-list>
-    </template>
+    <header-layout title="Instructor">
+      <user-auth id="user"></user-auth>
+      <template if="{{ $.user.loggedIn }}">
+        <table-instructor space="{{ $.user.space }}"></table-instructor>
+        <table-list space="{{ $.user.space }}"></table-list>
+      </template>
+    </header-layout>
   </template>
 </polymer-element>

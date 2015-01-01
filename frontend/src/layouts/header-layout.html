@@ -1,0 +1,36 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-header-panel/core-header-panel.html" />
+
+<polymer-element name="header-layout" attributes="title" noscript>
+  <template>
+    <style shim-shadowdom>
+    .content {
+      margin-top: 12px;
+    }
+
+    core-header-panel {
+      float: left;
+      width: 100%;
+      height: 500px;
+      margin: 5px;
+    }
+
+    .core-header {
+      height: 60px;
+      line-height: 60px;
+      font-size: 18px;
+      padding: 0 10px;
+      background-color: #4F7DC9;
+      color: #FFF;
+      transition: height 0.2s;
+    }
+
+    </style>
+    <core-header-panel>
+      <div class="core-header">{{ title || "Round Table" }}</div>
+      <div class="content" fit>
+        <content></content>
+      </div>
+    </core-header-panel>
+  </template>
+</polymer-element>
