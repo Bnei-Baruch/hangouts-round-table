@@ -21,7 +21,7 @@ $ sudo apt-get install redis
 ```bash
 $ cd backend
 $ bundle install
-$ ruby backend.rb
+$ rake
 ```
 
 # Frontend
