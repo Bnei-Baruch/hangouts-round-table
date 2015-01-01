@@ -4,7 +4,7 @@
 <polymer-element name="hangouts-participant">
   <template>
     <update-table id="table"></update-table>
-    <template if="{{ $.table.isHangoutsApiReady }}">
+    <template if="{{ $.table.isReady }}">
       <broadcast-viewer
           space="{{ $.table.appData.space }}"
           on-master-resumed="{{mute}}"
