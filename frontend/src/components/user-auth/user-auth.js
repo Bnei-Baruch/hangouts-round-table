@@ -37,6 +37,11 @@
         this[key] = authData[key];
       }
       this.loggedIn = true;
+    },
+    logout: function () {
+      this.$.cookie.deleteCookie();
+      this.loggedIn = false;
+      this.$.loginModal.toggle();
     }
   });
 })();

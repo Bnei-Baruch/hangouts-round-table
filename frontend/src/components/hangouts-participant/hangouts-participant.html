@@ -1,15 +1,18 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../broadcast-viewer/broadcast-viewer.html">
+<link rel="import" href="../viewer-heartbeat/viewer-heartbeat.html">
 
 <polymer-element name="hangouts-participant">
   <template>
     <update-table id="table"></update-table>
     <template if="{{ $.table.isReady }}">
       <broadcast-viewer
+          id="viewer"
           space="{{ $.table.appData.space }}"
           on-master-resumed="{{mute}}"
           on-master-paused="{{hide}}">
       </broadcast-viewer>
+      <viewer-heartbeat viewer="{{ $.viewer }}"></viewer-heartbeat>
     </template>
   </template>
 

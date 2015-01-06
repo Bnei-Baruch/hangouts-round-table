@@ -4,5 +4,6 @@
   "kurentoWsUri": "wss://webrtc-dev.kbb1.com:8433/kurento",
   "backendWsUri": "wss://rt-dev.kbb1.com/backend/socket",
   "updateTableInterval": 10000,
+  "sendHeartbeatInterval": 10000,
   "hangoutsAppGid": "979640007671"
 }

@@ -1,0 +1,20 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../app-config/app-config.html" />
+
+<polymer-element name="viewer-heartbeat" attributes="viewerSelector">
+  <template>
+
+  <app-config id="config"></app-config>
+
+  <core-ajax
+    id="sendHeartbeat"
+    url="{{ $.config.backendUrl }}/spaces/{{ appData.space }}/tables/{{ tableId }}/heartbeat",
+    method="PUT"
+    contentType="application/json">
+  </core-ajax>
+
+  </template>
+
+  <script src="viewer-heartbeat.js"></script>
+</polymer-element>

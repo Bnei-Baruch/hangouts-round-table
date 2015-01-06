@@ -14,15 +14,16 @@ gulp.task('scripts', function () {
 });
 
 gulp.task('components', function () {
-  return gulp.src(['src/components/**/*.html', '!**/*.template.html', '!**/demo.html'])
+  return gulp.src(['src/index.html'])
+    .pipe($.vulcanize({
+      csp: true,
+      strip: true,
+      dest: '.tmp'
+    }))
     .pipe($.minifyHtml({
       empty: true,
       spare: true,
       quotes: true
-    }))
-    .pipe($.vulcanize({
-      dest: '.tmp/components',
-      strip: true
     }))
     .pipe($.rev())
     .pipe(gulp.dest('.tmp/components'))
