@@ -28,6 +28,7 @@ class RoundTable::API
             unless viewer_response.nil?
               ws.send(viewer_response.to_json)
             end
+          when 'update-heartbeat'
           end
         end
         ws.onclose do

@@ -15,14 +15,19 @@
     },
     sendHeartbeat: function () {
       var message = {
-        soundLevel: this.getSoundLevel()
+        action: 'update-heartbeat',
+        participantId: '',
+        soundLevel: Math.random()
       };
 
-      // this.viewer.sendMessage();
+      this.viewer.sendMessage();
+    },
+    getAverageVideoColor: function () {
     },
     getSoundLevel: function () {
       if (!this.audioContext) {
-        this.audioContext = new window.webkitAudioContext() || window.AudioContext();
+        var Context = window.webkitAudioContext || window.AudioContext;
+        this.audioContext = new Context();
         this.source = this.audioContext.createMediaElementSource(this.viewer.webRtcPeer.remoteVideo);
         this.analyser = this.audioContext.createAnalyser();
         this.analyser.smoothingTimeConstant = 0.9;
