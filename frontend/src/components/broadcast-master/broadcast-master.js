@@ -1,20 +1,26 @@
-'use strict';
+/* jshint strict:false */
 
 (function () {
   Polymer({
     isReady: false,
     isMuted: false,
     isEnabled: false,
-    mediaConstraints: {
-      audio : true,
-      video : {
-        mandatory : {
-          maxWidth: 320,
-          maxHeight: 240,
-          maxFrameRate : 15,
-          minFrameRate : 15
+    ready: function () {
+      this.super();
+
+      var videoConstraints = this.$.config.videoConstraints;
+
+      this.mediaConstraints = {
+        audio : true,
+        video : {
+          mandatory : {
+            maxWidth: videoConstraints.maxWidth,
+            maxHeight: videoConstraints.maxHeight,
+            minFrameRate : videoConstraints.minFrameRate,
+            maxFrameRate : videoConstraints.maxFrameRate
+          }
         }
-      }
+      };
     },
     initKurento: function () {
       var that = this;

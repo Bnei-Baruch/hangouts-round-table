@@ -7,6 +7,8 @@
 
       this.viewer = this.parentNode.querySelector(this.viewerSelector);
 
+      this.snapshotContext = this.$.videoSnapshot.getContext('2d');
+
       var sendHeartbeat = function() {
         that.sendHeartbeat();
       };
@@ -17,19 +19,46 @@
       var message = {
         action: 'update-heartbeat',
         participantId: '',
-        soundLevel: this.getSoundLevel()
+        averageVideoColor: this.getAverageVideoColor()
+        // soundLevel: this.getSoundLevel()
       };
 
+      console.log(message);
       // this.viewer.sendMessage();
     },
     getAverageVideoColor: function () {
+      var video = this.viewer.webRtcPeer.remoteVideo;
+      this.snapshotContext.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+
+      var result;
+
+      if (video.paused) {
+        result = null;
+      } else {
+        var averageColor = {r: 0, g: 0, b: 0};
+
+        var imageData = this.snapshotContext.getImageData(0, 0, video.videoWidth, video.videoHeight).data;
+        for (var index = 0; index < imageData.length; index += 4) {
+          averageColor.r += imageData[index];
+          averageColor.g += imageData[index] + 1;
+          averageColor.b += imageData[index] + 2;
+        }
+
+        var total = imageData.length / 4;
+        console.log(averageColor.g, imageData.length / 4);
+        result = [Math.floor(averageColor.r / total),
+               Math.floor(averageColor.g / total),
+               Math.floor(averageColor.b / total)];
+      }
+
+      console.log(result);
+      return result;
     },
     getSoundLevel: function () {
       if (!this.audioContext) {
         var AC = window.webkitAudioContext || window.AudioContext;
         this.audioContext = new AC();
 
-        console.log('video', this.viewer.webRtcPeer.remoteVideo);
         this.source = this.audioContext.createMediaElementSource(this.viewer.webRtcPeer.remoteVideo);
         this.analyser = this.audioContext.createAnalyser();
         this.analyser.smoothingTimeConstant = 0.3;

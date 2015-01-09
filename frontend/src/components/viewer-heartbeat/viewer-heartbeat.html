@@ -4,15 +4,26 @@
 
 <polymer-element name="viewer-heartbeat" attributes="viewerSelector">
   <template>
+    <style>
+      #videoSnapshot {
+        /* display: none; */
+      }
+    </style>
 
-  <app-config id="config"></app-config>
+    <app-config id="config"></app-config>
 
-  <core-ajax
-    id="sendHeartbeat"
-    url="{{ $.config.backendUrl }}/spaces/{{ appData.space }}/tables/{{ tableId }}/heartbeat",
-    method="PUT"
-    contentType="application/json">
-  </core-ajax>
+    <core-ajax
+      id="sendHeartbeat"
+      url="{{ $.config.backendUrl }}/spaces/{{ appData.space }}/tables/{{ tableId }}/heartbeat",
+      method="PUT"
+      contentType="application/json">
+    </core-ajax>
+
+    <canvas
+      id="videoSnapshot"
+      width="{{ $.config.videoConstraints.maxWidth }}"
+      height="{{ $.config.videoConstraints.maxHeight }}">
+    </canvas>
 
   </template>
 

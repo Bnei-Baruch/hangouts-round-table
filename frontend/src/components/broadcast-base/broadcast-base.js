@@ -34,8 +34,12 @@
     initKurento: function () {
     },
     setBandwidth: function (sdp) {
-      sdp = sdp.replace(/a=mid:audio\r\n/g, 'a=mid:audio\r\nb=AS:64\r\n');
-      sdp = sdp.replace(/a=mid:video\r\n/g, 'a=mid:video\r\nb=AS:256\r\n');
+      var audioBw = this.$.config.audioConstraints.maxBitrate;
+      sdp = sdp.replace(/a=mid:audio\r\n/g, 'a=mid:audio\r\nb=AS:' + audioBw + '\r\n');
+
+      var videoBw = this.$.config.videoConstraints.maxBitrate;
+      sdp = sdp.replace(/a=mid:video\r\n/g, 'a=mid:video\r\nb=AS:' + videoBw + '\r\n');
+
       return sdp;
     },
     cancelOnError: function(func) {
