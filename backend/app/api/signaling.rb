@@ -1,5 +1,6 @@
 class RoundTable::API
   @@sockets = Hash.new { |sockets, space| sockets[space] = []; }
+  @@heartbeat
   @@master_endpoint_ids = { }
 
   # Websocket

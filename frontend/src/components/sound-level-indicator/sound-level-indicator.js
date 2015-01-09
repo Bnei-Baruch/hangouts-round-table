@@ -3,7 +3,8 @@
 (function () {
   Polymer({
     streamChanged: function () {
-      var audioContext = new window.AudioContext();
+      var AC = window.webkitAudioContext || window.AudioContext;
+      var audioContext = new AC();
       var source = audioContext.createMediaStreamSource(this.stream);
       var analyser = audioContext.createAnalyser();
       var scriptNode = audioContext.createScriptProcessor(2048, 1, 1);

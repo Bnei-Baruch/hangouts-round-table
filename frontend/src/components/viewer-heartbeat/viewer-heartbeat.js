@@ -17,21 +17,23 @@
       var message = {
         action: 'update-heartbeat',
         participantId: '',
-        soundLevel: Math.random()
+        soundLevel: this.getSoundLevel()
       };
 
-      this.viewer.sendMessage();
+      // this.viewer.sendMessage();
     },
     getAverageVideoColor: function () {
     },
     getSoundLevel: function () {
       if (!this.audioContext) {
-        var Context = window.webkitAudioContext || window.AudioContext;
-        this.audioContext = new Context();
+        var AC = window.webkitAudioContext || window.AudioContext;
+        this.audioContext = new AC();
+
+        console.log('video', this.viewer.webRtcPeer.remoteVideo);
         this.source = this.audioContext.createMediaElementSource(this.viewer.webRtcPeer.remoteVideo);
         this.analyser = this.audioContext.createAnalyser();
-        this.analyser.smoothingTimeConstant = 0.9;
-        this.analyser.fftSize = 512;
+        this.analyser.smoothingTimeConstant = 0.3;
+        this.analyser.fftSize = 1024;
         this.source.connect(this.analyser);
         this.analyser.connect(this.audioContext.destination);
       }
