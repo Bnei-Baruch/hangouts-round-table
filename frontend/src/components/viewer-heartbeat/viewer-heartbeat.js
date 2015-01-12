@@ -24,7 +24,8 @@
         participantId: participant.id,
         participantName: participant.person.displayName,
         averageVideoColor: this.getAverageVideoColor(),
-        soundLevel: this.getSoundLevel()
+        soundLevel: this.getSoundLevel(),
+        browser: window.bowser
       };
 
       this.viewer.sendMessage(message);
