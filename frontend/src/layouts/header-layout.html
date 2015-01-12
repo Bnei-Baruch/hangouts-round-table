@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/core-header-panel/core-header-panel.html" />
 
-<polymer-element name="header-layout" attributes="title" noscript>
+<polymer-element name="header-layout" attributes="header authRequired" noscript>
   <template>
     <style shim-shadowdom>
     .content {
@@ -26,8 +26,11 @@
     }
 
     </style>
-    <core-header-panel>
-      <div class="core-header">{{ title || "Round Table" }}</div>
+
+    <user-auth id="user" if="{{ authRequired }}"></user-auth>
+
+    <core-header-panel if="{{ !authRequired || (authRequired && $.user.loggedIn) }}">
+      <div class="core-header">{{ header || "Round Table" }}</div>
       <div class="content" fit>
         <content></content>
       </div>

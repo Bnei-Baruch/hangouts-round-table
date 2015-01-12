@@ -1,6 +1,5 @@
 class RoundTable::API
   @@sockets = Hash.new { |sockets, space| sockets[space] = []; }
-  @@heartbeat
   @@master_endpoint_ids = { }
 
   # Websocket
@@ -18,18 +17,17 @@ class RoundTable::API
           @@sockets[message['space']] |= [ws]
 
           case message['action']
-          when 'master-resumed', 'master-paused'
-            broadcast_message(message['space'], message)
-          when 'register-master'
-            @@master_endpoint_ids[message['space']] = message['endpointId']
-            viewer_response = get_viewer_response(message['space'])
-            broadcast_message(message['space'], viewer_response)
-          when 'register-viewer'
-            viewer_response = get_viewer_response(message['space'])
-            unless viewer_response.nil?
-              ws.send(viewer_response.to_json)
-            end
-          when 'update-heartbeat'
+            when 'register-master'
+              @@master_endpoint_ids[message['space']] = message['endpointId']
+              viewer_response = get_viewer_response(message['space'])
+              broadcast_message(message['space'], viewer_response)
+            when 'register-viewer'
+              viewer_response = get_viewer_response(message['space'])
+              unless viewer_response.nil?
+                ws.send(viewer_response.to_json)
+              end
+            when 'master-resumed', 'master-paused', 'update-heartbeat'
+              broadcast_message(message['space'], message)
           end
         end
         ws.onclose do
