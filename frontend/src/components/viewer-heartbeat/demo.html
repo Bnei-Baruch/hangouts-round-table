@@ -6,11 +6,30 @@
     <script src="../../bower_components/webcomponentsjs/webcomponents.js"></script>
     <link rel="import" href="../broadcast-viewer/broadcast-viewer.html">
     <link rel="import" href="viewer-heartbeat.html">
+    <script>
+      // Mock Hangouts API
+      window.gapi = {};
+
+      window.gapi.hangout = {
+        getHangoutId: function () {
+          return 'fake-hangout-id';
+        },
+        getLocalParticipant: function () {
+          return {
+            id: 'fake-participant-id',
+            person: {
+              displayName: "Fake Participant"
+            }
+          }
+        }
+      }
+    </script>
   </head>
 
   <body unresolved>
-    <broadcast-viewer id="viewer"></broadcast-viewer>
-    <viewer-heartbeat viewerSelector="#viewer"></viewer-heartbeat>
+    <viewer-heartbeat>
+      <broadcast-viewer></broadcast-viewer>
+    </viewer-heartbeat>
   </body>
 
 </html>

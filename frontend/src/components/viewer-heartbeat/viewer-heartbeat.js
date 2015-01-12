@@ -5,7 +5,7 @@
     ready: function () {
       var that = this;
 
-      this.viewer = this.parentNode.querySelector(this.viewerSelector);
+      this.viewer = this.querySelector('broadcast-viewer');
 
       this.snapshotContext = this.$.videoSnapshot.getContext('2d');
 
@@ -16,15 +16,18 @@
       setInterval(sendHeartbeat, this.$.config.sendHeartbeatInterval);
     },
     sendHeartbeat: function () {
+      var participant = gapi.hangout.getLocalParticipant();
+
       var message = {
         action: 'update-heartbeat',
-        participantId: '',
-        averageVideoColor: this.getAverageVideoColor()
-        // soundLevel: this.getSoundLevel()
+        tableId: gapi.hangout.getHangoutId(),
+        participantId: participant.id,
+        participantName: participant.person.displayName,
+        averageVideoColor: this.getAverageVideoColor(),
+        soundLevel: this.getSoundLevel()
       };
 
-      console.log(message);
-      // this.viewer.sendMessage();
+      this.viewer.sendMessage(message);
     },
     getAverageVideoColor: function () {
       var video = this.viewer.webRtcPeer.remoteVideo;
@@ -45,7 +48,6 @@
           averageColor.b += imageData[index + 2];
         }
 
-        console.log(averageColor);
         var total = imageData.length / 4;
         result = [Math.floor(averageColor.r / total),
                Math.floor(averageColor.g / total),
@@ -77,7 +79,8 @@
       }
 
       average = average/this.array.length;
-      console.log(average);
+
+      return average;
     },
     getPeerConnectionStats: function () {
       this.viewer.webRtcPeer.pc.getStats(function (connStats){
