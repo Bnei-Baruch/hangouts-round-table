@@ -25,7 +25,8 @@
         participantName: participant.person.displayName,
         averageVideoColor: this.getAverageVideoColor(),
         soundLevel: this.getSoundLevel(),
-        browser: window.bowser
+        browser: window.bowser,
+        participants: this.getParticipants()
       };
 
       this.viewer.sendMessage(message);
@@ -94,6 +95,22 @@
         // var googCurrentDelayMs = rtcStatsReports[7].stat('googCurrentDelayMs')
         // console.log(googCurrentDelayMs)
       });
+    },
+    getParticipants: function () {
+      var result = [];
+      var hangoutParticipants = gapi.hangout.getParticipants();
+
+      for (var index in hangoutParticipants) {
+        var hangoutParticipant = hangoutParticipants[index];
+        if (hangoutParticipant.person) {
+          result.push({
+            id: hangoutParticipant.id,
+            name: hangoutParticipant.person.displayName
+          });
+        }
+      }
+
+      return result;
     }
 
   });
