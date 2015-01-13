@@ -1,0 +1,16 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../app-config/app-config.html" />
+
+<polymer-element name="webdis-chat" attributes="space">
+  <template id="chat-list">
+
+  <app-config id="config"></app-config>
+
+  <link rel="stylesheet" href="webdis-chat.css">
+
+  <iframe src="{{ chatUrl($.config.frontendUrl) }}" width="100%" height="100%"></iframe>
+  </template>
+
+  <script src="webdis-chat.js"></script>
+</polymer-element>

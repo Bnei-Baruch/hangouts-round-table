@@ -2,14 +2,33 @@
 <link rel="import" href="../layouts/header-layout.html">
 <link rel="import" href="../components/user-auth/user-auth.html" />
 <link rel="import" href="../components/table-list/table-list.html" />
+<link rel="import" href="../components/webdis-chat/webdis-chat.html" />
 <link rel="import" href="../components/table-instructor/table-instructor.html" />
 
 <polymer-element name="instructor-page" noscript>
   <template>
     <header-layout header="Instructor" authRequired="true">
       <user-auth id="user"></user-auth>
-      <table-instructor space="{{ $.user.space }}"></table-instructor>
-      <table-list space="{{ $.user.space }}"></table-list>
+      <template if="{{ $.user.loggedIn }}">
+        <style>
+          .main-column {
+            float: left;
+            width: 58%;
+          }
+          .side-column {
+            float: right;
+            width: 42%;
+            height: 100%;
+          }
+        </style>
+        <div class="main-column">
+          <table-instructor space="{{ $.user.space }}"></table-instructor>
+          <table-list space="{{ $.user.space }}"></table-list>
+        </div>
+        <div class="side-column">
+          <webdis-chat space="{{ $.user.space }}" isAdmin="true" style="width: 100%; height: 100%; display: block"></webdis-chat>
+        </div>
+      </template>
     </header-layout>
   </template>
 </polymer-element>

@@ -1,18 +1,39 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../broadcast-viewer/broadcast-viewer.html">
+<link rel="import" href="../update-table/update-table.html" />
+<link rel="import" href="../webdis-chat/webdis-chat.html" />
 <link rel="import" href="../viewer-heartbeat/viewer-heartbeat.html">
 
 <polymer-element name="hangouts-participant">
   <template>
     <update-table id="table"></update-table>
     <template if="{{ $.table.isReady }}">
-      <broadcast-viewer
-          id="viewer"
-          space="{{ $.table.appData.space }}"
-          on-master-resumed="{{mute}}"
-          on-master-paused="{{hide}}">
-      </broadcast-viewer>
-      <viewer-heartbeat viewer="{{ $.viewer }}"></viewer-heartbeat>
+      <style>
+        .main-column {
+          float: left;
+          width: 66%;
+        }
+        .side-column {
+          float: right;
+          width: 33%;
+        }
+      </style>
+      <div class="main-column">
+        <viewer-heartbeat>
+          <broadcast-viewer
+            space="{{ $.table.appData.space }}"
+            on-master-resumed="{{mute}}"
+            on-master-paused="{{hide}}">
+          </broadcast-viewer>
+        </viewer-heartbeat>
+      </div>
+      <div class="side-column">
+        <webdis-chat
+           space="{{ $.table.appData.space }}"
+           isAdmin="false"
+           style="width: 100%; height: 100%; display: block">
+        </webdis-chat>
+      </div>
     </template>
   </template>
 
