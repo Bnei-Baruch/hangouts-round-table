@@ -3,20 +3,20 @@
 var gulp = require('gulp');
 
 var $ = require('gulp-load-plugins')({
-  pattern: ['gulp-*', 'main-bower-files', 'uglify-save-license']
+  pattern: ['gulp-*', 'main-bower-files']
 });
 
-gulp.task('scripts', function () {
-  return gulp.src('src/components/**/*.js')
+gulp.task('jshint', function () {
+  return gulp.src(['src/components/**/*.js'])
     .pipe($.jshint())
     .pipe($.jshint.reporter('jshint-stylish'))
     .pipe($.size());
 });
 
-gulp.task('components', function () {
-  return gulp.src(['src/index.html'])
+gulp.task('index', function () {
+  return gulp.src('src/index.html')
     .pipe($.vulcanize({
-      csp: true,
+      inline: true,
       strip: true,
       dest: '.tmp'
     }))
@@ -25,8 +25,40 @@ gulp.task('components', function () {
       spare: true,
       quotes: true
     }))
-    .pipe($.rev())
-    .pipe(gulp.dest('.tmp/components'))
+    .pipe(gulp.dest('dist'))
+    .pipe($.size());
+});
+
+gulp.task('hangouts', function () {
+  var template = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
+    '<Module>\n' +
+    '  <ModulePrefs title="Round Table">\n' +
+    '    <Require feature="rpc" />\n' +
+    '    <Require feature="views" />\n' +
+    '    <Require feature="locked-domain" />\n' +
+    '  </ModulePrefs>\n' +
+    '  <Content type="html"><![CDATA[\n' +
+    '    <%= contents %>' +
+    '    ]]>\n' +
+    '  </Content>\n' +
+    '</Module>\n';
+
+  return gulp.src('src/hangouts.html')
+    .pipe($.replace(/%frontend_url%/g, ''))
+    .pipe($.vulcanize({
+      inline: true,
+      strip: true,
+      dest: '.tmp'
+    }))
+    .pipe($.minifyHtml({
+      empty: true,
+      spare: true,
+      quotes: true
+    }))
+    .pipe($.wrap(template))
+    .pipe($.template())
+    .pipe($.rename('hangouts.xml'))
+    .pipe(gulp.dest('dist'))
     .pipe($.size());
 });
 
@@ -92,4 +124,4 @@ gulp.task('clean', function () {
   return gulp.src(['.tmp', 'dist'], { read: false }).pipe($.rimraf());
 });
 
-gulp.task('build', ['config', 'html', 'partials', 'images', 'fonts']);
+gulp.task('build', ['jshint', 'config', 'index', 'hangouts', 'images', 'fonts']);

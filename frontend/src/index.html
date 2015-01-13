@@ -7,12 +7,16 @@
     <title>Round Table</title>
     <script src="bower_components/webcomponentsjs/webcomponents.js"></script>
     <link rel="import" href="bower_components/app-router/app-router.html">
+    <!-- -->
+    <link rel="import" href="pages/instructor-page.html">
+    <link rel="import" href="pages/dashboard-page.html">
+    <link rel="import" href="pages/not-found-page.html">
   </head>
   <body unresolved>
-    <app-router>
-      <app-route path="/instructor" import="pages/instructor-page.html"></app-route>
-      <app-route path="/dashboard" import="pages/dashboard-page.html"></app-route>
-      <app-route path="*" import="pages/not-found-page.html"></app-route>
+    <app-router trailingSlash="ignore">
+      <app-route path="/instructor" element="instructor-page"></app-route>
+      <app-route path="/dashboard" element="dashboard-page"></app-route>
+      <app-route path="*" element="not-found-page"></app-route>
     </app-router>
   </body>
 </html>
