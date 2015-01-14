@@ -13,6 +13,9 @@ gulp.task('jshint', function () {
     .pipe($.size());
 });
 
+function htmlPipe(pipe) {
+}
+
 gulp.task('index', function () {
   return gulp.src('src/index.html')
     .pipe($.vulcanize({
@@ -50,6 +53,7 @@ gulp.task('hangouts', function () {
       strip: true,
       dest: '.tmp'
     }))
+    .pipe($.replace(/\.\.\/src\/components\/(.*)\.(gif|png|jpeg)/g, 'images/$1.$2'))
     .pipe($.minifyHtml({
       empty: true,
       spare: true,
@@ -62,56 +66,20 @@ gulp.task('hangouts', function () {
     .pipe($.size());
 });
 
-gulp.task('html', ['scripts', 'partials'], function () {
-  var htmlFilter = $.filter('*.html');
-  var jsFilter = $.filter('**/*.js');
-  var cssFilter = $.filter('**/*.css');
-  var assets;
-
-  return gulp.src('src/*.html')
-    .pipe($.inject(gulp.src('.tmp/components/**/*.js'), {
-      read: false,
-      starttag: '<!-- inject:partials -->',
-      addRootSlash: false,
-      addPrefix: '../'
-    }))
-    .pipe(assets = $.useref.assets())
-    .pipe($.rev())
-    .pipe(jsFilter)
-    .pipe($.ngAnnotate())
-    .pipe($.uglify({preserveComments: $.uglifySaveLicense}))
-    .pipe(jsFilter.restore())
-    .pipe(cssFilter)
-    .pipe($.csso())
-    .pipe(cssFilter.restore())
-    .pipe(assets.restore())
-    .pipe($.useref())
-    .pipe($.revReplace())
-    .pipe(htmlFilter)
-    .pipe($.minifyHtml({
-      empty: true,
-      spare: true,
-      quotes: true
-    }))
-    .pipe(htmlFilter.restore())
-    .pipe(gulp.dest('dist'))
-    .pipe($.size());
-});
-
 gulp.task('images', function () {
-  return gulp.src('src/assets/images/**/*')
+  return gulp.src(['src/components/**/*.{png,gif,jpeg}',
+                   'src/bower_components/**/*.{png,gif,jpeg}'])
     .pipe($.cache($.imagemin({
       optimizationLevel: 3,
       progressive: true,
       interlaced: true
     })))
-    .pipe(gulp.dest('dist/assets/images'))
+    .pipe(gulp.dest('dist/images'))
     .pipe($.size());
 });
 
 gulp.task('fonts', function () {
   var fontPaths = $.mainBowerFiles().slice();
-  fontPaths.push('src/assets/fonts/**/*');
 
   return gulp.src(fontPaths)
     .pipe($.filter('**/*.{eot,svg,ttf,woff}'))
@@ -124,4 +92,4 @@ gulp.task('clean', function () {
   return gulp.src(['.tmp', 'dist'], { read: false }).pipe($.rimraf());
 });
 
-gulp.task('build', ['jshint', 'config', 'index', 'hangouts', 'images', 'fonts']);
+gulp.task('build', ['config', 'images', 'fonts', 'index', 'hangouts']);
