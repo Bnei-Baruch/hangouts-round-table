@@ -92,4 +92,4 @@ gulp.task('clean', function () {
   return gulp.src(['.tmp', 'dist'], { read: false }).pipe($.rimraf());
 });
 
-gulp.task('build', ['config', 'images', 'fonts', 'index', 'hangouts']);
+gulp.task('build', ['jshint', 'config', 'images', 'fonts', 'index', 'hangouts']);
