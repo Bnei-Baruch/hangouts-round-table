@@ -1,18 +1,31 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<polymer-element name="heartbeat-dashboard">
+<polymer-element name="heartbeat-dashboard" on-update-heartbeat="{{update}}">
   <template>
+    <style>
+    </style>
     <table>
       <thead>
         <tr>
           <th>Table ID</th>
-          <th>Participants</th>
+          <th>Language</th>
+          <th colspan="{{ maxParticipantsNumber }}">Participants</th>
         </tr>
       </thead>
       <tbody>
-        <template>
+        <template repeat="{{ table in tables }}">
           <tr>
-            <td>{{  }}</td>
+            <td>{{ table.id }}</td>
+            <td>{{ table.language }}</td>
+            <template repeat="{{ participant in table.participants }}">
+              <td style="background: {{ participant.videoColor }};">
+                <h1>{{ participant.name }}</h1>
+                <template if="{{ participant.hasHeartbeat }}">
+                  {{ participant.browser.name }}
+                  {{ participant.browser.version }}
+                </template>
+              </td>
+            </template>
           </tr>
         </template>
       </tbody>
