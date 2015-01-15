@@ -7,15 +7,8 @@
       this.webRtcEndpointId = message.endpointId;
       this.initKurento();
     },
-    initBackendSocket: function () {
-      var that = this;
-
-      // Doesn't work in 'strict' mode
-      this.super();
-
-      this.backendWs.onopen = function () {
-        that.sendMessage({action: 'register-viewer'});
-      };
+    register: function () {
+      this.$.signaling.sendMessage({action: 'register-viewer'});
     },
     initKurento: function () {
       var that = this;

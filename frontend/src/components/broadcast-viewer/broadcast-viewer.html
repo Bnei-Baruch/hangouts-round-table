@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../broadcast-base/broadcast-base.html">
+<link rel="import" href="../backend-signaling/backend-signaling.html">
 
 <polymer-element name="broadcast-viewer" extends="broadcast-base" on-assign-master-endpoint={{assignMasterEndpoint}}>
   <template>
@@ -9,6 +10,8 @@
         background: center transparent url('./spinner.gif') no-repeat;
       }
     </style>
+
+    <backend-signaling space="{{ space }}" on-websocket-open="{{register}}"></backend-signaling>
 
     <video id="remoteVideo" poster="transparent-1x1.png" autoplay></video>
     <shadow></shadow>

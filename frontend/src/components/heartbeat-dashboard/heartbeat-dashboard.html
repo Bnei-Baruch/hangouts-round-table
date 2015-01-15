@@ -1,9 +1,15 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../backend-signaling/backend-signaling.html">
 
-<polymer-element name="heartbeat-dashboard" on-update-heartbeat="{{update}}">
+<polymer-element name="heartbeat-dashboard">
   <template>
     <style>
     </style>
+
+    <user-auth id="user"></user-auth>
+
+    <backend-signaling space="{{ $.user.space }}" on-update-heartbeat="{{update}}"></backend-signaling>
+
     <table>
       <thead>
         <tr>

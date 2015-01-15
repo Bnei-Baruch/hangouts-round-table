@@ -1,9 +1,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../broadcast-base/broadcast-base.html">
+<link rel="import" href="../backend-signaling/backend-signaling.html">
 
 <polymer-element name="broadcast-master" extends="broadcast-base" attributes="">
   <template>
     <user-auth id="user"></user-auth>
+
+    <backend-signaling space="{{ space }}" on-websocket-open="{{initKurento}}"></backend-signaling>
 
     <video id="localVideo" autoplay width="320px" height="240px"></video>
     <shadow></shadow>
