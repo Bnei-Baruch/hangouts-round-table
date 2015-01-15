@@ -104,8 +104,8 @@
         var hangoutParticipant = hangoutParticipants[index];
         if (hangoutParticipant.person) {
           result.push({
-            id: hangoutParticipant.id,
-            name: hangoutParticipant.person.displayName
+            participantId: hangoutParticipant.id,
+            participantName: hangoutParticipant.person.displayName
           });
         }
       }
