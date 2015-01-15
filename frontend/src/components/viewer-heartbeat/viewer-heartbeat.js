@@ -29,7 +29,7 @@
         participants: this.getParticipants()
       };
 
-      this.viewer.sendMessage(message);
+      this.$.signaling.sendMessage(message);
     },
     getAverageVideoColor: function () {
       var video = this.viewer.webRtcPeer.remoteVideo;
