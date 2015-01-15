@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <script src="../../bower_components/webcomponentsjs/webcomponents.js"></script>
     <link rel="import" href="webdis-chat.html" />
+    <style>
+      webdis-chat {
+        width: 400px;
+        height: 400px;
+        display: block;
+      }
+    </style>
   </head>
 
   <body unresolved>
@@ -12,9 +19,9 @@
     <core-header-panel>
     <div class="core-header">User chat demo</div>
     <div class="content" fit>
-      <webdis-chat space="default" isAdmin="false" style="width: 400px; height: 400px; display: block"></webdis-chat>
+      <webdis-chat space="default" isAdmin="false"></webdis-chat>
       <br>
-      <webdis-chat space="default" isAdmin="true" style="width: 300px; height: 400px; display: block"></webdis-chat>
+      <webdis-chat space="default" isAdmin="true"></webdis-chat>
     </div>
     </core-header-panel>
 
