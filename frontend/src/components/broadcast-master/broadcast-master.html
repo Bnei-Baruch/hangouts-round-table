@@ -6,7 +6,7 @@
   <template>
     <user-auth id="user"></user-auth>
 
-    <backend-signaling space="{{ space }}" on-websocket-open="{{initKurento}}"></backend-signaling>
+    <backend-signaling id="signaling" space="{{ space }}" on-websocket-open="{{initKurento}}"></backend-signaling>
 
     <video id="localVideo" autoplay width="320px" height="240px"></video>
     <shadow></shadow>

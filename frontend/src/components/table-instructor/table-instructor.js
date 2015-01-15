@@ -5,7 +5,7 @@
     isEnabledChanged: function () {
       this.super();
 
-      this.sendMessage({
+      this.$.signaling.sendMessage({
         action: this.isEnabled ? 'master-resumed': 'master-paused'
       });
     },

@@ -39,7 +39,7 @@
                   that.toggleBroadcast();
                   that.webRtcPeer.processSdpAnswer(sdpAnswer);
                   that.isReady = true;
-                  that.sendMessage({action: 'register-master', endpointId: webRtc.id});
+                  that.$.signaling.sendMessage({action: 'register-master', endpointId: webRtc.id});
                 }));
               }));
             }));
