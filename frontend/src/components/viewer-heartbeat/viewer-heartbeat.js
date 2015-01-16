@@ -5,7 +5,7 @@
     ready: function () {
       var that = this;
 
-      this.viewer = this.querySelector('broadcast-viewer');
+      this.viewer = this.parentNode.querySelector('#' + this.viewerId);
 
       this.snapshotContext = this.$.videoSnapshot.getContext('2d');
 

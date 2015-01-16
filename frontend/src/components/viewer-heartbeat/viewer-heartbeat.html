@@ -3,7 +3,7 @@
 <link rel="import" href="../app-config/app-config.html" />
 <link rel="import" href="../backend-signaling/backend-signaling.html">
 
-<polymer-element name="viewer-heartbeat">
+<polymer-element name="viewer-heartbeat" attributes="viewerId">
   <template>
     <style>
       #videoSnapshot {
@@ -13,14 +13,7 @@
 
     <app-config id="config"></app-config>
 
-    <backend-signaling id="signaling" space="{{ addData.space }}"></backend-signaling>
-
-    <core-ajax
-      id="sendHeartbeat"
-      url="{{ $.config.backendUrl }}/spaces/{{ appData.space }}/tables/{{ tableId }}/heartbeat",
-      method="PUT"
-      contentType="application/json">
-    </core-ajax>
+    <backend-signaling id="signaling" space="{{ viewer.space }}"></backend-signaling>
 
     <canvas
       id="videoSnapshot"

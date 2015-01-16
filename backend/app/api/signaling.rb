@@ -14,6 +14,8 @@ class RoundTable::API
         ws.onmessage do |msg|
           message = JSON.parse(msg)
 
+          warn("Got message %s" % msg)
+
           @@sockets[message['space']] |= [ws]
 
           case message['action']

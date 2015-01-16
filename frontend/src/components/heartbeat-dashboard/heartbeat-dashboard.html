@@ -8,7 +8,19 @@
 
     <user-auth id="user"></user-auth>
 
-    <backend-signaling space="{{ $.user.space }}" on-update-heartbeat="{{update}}"></backend-signaling>
+    <backend-signaling
+        id="signaling"
+        space="{{ $.user.space }}"
+        on-update-heartbeat="{{update}}"
+        on-websocket-open="{{register}}">
+    </backend-signaling>
+
+    {{ tables }}
+
+    <template repeat="{{ value, tableId in tables }}">
+      {{ tableId }}
+      {{ value }}
+    </template>
 
     <table>
       <thead>
@@ -19,9 +31,9 @@
         </tr>
       </thead>
       <tbody>
-        <template repeat="{{ table in tables }}">
+        <template repeat="{{ tableId, table in tables }}">
           <tr>
-            <td>{{ table.id }}</td>
+            <td>{{ table.id }} {{ tableId }}</td>
             <td>{{ table.language }}</td>
             <template repeat="{{ participant in table.participants }}">
               <td style="background: {{ participant.videoColor }};">
