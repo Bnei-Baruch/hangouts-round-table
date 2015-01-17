@@ -19,13 +19,14 @@
           height: 100%;
         }
       </style>
-      <viewer-heartbeat>
-        <broadcast-viewer
+      <broadcast-viewer
+          id="viewer"
           space="{{ $.table.appData.space }}"
+          language="{{ $.table.appData.language }}"
           on-master-resumed="{{mute}}"
           on-master-paused="{{hide}}">
-        </broadcast-viewer>
-      </viewer-heartbeat>
+      </broadcast-viewer>
+      <viewer-heartbeat viewerId="viewer"></viewer-heartbeat>
       <webdis-chat
          space="{{ $.table.appData.space }}"
          isAdmin="false">
