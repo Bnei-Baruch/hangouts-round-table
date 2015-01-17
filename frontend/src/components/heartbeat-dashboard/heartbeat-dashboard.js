@@ -26,22 +26,25 @@
       this.tables = [];
       for (var tableId in this.tablesMap) {
         var table = this.tablesMap[tableId];
-        table.participantsArray = [];
-        for (var participantId in table.participants) {
-          table.participantsArray.push(table.participants[participantId]);
-        }
-        table.participantsArray.sort(function(a,b) {
-          if (a.participantName == b.participantName) {
-            return 0;
-          }
-          if (a.participantName > b.participantName) {
-            return 1;
-          } else {
-            return -1;
-          }
-        });
 
-        this.tables.push(table);
+        if (this.timestamp - table.timestamp <= 10 * this.$.config.updateTableInterval) {
+          table.participantsArray = [];
+          for (var participantId in table.participants) {
+            table.participantsArray.push(table.participants[participantId]);
+          }
+          table.participantsArray.sort(function(a,b) {
+            if (a.participantName == b.participantName) {
+              return 0;
+            }
+            if (a.participantName > b.participantName) {
+              return 1;
+            } else {
+              return -1;
+            }
+          });
+
+          this.tables.push(table);
+        }
       }
     },
     update: function (e, message) {
