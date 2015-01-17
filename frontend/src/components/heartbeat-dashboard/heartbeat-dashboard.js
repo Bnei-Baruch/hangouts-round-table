@@ -3,32 +3,74 @@
 (function () {
   Polymer({
     maxParticipantsNumber: 0,
-    tables: [1,2,3],
     create: function () {
     },
     ready: function () {
-      this.tables = [2,3,4];
+      var that = this;
+
+      this.tables = [];
+      this.tablesMap = {};
+
+      var refresh = function() {
+        that.refresh();
+      };
+
+      setInterval(refresh, this.$.config.dashboardRefreshInterval);
     },
     register: function() {
       this.$.signaling.sendMessage({});
     },
+    refresh: function() {
+      this.timestamp = new Date().getTime();
+
+      this.tables = [];
+      for (var tableId in this.tablesMap) {
+        var table = this.tablesMap[tableId];
+        table.participantsArray = [];
+        for (var participantId in table.participants) {
+          table.participantsArray.push(table.participants[participantId]);
+        }
+        table.participantsArray.sort(function(a,b) {
+          if (a.participantName == b.participantName) {
+            return 0;
+          }
+          if (a.participantName > b.participantName) {
+            return 1;
+          } else {
+            return -1;
+          }
+        });
+
+        this.tables.push(table);
+      }
+    },
     update: function (e, message) {
+      this.timestamp = new Date().getTime();
+
       if (message.participants.length > this.maxParticipantsNumber) {
         this.maxParticipantsNumber = message.participants.length;
       }
 
-      if (!(message.tableId in this.tables)) {
-        this.tables[message.tableId] = {
+      if (!(message.tableId in this.tablesMap)) {
+        this.tablesMap[message.tableId] = {
           id: message.tableId,
+          space: message.space,
+          language: message.language,
           participants: {}
         };
       }
 
-      var table = this.tables[message.tableId];
-      this.timestamp = new Date().getTime();
+      var table = this.tablesMap[message.tableId];
+      // Validate all users have the same language and space as the table.
+      if (message.language != table.language) {
+        console.error('Wrong language, table:', table.language, 'participant:', message.language);
+      }
+      if (message.space != table.space) {
+        console.error('Wrong space, table:', table.space, 'participant:', message.space);
+      }
 
       message.timestamp = this.timestamp;
-      message.videoColor = '#000';
+      message.videoColor = '#fff';
       if (message.averageVideoColor) {
         message.videoColor = 'rgb(' + message.averageVideoColor.join(',') + ')';
       }
@@ -36,15 +78,10 @@
 
       for (var index in message.participants) {
         var participant = message.participants[index];
-        participant.timestamp = this.timestamp;
         if (!(participant.participantId in table.participants)) {
           table.participants[participant.participantId] = participant;
         }
       }
-      this.async(function() {
-        this.tables = JSON.parse(JSON.stringify(this.tables));
-        console.log(this.tables);
-      });
     }
   });
 })();

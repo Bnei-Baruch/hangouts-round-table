@@ -4,6 +4,7 @@
   Polymer({
     publish: {
       space: 'default',
+      language: 'en'
     },
     initKurento: function () {
     },

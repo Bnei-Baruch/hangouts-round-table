@@ -1,10 +1,32 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer-fontawesome/polymer-fontawesome.html">
+<link rel="import" href="../../bower_components/core-tooltip/core-tooltip.html">
+<link rel="import" href="../app-config/app-config.html" />
 <link rel="import" href="../backend-signaling/backend-signaling.html">
+
 
 <polymer-element name="heartbeat-dashboard">
   <template>
     <style>
+      .no-heartbeat {
+        background: red;
+      }
+
+      .good-heartbeat {
+        color: green;
+      }
+
+      .low-heartbeat {
+        color: red !important;
+      }
+
+      table td {
+        padding: 10px;
+      }
+
     </style>
+
+    <app-config id="config"></app-config>
 
     <user-auth id="user"></user-auth>
 
@@ -15,13 +37,6 @@
         on-websocket-open="{{register}}">
     </backend-signaling>
 
-    {{ tables }}
-
-    <template repeat="{{ value, tableId in tables }}">
-      {{ tableId }}
-      {{ value }}
-    </template>
-
     <table>
       <thead>
         <tr>
@@ -31,17 +46,26 @@
         </tr>
       </thead>
       <tbody>
-        <template repeat="{{ tableId, table in tables }}">
+        <template repeat="{{ table in tables }}">
           <tr>
-            <td>{{ table.id }} {{ tableId }}</td>
+            <td>{{ table.id }}</td>
             <td>{{ table.language }}</td>
-            <template repeat="{{ participant in table.participants }}">
-              <td style="background: {{ participant.videoColor }};">
-                <h1>{{ participant.name }}</h1>
-                <template if="{{ participant.hasHeartbeat }}">
-                  {{ participant.browser.name }}
-                  {{ participant.browser.version }}
-                </template>
+            <template repeat="{{ participant in table.participantsArray }}">
+              <td class="{{ participant.timestamp ? '' : 'no-heartbeat' }}">
+                <core-tooltip>
+                  <font-awesome icon="video-camera"
+                    size="2x" style="color: {{ participant.videoColor }}">
+                  </font-awesome>
+                  <font-awesome icon="heart"
+                    size="2x"
+                    class="{{ (timestamp - participant.timestamp) <= (2 * $.config.sendHeartbeatInterval) ? 'good-heartbeat' : 'low-hearbeat'}}">
+                  </font-awesome>
+                  <div tip>
+                    <p>{{ participant.participantId }}</p>
+                    <p><strong>{{ participant.participantName }}</strong></p>
+                    <p>{{ participant.browser.name }} {{ participant.browser.version }}</p>
+                  </div>
+                </core-tooltip>
               </td>
             </template>
           </tr>
