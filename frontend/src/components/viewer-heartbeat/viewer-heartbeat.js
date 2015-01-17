@@ -21,7 +21,7 @@
       var message = {
         action: 'update-heartbeat',
         tableId: gapi.hangout.getHangoutId(),
-        participantId: participant.id,
+        participantId: participant.person.id,
         participantName: participant.person.displayName,
         averageVideoColor: this.getAverageVideoColor(),
         soundLevel: this.getSoundLevel(),
@@ -104,7 +104,7 @@
         var hangoutParticipant = hangoutParticipants[index];
         if (hangoutParticipant.person) {
           result.push({
-            participantId: hangoutParticipant.id,
+            participantId: hangoutParticipant.person.id,
             participantName: hangoutParticipant.person.displayName
           });
         }

@@ -64,6 +64,8 @@
       }
 
       var table = this.tablesMap[message.tableId];
+      table.timestamp = this.timestamp;
+
       // Validate all users have the same language and space as the table.
       if (message.language != table.language) {
         console.error('Wrong language, table:', table.language, 'participant:', message.language);

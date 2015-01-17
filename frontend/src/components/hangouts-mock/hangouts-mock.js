@@ -5,9 +5,9 @@
 
 (function () {
   var participants = [
-    { id: 1, person: { displayName: "Fake Participant 1" } },
-    { id: 2, person: { displayName: "Fake Participant 2" } },
-    { id: 3, person: { displayName: "Fake Participant 3" } }
+    { id: 1, person: { id: 1, displayName: "Fake Participant 1" } },
+    { id: 2, person: { id: 2, displayName: "Fake Participant 2" } },
+    { id: 3, person: { id: 3, displayName: "Fake Participant 3" } }
   ];
 
   window.gapi = {};
@@ -41,6 +41,7 @@
       return {
         id: 1,
         person: {
+          id: 1,
           displayName: "Fake Participant 1"
         }
       };
