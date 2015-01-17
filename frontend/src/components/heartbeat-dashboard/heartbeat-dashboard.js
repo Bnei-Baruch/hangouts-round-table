@@ -32,14 +32,11 @@
           for (var participantId in table.participants) {
             table.participantsArray.push(table.participants[participantId]);
           }
-          table.participantsArray.sort(function(a,b) {
-            if (a.participantName == b.participantName) {
-              return 0;
-            }
-            if (a.participantName > b.participantName) {
-              return 1;
-            } else {
+          table.participantsArray.sort(function(a, b) {
+            if (a.participantName < b.participantName) {
               return -1;
+            } else {
+              return Number(a.participantName > b.participantName);
             }
           });
 
@@ -65,10 +62,10 @@
 
       var table = this.tablesMap[message.tableId];
       // Validate all users have the same language and space as the table.
-      if (message.language != table.language) {
+      if (message.language !== table.language) {
         console.error('Wrong language, table:', table.language, 'participant:', message.language);
       }
-      if (message.space != table.space) {
+      if (message.space !== table.space) {
         console.error('Wrong space, table:', table.space, 'participant:', message.space);
       }
 
