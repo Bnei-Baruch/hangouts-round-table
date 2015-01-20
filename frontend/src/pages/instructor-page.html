@@ -9,25 +9,23 @@
   <template>
     <header-layout header="Instructor" authRequired="true">
       <user-auth id="user"></user-auth>
-      <template if="{{ $.user.loggedIn }}">
-        <style>
-          div {
-            float: left;
-            width: 58%;
-          }
-          webdis-chat {
-            float: right;
-            width: 42%;
-            height: 100%;
-            display: block;
-          }
-        </style>
-        <div>
-          <table-instructor space="{{ $.user.space }}"></table-instructor>
-          <table-list space="{{ $.user.space }}"></table-list>
-        </div>
-        <webdis-chat space="{{ $.user.space }}" isAdmin="true"></webdis-chat>
-      </template>
+      <style>
+        div {
+          float: left;
+          width: 58%;
+        }
+        webdis-chat {
+          float: right;
+          width: 42%;
+          height: 100%;
+          display: block;
+        }
+      </style>
+      <div>
+        <table-instructor space="{{ $.user.space }}"></table-instructor>
+        <table-list space="{{ $.user.space }}"></table-list>
+      </div>
+      <webdis-chat space="{{ $.user.space }}" isAdmin="true"></webdis-chat>
     </header-layout>
   </template>
 </polymer-element>

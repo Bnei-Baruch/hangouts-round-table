@@ -24,7 +24,7 @@
         participantId: participant.person.id,
         participantName: participant.person.displayName,
         averageVideoColor: this.getAverageVideoColor(),
-        soundLevel: this.getSoundLevel(),
+        soundLevel: null, // TBD: this.getSoundLevel(),
         browser: window.bowser,
         participants: this.getParticipants()
       };
