@@ -20,6 +20,7 @@
 
       var message = {
         action: 'update-heartbeat',
+        channel: 'update-heartbeat',
         tableId: gapi.hangout.getHangoutId(),
         participantId: participant.person.id,
         participantName: participant.person.displayName,

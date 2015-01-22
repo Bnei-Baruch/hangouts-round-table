@@ -1,4 +1,5 @@
 class RoundTable::API
+  ... TBD - should be hash of hashes... or separate to another hash.
   @@sockets = Hash.new { |sockets, space| sockets[space] = []; }
   @@master_endpoint_ids = { }
 
@@ -16,7 +17,7 @@ class RoundTable::API
 
           warn("Got message %s" % msg)
 
-          @@sockets[message['space']] |= [ws]
+          @@sockets[message['space']]['broadcast'] |= [ws]
 
           case message['action']
             when 'register-master'
@@ -30,21 +31,30 @@ class RoundTable::API
               end
             when 'master-resumed', 'master-paused', 'update-heartbeat'
               broadcast_message(message['space'], message)
+            when 'subscribe'
+              @@sockets[message['space']][message['channel']] |= [ws]
           end
         end
         ws.onclose do
+          ... TBD
           sockets = @@sockets.values.select { |values| values.include? ws }
           sockets.delete(ws)
           warn("Websocket closed")
         end
-      end
-    end
-  end
+      end  # request.websocket do
+    end  # request.websocket?
+  end  # get '/socket' do
 
 
   def broadcast_message(space, message)
-    encoded_message = message.to_json
-    EM.next_tick { @@sockets[space].each{|sock| sock.send(encoded_message) } }
+    # Don't broadcast messages which have 'channel' attribute, send them to
+    # sockets which specifically subscribed to that channel.
+    if message.key?('channel') && message['channel']
+      ... TBD
+    else
+      encoded_message = message.to_json
+      EM.next_tick { @@sockets[space].each{|sock| sock.send(encoded_message) } }
+    end
   end
 
   def get_viewer_response(space)

@@ -18,7 +18,7 @@
       setInterval(refresh, this.$.config.dashboardRefreshInterval);
     },
     register: function() {
-      this.$.signaling.sendMessage({});
+      this.$.signaling.sendMessage({'action': 'subscribe', 'channel': 'update-heartbeat'});
     },
     refresh: function() {
       this.timestamp = new Date().getTime();
