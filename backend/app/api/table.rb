@@ -1,7 +1,7 @@
 class RoundTable::API
   # Update table
   put '/spaces/:space/tables/:id' do
-    body = JSON.parse(request.body.read)
+    body = JSON.parse(request.body.read.force_encoding('UTF-8'))
     body['id'] = params[:id]
     body['space'] = params[:space]
     body['timestamp'] = redis.time[0]
@@ -46,7 +46,7 @@ class RoundTable::API
 
     live_tables = []
     redis.mget(*keys).each do |one_table|
-      one_table = JSON.parse(one_table)
+      one_table = JSON.parse(one_table.force_encoding('UTF-8'))
       if one_table['timestamp'] + config['table']['time_to_live'] < time_now
         table_id = "table_#{one_table['space']}_#{one_table['id']}"
         redis.del(table_id)
