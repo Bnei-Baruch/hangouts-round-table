@@ -1,8 +1,12 @@
 'use strict';
 
 (function () {
+  var loggedIn = false;
+
   Polymer({
-    loggedIn: false,
+    get loggedIn() {
+      return loggedIn;
+    },
     ready: function () {
       var cookieValue = this.$.cookie.value;
 
@@ -36,11 +40,11 @@
       for (var key in authData) {
         this[key] = authData[key];
       }
-      this.loggedIn = true;
+      loggedIn = true;
     },
     logout: function () {
       this.$.cookie.deleteCookie();
-      this.loggedIn = false;
+      loggedIn = false;
       this.$.loginModal.toggle();
     }
   });
