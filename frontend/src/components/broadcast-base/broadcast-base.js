@@ -6,6 +6,13 @@
       space: 'default',
       language: 'en'
     },
+    ready: function () {
+      var that = this;
+
+      window.onbeforeunload = function () {
+        that.shutdown();
+      };
+    },
     initKurento: function () {
     },
     setBandwidth: function (sdp) {
@@ -31,6 +38,16 @@
     },
     onError: function (error) {
       console.error(error);
+    },
+    shutdown: function () {
+      if (this.webRtcPeer) {
+        this.webRtcPeer.dispose();
+        this.webRtcPeer = null;
+      }
+
+      if (this.webRtcEndpoint) {
+        this.webRtcEndpoint.release();
+      }
     }
   });
 

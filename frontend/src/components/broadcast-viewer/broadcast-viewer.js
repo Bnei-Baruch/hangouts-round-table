@@ -13,10 +13,7 @@
     initKurento: function () {
       var that = this;
 
-      if (this.webRtcPeer) {
-        this.webRtcPeer.dispose();
-        this.webRtcPeer = null;
-      }
+      this.shutdown();
 
       this.webRtcPeer = kurentoUtils.WebRtcPeer.startRecvOnly(
         this.$.remoteVideo, function (sdpOffer) {
@@ -29,6 +26,8 @@
                 kurentoClient.getMediaobjectById(pipelineId, that.cancelOnError(function(error, pipeline) {
 
                   pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, webRtcViewer){
+
+                    that.webRtcEndpoint = webRtcViewer;
 
                     webRtcMaster.connect(webRtcViewer, that.cancelOnError(function(){
                       console.log('Connection established');
