@@ -33,6 +33,8 @@
             kurentoClient.create('MediaPipeline', that.cancelOnError(function(error, pipeline) {
 
               pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, webRtc){
+                that.webRtcEndpoint = webRtc;
+
                 sdpOffer = that.setBandwidth(sdpOffer);
 
                 webRtc.processOffer(sdpOffer, that.cancelOnError(function(error, sdpAnswer){
