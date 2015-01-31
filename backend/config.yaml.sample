@@ -1,5 +1,6 @@
 ---
 hangout_app_gid: '979640007671'
+bad_user_agent_url: https://rt-dev.kbb1.com/#/bad-user-agent
 auth:
   session_ttl: 86400
 table:

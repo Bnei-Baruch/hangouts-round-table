@@ -1,0 +1,20 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../layouts/header-layout.html">
+<link rel="import" href="../components/user-agent/user-agent.html">
+
+<polymer-element name="bad-user-agent-page" noscript>
+  <template>
+    <header-layout header="Unsupported User Agent">
+      <style>
+      </style>
+      <h2>
+        <user-agent show="message"></user-agent>
+        <div>
+          Your browser is not supported or you are trying to access from a mobile device or a tablet.<br>
+          Currently we only support Chrome and Firefox from desktop or laptop computers only.
+        </div>
+      </h2>
+    </header-layout>
+  </template>
+</polymer-element>
+

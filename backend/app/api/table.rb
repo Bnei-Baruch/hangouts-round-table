@@ -10,9 +10,14 @@ class RoundTable::API
 
   # Get free table
   get '/spaces/:space/tables/:language/free' do
-    table_id = get_free_table_id(params[:space], params[:language])
-    redirect get_hangouts_url(table_id, params[:space],
-                              params[:language], params[:onair])
+    browser = Browser.new(:ua => request.user_agent)
+    if not browser.mobile? and (browser.chrome? or browser.firefox?)
+      table_id = get_free_table_id(params[:space], params[:language])
+      redirect get_hangouts_url(table_id, params[:space],
+                                params[:language], params[:onair])
+    else
+      redirect "#{config['bad_user_agent_url']}?from=#{request.url}"
+    end
   end
 
   get '/spaces/:space/tables' do

@@ -4,6 +4,10 @@
   var backendWs;
 
   Polymer({
+    publish: {
+      space: null,
+      language: null
+    },
     ready: function() {
       if (backendWs === undefined) {
         this.initBackendSocket();

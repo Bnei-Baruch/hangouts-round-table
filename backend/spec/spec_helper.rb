@@ -22,3 +22,4 @@ require_relative '../app/main'
 
 def app; RoundTable::API.new; end
 def redis; app.helpers.redis; end
+def config; app.helpers.config; end

@@ -29,6 +29,7 @@
     "ajax-form": "~1.4.0",
     "app-router": "~2.3.2",
     "bowser": "~0.7.2",
-    "polymer-fontawesome": "~1.0.0-beta.2"
+    "polymer-fontawesome": "~1.0.0-beta.2",
+    "ua-parser-js": "~0.7.3"
   }
 }

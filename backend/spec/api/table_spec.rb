@@ -4,6 +4,7 @@ require_relative '../spec_helper'
 describe RoundTable::API do
   before do
     redis.flushdb
+    #app.helpers.request.env['HTTP_USER_AGENT'] = 'Chrome/39.0.2171.99'
   end
 
   it "should update table" do
@@ -20,6 +21,13 @@ describe RoundTable::API do
     expect(table_test_from_db['timestamp']).to be > 1416028759
     table_test_from_db.delete('timestamp')
     expect(test_table).to eq(table_test_from_db)
+  end
+
+  it "should redirect to bad user agent page" do
+    get("/spaces/fake-space/tables/en/free",
+        {}, { 'HTTP_USER_AGENT' => 'FakeUserAgent/1.0' })
+    expect(last_response).to be_redirect
+    expect(last_response.location).to start_with(config['bad_user_agent_url'])
   end
 
   it "should redirect to a free table" do
@@ -102,7 +110,8 @@ describe RoundTable::API do
 
   def get_free_table_url(language="fake-language", url_params: {})
     query = Rack::Utils.build_query(url_params)
-    get "/spaces/fake-space/tables/#{language}/free?#{query}"
+    get("/spaces/fake-space/tables/#{language}/free?#{query}",
+        {}, { 'HTTP_USER_AGENT' => 'Chrome/39.0.2171.99' })
     expect(last_response).to be_redirect
     last_response.location
   end

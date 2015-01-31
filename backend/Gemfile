@@ -6,6 +6,7 @@ gem 'sinatra'
 gem 'sinatra-websocket'
 gem 'redis'
 gem 'bcrypt'
+gem 'browser'
 
 group :development, :test do
   gem 'awesome_print'
