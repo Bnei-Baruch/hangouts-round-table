@@ -1,11 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<polymer-element name="user-agent" attributes="show">
-  <script src="../../bower_components/ua-parser-js/dist/ua-parser.min.js"></script>
+<polymer-element name="user-agent">
+  <script src="../../bower_components/bowser/bowser.js"></script>
   <script src="user-agent.js"></script>
-
-  <template id="user-agent">
-    <link rel="stylesheet" href="user-agent.css">
-    <div>{{ getUserAgentMessage() }}<div>
-  </template>
 </polymer-element>
