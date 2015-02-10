@@ -12,7 +12,8 @@ class RoundTable::API
   get '/spaces/:space/tables/:language/free' do
     browser = Browser.new(:ua => request.user_agent)
     if not browser.mobile? and (browser.chrome? or browser.firefox?)
-      table_id = get_free_table_id(params[:space], params[:language])
+      table_id = get_free_table_id(params[:space], params[:language],
+                                   params[:onair])
       redirect get_hangouts_url(table_id, params[:space],
                                 params[:language], params[:onair])
     else
@@ -70,12 +71,45 @@ class RoundTable::API
     live_tables
   end
 
-  def get_free_table_id(space, language)
+  def get_free_table_id(space, language, onair)
     time_now = redis.time[0]
     live_tables = get_space_tables(space, language, time_now)
     table = choose_table(live_tables, time_now)
     return table['id'] if table
-    nil
+
+    # No free table found, create a new one
+
+    client = Google::APIClient.new(
+      :application_name => 'Example Ruby application',
+      :application_version => '1.0.0'
+    )
+    plus = client.discovered_api('plus')
+    key = Google::APIClient::KeyUtils.load_from_pkcs12('round-table-dev.p12', 'notasecret')
+    client.authorization = Signet::OAuth2::Client.new(
+      :token_credential_uri => 'https://accounts.google.com/o/oauth2/token',
+      :audience => 'https://accounts.google.com/o/oauth2/token',
+    #  :scope => 'https://www.googleapis.com/auth/plus.login',
+    #  :scope => 'https://www.googleapis.com/auth/userinfo.profile',
+      :scope => ['https://www.googleapis.com/auth/plus.me'],
+    #  :issuer => '979640007671@developer.gserviceaccount.com',
+      :issuer => '979640007671-5an0asug198fle5ql60kj539jachguj0@developer.gserviceaccount.com',
+      :signing_key => key)
+    client.authorization.fetch_access_token!
+    kuku = client.discovered_apis.map { |a| "%s %s %s %s %s %s" % [a.id, a.name, a.inspect, a.method_base, a.discovery_document, a.document_base]  }.join("\n")
+    puts kuku
+    result = client.execute(
+      :api_method => plus.activities.list,
+      :parameters => {'collection' => 'public', 'userId' => 'me'}
+    )
+    puts result.data
+    response = client.execute!(
+      :http_method => :get,
+      :uri => URI(get_hangouts_url("", space, language, onair)),
+      :authenticated => true
+    )
+    res = response.data
+    require 'pry'; binding.pry
+    res = Net::HTTP.get_response(URI(get_hangouts_url("", space, language, onair)))
   end
 
   def choose_table(tables, time_now)
