@@ -5,6 +5,7 @@
 backend/Gemfile.lock
 backend/coverage
 backend/config.yaml
+backend/consts.yaml
 frontend/.tmp
 frontend/dist
 frontend/node_modules

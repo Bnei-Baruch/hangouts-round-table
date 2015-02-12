@@ -7,8 +7,6 @@ gem 'sinatra-websocket'
 gem 'redis'
 gem 'bcrypt'
 gem 'browser'
-gem 'google-api-client', '>= 0.8.2',
-  :require => ['google/api_client', 'google/api_client/auth/installed_app']
 
 group :development, :test do
   gem 'awesome_print'

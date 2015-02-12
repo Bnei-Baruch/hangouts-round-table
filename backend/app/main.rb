@@ -4,7 +4,7 @@ Bundler.require(:default, ENV['RACK_ENV'] || :development)
 
 module RoundTable; end
 
-require_relative 'helpers/config'
+require_relative 'helpers/yaml'
 require_relative 'helpers/redis'
 
 class RoundTable::API < Sinatra::Base
@@ -30,7 +30,7 @@ class RoundTable::API < Sinatra::Base
     200
   end
 
-  helpers RoundTable::Helpers::Config
+  helpers RoundTable::Helpers::Yaml
   helpers RoundTable::Helpers::DB
   helpers RoundTable::Helpers
 end

@@ -29,10 +29,9 @@ describe RoundTable::API do
     expect(last_response.location).to start_with(config['bad_user_agent_url'])
   end
 
-  it "should create new table id" do
-    Net::HTTP.stub(:get_response).and_return(...)
-    #table_url = get_free_table_url()
-    verify_free_table_id('fake-table-id')
+  it "should take the new table ID from pre-generated IDs" do
+    app.stub(:consts).and_return(['pre-generated-id'])
+    verify_free_table_id('pre-generated-id')
   end
 
   it "should redirect to a free table" do

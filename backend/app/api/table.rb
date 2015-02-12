@@ -5,7 +5,9 @@ class RoundTable::API
     body['id'] = params[:id]
     body['space'] = params[:space]
     body['timestamp'] = redis.time[0]
-    redis.set("table_#{params[:space]}_#{params[:id]}", JSON.generate(body))
+    table_key = "table_#{params[:space]}_#{params[:id]}"
+    redis.set(table_key, JSON.generate(body))
+    redis.expire(table_key, config['table']['time_to_live'])
   end
 
   # Get free table
@@ -53,18 +55,13 @@ class RoundTable::API
     live_tables = []
     redis.mget(*keys).each do |one_table|
       one_table = JSON.parse(one_table.force_encoding('UTF-8'))
-      if one_table['timestamp'] + config['table']['time_to_live'] < time_now
-        table_id = "table_#{one_table['space']}_#{one_table['id']}"
-        redis.del(table_id)
-      else
-        if is_table_live(one_table, time_now) and (language.nil? or language == one_table['language'])
-          one_table['hangouts_url'] = get_hangouts_url(
-            one_table['id'],
-            one_table['space'],
-            one_table['language']
-          )
-          live_tables << one_table
-        end
+      if is_table_live(one_table, time_now) and (language.nil? or language == one_table['language'])
+        one_table['hangouts_url'] = get_hangouts_url(
+          one_table['id'],
+          one_table['space'],
+          one_table['language']
+        )
+        live_tables << one_table
       end
     end if not keys.empty?
 
@@ -75,41 +72,18 @@ class RoundTable::API
     time_now = redis.time[0]
     live_tables = get_space_tables(space, language, time_now)
     table = choose_table(live_tables, time_now)
-    return table['id'] if table
 
-    # No free table found, create a new one
+    if table
+      table_id = table['id']
+    else
+      existing_ids = get_existing_table_ids
 
-    client = Google::APIClient.new(
-      :application_name => 'Example Ruby application',
-      :application_version => '1.0.0'
-    )
-    plus = client.discovered_api('plus')
-    key = Google::APIClient::KeyUtils.load_from_pkcs12('round-table-dev.p12', 'notasecret')
-    client.authorization = Signet::OAuth2::Client.new(
-      :token_credential_uri => 'https://accounts.google.com/o/oauth2/token',
-      :audience => 'https://accounts.google.com/o/oauth2/token',
-    #  :scope => 'https://www.googleapis.com/auth/plus.login',
-    #  :scope => 'https://www.googleapis.com/auth/userinfo.profile',
-      :scope => ['https://www.googleapis.com/auth/plus.me'],
-    #  :issuer => '979640007671@developer.gserviceaccount.com',
-      :issuer => '979640007671-5an0asug198fle5ql60kj539jachguj0@developer.gserviceaccount.com',
-      :signing_key => key)
-    client.authorization.fetch_access_token!
-    kuku = client.discovered_apis.map { |a| "%s %s %s %s %s %s" % [a.id, a.name, a.inspect, a.method_base, a.discovery_document, a.document_base]  }.join("\n")
-    puts kuku
-    result = client.execute(
-      :api_method => plus.activities.list,
-      :parameters => {'collection' => 'public', 'userId' => 'me'}
-    )
-    puts result.data
-    response = client.execute!(
-      :http_method => :get,
-      :uri => URI(get_hangouts_url("", space, language, onair)),
-      :authenticated => true
-    )
-    res = response.data
-    require 'pry'; binding.pry
-    res = Net::HTTP.get_response(URI(get_hangouts_url("", space, language, onair)))
+      table_id = consts['hangout_ids'].detect do |id|
+        not existing_ids.include? id
+      end
+    end
+
+    table_id
   end
 
   def choose_table(tables, time_now)
@@ -130,5 +104,10 @@ class RoundTable::API
 
   def is_table_live(table, time_now)
     table['timestamp'] + config['table']['polling_interval'] > time_now
+  end
+
+  def get_existing_table_ids
+    keys = redis.keys("table_*_*" )
+    keys.map { |key| key.split('_').last }
   end
 end
