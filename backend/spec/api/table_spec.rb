@@ -29,9 +29,30 @@ describe RoundTable::API do
     expect(last_response.location).to start_with(config['bad_user_agent_url'])
   end
 
-  it "should take the new table ID from pre-generated IDs" do
-    app.stub(:consts).and_return(['pre-generated-id'])
-    verify_free_table_id('pre-generated-id')
+  it "should create tables with pre-generated ids" do
+    # TODO: correct name and test
+    fake_consts = {
+      :hangout_ids => [
+        'pre-generated-id-1',
+        'pre-generated-id-2',
+      ]
+    }
+
+    RoundTable::API.any_instance.stub(:consts).and_return(fake_consts)
+    verify_free_table_id('pre-generated-id-1')
+
+    update_fake_table('pre-generated-id-1', 10)
+    verify_free_table_id('pre-generated-id-2')
+
+    update_fake_table('pre-generated-id-2', 10)
+    verify_free_table_id('')
+  end
+
+  it "should create a new table if all tables are full" do
+    # TODO: correct name and test
+    update_fake_table(1, 10)
+    update_fake_table(2, 10)
+    verify_free_table_id("")
   end
 
   it "should redirect to a free table" do
@@ -61,16 +82,6 @@ describe RoundTable::API do
     verify_free_table_id(3, 'he')
   end
 
-  it "should create a table there are no tables" do
-    get_free_table_url()
-  end
-
-  it "should create a table if all tables are full" do
-    update_fake_table(1, 10)
-    update_fake_table(2, 10)
-    verify_free_table_id("")
-  end
-
   it "should create a table with onair param" do
     table_url = get_free_table_url(url_params: { :onair => "yes" })
     expect(table_url).to include("&hso=0")
@@ -97,13 +108,14 @@ describe RoundTable::API do
   end
 
   def update_fake_table(table_id, participants_number, space: "fake-space", language: "fake-language")
+    participants = ["Haim", "Moshe", "Jude", "Avi", "Moti", "Tzvika", "Oded",
+                    "Valik", "Misha", "Igor"]
     test_table = {
       "id" => table_id.to_s,
       "language" => language,
       "space" => space,
-      "participants" => ["Haim", "Moshe", "Jude", "Avi", "Moti", "Tzvika", "Oded", "Valik", "Misha", "Igor"],
     }
-    test_table['participants'] = test_table['participants'][0..participants_number-1]
+    test_table['participants'] = participants[0..participants_number-1]
     put "/spaces/#{space}/tables/#{table_id}", JSON.generate(test_table)
   end
 
