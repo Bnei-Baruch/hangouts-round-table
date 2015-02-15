@@ -4,10 +4,18 @@ class RoundTable::API
     body = JSON.parse(request.body.read.force_encoding('UTF-8'))
     body['id'] = params[:id]
     body['space'] = params[:space]
-    body['timestamp'] = redis.time[0]
-    table_key = "table_#{params[:space]}_#{params[:id]}"
-    redis.set(table_key, JSON.generate(body))
-    redis.expire(table_key, config['table']['time_to_live'])
+    update_table(params[:id], params[:space], body)
+  end
+
+  def update_table(id, space, table)
+    raise "Bad table id" unless not table.key?('id') or table['id'] == id
+    raise "Bad table space" unless not table.key?('space') or table['space'] == space
+    table['id'] = id
+    table['space'] = space
+    table['timestamp'] = redis.time[0]
+    table_key = "table_#{space}_#{id}"
+    redis.set(table_key, JSON.generate(table),
+              {:ex => config['table']['time_to_live']} )
   end
 
   # Get free table
@@ -55,6 +63,7 @@ class RoundTable::API
     live_tables = []
     redis.mget(*keys).each do |one_table|
       one_table = JSON.parse(one_table.force_encoding('UTF-8'))
+
       if is_table_live(one_table, time_now) and (language.nil? or language == one_table['language'])
         one_table['hangouts_url'] = get_hangouts_url(
           one_table['id'],
@@ -73,14 +82,20 @@ class RoundTable::API
     live_tables = get_space_tables(space, language, time_now)
     table = choose_table(live_tables, time_now)
 
-    if table
+    if not table.nil?
       table_id = table['id']
     else
+      table = { 'participants' => [], 'language' => language }
       existing_ids = get_existing_table_ids
-
       table_id = consts['hangout_ids'].detect do |id|
         not existing_ids.include? id
       end
+    end
+
+    if not table_id.nil?
+      # Add one user to table
+      table['participants'].push('Unknown')
+      update_table(table_id, space, table)
     end
 
     table_id

@@ -23,8 +23,7 @@ class RoundTable::API
   def create_auth_token
     token = SecureRandom.urlsafe_base64
     key = "auth_session_#{token}"
-    redis.set(key, true)
-    redis.expire(key, config['auth']['session_ttl'])
+    redis.set(key, true, {:ex => config['auth']['session_ttl']})
     token
   end
 
