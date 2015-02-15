@@ -73,6 +73,16 @@ describe RoundTable::API do
     verify_free_table_id('pre-generated-id-2', space: "two")
     verify_free_table_id('pre-generated-id-2', space: "two")
     expect(get_table('pre-generated-id-2', 'two')['participants'].length).to be(2)
+    verify_free_table_id('pre-generated-id-2', space: "two")
+    verify_free_table_id('pre-generated-id-2', space: "two")
+    verify_free_table_id('pre-generated-id-2', space: "two")
+    verify_free_table_id('pre-generated-id-2', space: "two")
+    verify_free_table_id('pre-generated-id-2', space: "two")
+    verify_free_table_id('pre-generated-id-2', space: "two")
+    verify_free_table_id('pre-generated-id-2', space: "two")
+    verify_free_table_id('pre-generated-id-2', space: "two")
+    expect(get_table('pre-generated-id-2', 'two')['participants'].length).to be(10)
+    verify_free_table_id('', space: "two")
     verify_free_table_id('', space: "three")
   end
 
