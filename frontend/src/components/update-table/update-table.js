@@ -54,9 +54,11 @@
     },
     getParticipantsJSON: function () {
       var result = {
-        language: this.appData.language,
         participants: []
       };
+      for (var key in this.appData) {
+        result[key] = this.appData[key];
+      }
 
       var hangoutParticipants = gapi.hangout.getParticipants();
       for (var index in hangoutParticipants) {

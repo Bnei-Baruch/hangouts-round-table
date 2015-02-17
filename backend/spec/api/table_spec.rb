@@ -118,6 +118,11 @@ describe RoundTable::API do
     expect(table_url).to include("&hso=0")
   end
 
+  it "should redirect to a different table for subspace" do
+    verify_free_table_id('pre-generated-id-1', space: "one", subspace: "1")
+    verify_free_table_id('pre-generated-id-2', space: "one", subspace: "2")
+  end
+
   it "should return space tables" do
     update_fake_table(1, 5, space: "space1")
     update_fake_table(2, 6, space: "space2")
@@ -150,8 +155,9 @@ describe RoundTable::API do
     put "/spaces/#{space}/tables/#{table_id}", JSON.generate(test_table)
   end
 
-  def verify_free_table_id(table_id, language: "fake-language", space: "fake-space")
-    table_url = get_free_table_url(language: language, space: space)
+  def verify_free_table_id(table_id, language: "fake-language",
+                           space: "fake-space", subspace: "")
+    table_url = get_free_table_url(language: language, space: space, subspace: subspace)
     expect(table_url).to include("_/#{table_id}?")
   end
 
@@ -159,10 +165,16 @@ describe RoundTable::API do
     JSON.parse(redis.get("table_#{space}_#{id}"))
   end
 
-  def get_free_table_url(language: "fake-language", space: "fake-space", url_params: {})
+  def get_free_table_url(language: "fake-language", space: "fake-space",
+                         url_params: {}, subspace: "")
     query = Rack::Utils.build_query(url_params)
-    get("/spaces/#{space}/tables/#{language}/free?#{query}",
-        {}, { 'HTTP_USER_AGENT' => 'Chrome/39.0.2171.99' })
+    if subspace.empty?
+      get("/spaces/#{space}/tables/#{language}/free?#{query}",
+          {}, { 'HTTP_USER_AGENT' => 'Chrome/39.0.2171.99' })
+    else
+      get("/spaces/#{space}/tables/#{language}/fixed/#{subspace}?#{query}",
+          {}, { 'HTTP_USER_AGENT' => 'Chrome/39.0.2171.99' })
+    end
     expect(last_response).to be_redirect
     last_response.location
   end
