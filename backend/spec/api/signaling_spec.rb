@@ -6,26 +6,53 @@ describe RoundTable::API do
     expect(last_response).to be_bad_request
   end
 
-  it "should register endpoint for a specific role" do
-    send_ws_message("kuku")
+  it "should notify clients on paused broadcast" do
+    message = {
+      'space' => 'fake-space',
+      'action' => 'master-paused'
+    }
+
+    expect(WebsocketMock.any_instance).to receive(:send)
+
+    send_ws_message(message)
   end
 
-  def send_ws_message(msg)
-    app.helpers.request.stub(:websocket?).and_return(true)
-    app.helpers.request.stub(:websocket).and_return(WebsocketMock.new(msg))
+  xit "should notify clients on resumed broadcast" do
+  end
+
+  # xit "should register endpoint for a specific role" do
+  #   message = {
+  #     'space' => 'fake-space',
+  #     'action' => 'register-master',
+  #     'endpoint' => 'fake-endpoint-id',
+  #   }
+  #   send_ws_message(message)
+  # end
+
+  def send_ws_message(message)
+    any_instance = Sinatra::Request.any_instance
+    any_instance.stub(:websocket?).and_return(true)
+
+    json_message = JSON.generate(message)
+    ws_mock = WebsocketMock.new(json_message)
+    any_instance.stub(:websocket).and_yield(ws_mock)
+
     get '/socket'
+
+    ws_mock
   end
 
   class WebsocketMock
 
-    def initialize(msg)
-      @msg = msg
+    def initialize(message)
+      @message = message
     end
 
-    def send
+    def send(message)
     end
 
     def onmessage
+      yield @message
     end
 
     def onclose
