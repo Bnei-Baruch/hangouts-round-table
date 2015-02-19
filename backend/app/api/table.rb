@@ -108,6 +108,10 @@ class RoundTable::API
       table = choose_subspace_table(live_tables)
     end
 
+    grab_table(table, space, language, onair, subspace)
+  end
+
+  def grab_table(table, space, language, onair, subspace)
     if not table.nil?
       table_id = table['id']
     else
