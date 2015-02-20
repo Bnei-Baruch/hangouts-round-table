@@ -11,7 +11,8 @@ describe RoundTable::API do
         'pre-generated-id-2',
       ]
     }
-    RoundTable::API.any_instance.stub(:consts).and_return(fake_consts)
+    allow_any_instance_of(RoundTable::API).to \
+      receive(:consts).and_return(fake_consts)
   end
 
   it "should update table" do

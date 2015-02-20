@@ -12,7 +12,7 @@ describe RoundTable::API do
       'action' => 'master-paused'
     }
 
-    expect(WebsocketMock.any_instance).to receive(:send)
+    expect_any_instance_of(WebsocketMock).to receive(:send)
 
     send_ws_message(message)
   end
@@ -30,12 +30,14 @@ describe RoundTable::API do
   # end
 
   def send_ws_message(message)
-    any_instance = Sinatra::Request.any_instance
-    any_instance.stub(:websocket?).and_return(true)
+    allow_any_instance_of(Sinatra::Request).to \
+      receive(:websocket?).and_return(true)
 
     json_message = JSON.generate(message)
     ws_mock = WebsocketMock.new(json_message)
-    any_instance.stub(:websocket).and_yield(ws_mock)
+
+    allow_any_instance_of(Sinatra::Request).to \
+      receive(:websocket).and_yield(ws_mock)
 
     get '/socket'
 
