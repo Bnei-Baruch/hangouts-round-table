@@ -156,6 +156,35 @@ describe RoundTable::API do
     verify_message(channel_message, broadcast: false)
   end
 
+  it "should return empty list of languages if no instructor or translators present" do
+    get "/spaces/fake-space/languages"
+    languages = JSON.parse(last_response.body)
+    expect(languages).to eq([])
+  end
+
+  it "should return list of supported languages for a space" do
+    message = {
+      'space' => 'fake-space',
+      'action' => 'register-master',
+      'endpointId' => 'fake-instructor-endpoint-id',
+      'role' => 'instructor',
+      'language' => 'fake-language-1'
+    }
+    send_ws_message(message)
+    message = {
+      'space' => 'fake-space',
+      'action' => 'register-master',
+      'endpointId' => 'fake-translator-endpoint-id',
+      'role' => 'translator',
+      'language' => 'fake-language-2'
+    }
+    send_ws_message(message)
+
+    get "/spaces/fake-space/languages"
+    languages = JSON.parse(last_response.body)
+    expect(languages).to eq(["fake-language-1", "fake-language-2"])
+  end
+
   def verify_message(message, forwarded_message: nil, broadcast: true)
     forwarded_message ||= message
     json_message = JSON.generate(forwarded_message)

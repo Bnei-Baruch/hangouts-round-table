@@ -4,6 +4,13 @@ class RoundTable::API
   }
   @@master_endpoint_ids = Hash.new { |endpoints, space| endpoints[space] = [] } 
 
+  # Get space languages
+  get '/spaces/:space/languages' do
+    languages = @@master_endpoint_ids[params[:space]].map { |msg|
+      msg['language']}.to_set.to_a
+    JSON.generate(languages)
+  end
+
   # Websocket
   get '/socket' do
     if !request.websocket?

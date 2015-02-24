@@ -30,30 +30,11 @@ class RoundTable::API
                       params[:onair], params[:subspace])
   end
 
-  def redirect_to_table(request, space, language, onair, subspace)
-    redirect_on_bad_user_agent(request)
-
-    table_id = get_free_table_id(space, language,
-                                 onair, subspace)
-    redirect get_hangouts_url(table_id, space, language,
-                              onair, subspace)
-  end
-
-  def redirect_on_bad_user_agent(request)
-    browser = Browser.new(:ua => request.user_agent)
-    if browser.mobile? or (not browser.chrome? and not browser.firefox?)
-      redirect "#{config['bad_user_agent_url']}?from=#{request.url}"
-    end
-  end
-
+  # Get space tables
   get '/spaces/:space/tables' do
     time_now = redis.time[0]
     live_tables = get_space_tables(params[:space], nil, time_now, "")
     JSON.generate(live_tables)
-  end
-  
-  get '/spaces/:space/languages' do
-
   end
 
   get '/spaces/tables' do
@@ -169,4 +150,21 @@ class RoundTable::API
     keys = redis.keys("table_*_*" )
     keys.map { |key| key.split('_').last }
   end
+
+  def redirect_to_table(request, space, language, onair, subspace)
+    redirect_on_bad_user_agent(request)
+
+    table_id = get_free_table_id(space, language,
+                                 onair, subspace)
+    redirect get_hangouts_url(table_id, space, language,
+                              onair, subspace)
+  end
+
+  def redirect_on_bad_user_agent(request)
+    browser = Browser.new(:ua => request.user_agent)
+    if browser.mobile? or (not browser.chrome? and not browser.firefox?)
+      redirect "#{config['bad_user_agent_url']}?from=#{request.url}"
+    end
+  end
+
 end
