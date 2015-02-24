@@ -2,7 +2,7 @@ class RoundTable::API
   @@sockets = Hash.new { |sockets, space|
     sockets[space] = Hash.new { |channels, channel| channels[channel] = [] };
   }
-  @@master_endpoint_ids = { }
+  @@master_endpoint_ids = Hash.new { |endpoints, space| endpoints[space] = [] } 
 
   # Websocket
   get '/socket' do
@@ -23,15 +23,17 @@ class RoundTable::API
 
           case message['action']
             when 'register-master'
-              @@master_endpoint_ids[message['space']] = message['endpointId']
-              viewer_response = get_viewer_response(message['space'])
-              send_message(message['space'], viewer_response)
+              @@master_endpoint_ids[message['space']] << message
+              viewer_response = get_viewer_response(message)
+              unless viewer_response.nil?
+                send_message(message['space'], viewer_response)
+              end
             when 'register-viewer'
-              viewer_response = get_viewer_response(message['space'])
+              viewer_response = get_viewer_response(message)
               unless viewer_response.nil?
                 ws.send(viewer_response.to_json)
               end
-            when 'master-resumed', 'master-paused', 'update-heartbeat'
+            when 'instructor-resumed', 'instructor-paused', 'update-heartbeat'
               send_message(message['space'], message)
             when 'subscribe'
               @@sockets[message['space']][message['channel']] |= [ws]
@@ -60,11 +62,21 @@ class RoundTable::API
     EM.next_tick{ sockets.each{ |sock| sock.send(encoded_message) } }
   end
 
-  def get_viewer_response(space)
-    if @@master_endpoint_ids.include? space
+  def get_viewer_response(message)
+    endpoints = @@master_endpoint_ids[message['space']]
+
+    instructor = endpoints.select { |endpoint| endpoint['role'] == 'instructor' }
+
+    if not instructor.empty?
+      translator = endpoints.select { |endpoint|
+        endpoint['role'] == 'translator' and
+        endpoint['language'] == message['language']
+      }
       {
-        :action => 'assign-master-endpoint',
-        :endpointId => @@master_endpoint_ids[space]
+        'space' => message['space'],
+        'action' => 'assign-master-endpoints',
+        'instructorEndpointId' => instructor.first['endpointId'],
+        'translatorEndpointId' => (translator.first and translator.first['endpointId'])
       }
     else
       nil

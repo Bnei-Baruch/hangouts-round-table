@@ -51,6 +51,10 @@ class RoundTable::API
     live_tables = get_space_tables(params[:space], nil, time_now, "")
     JSON.generate(live_tables)
   end
+  
+  get '/spaces/:space/languages' do
+
+  end
 
   get '/spaces/tables' do
     time_now = redis.time[0]
