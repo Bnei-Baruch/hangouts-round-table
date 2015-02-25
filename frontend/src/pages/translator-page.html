@@ -6,16 +6,17 @@
 
 <polymer-element name="translator-page" noscript>
   <template>
-    <style>
-      broadcast-viewer {
-        width: 320px;
-        height: 240px;
-        float: left;
-        background: #181818;
-      }
-    </style>
     <header-layout header="Translator" authRequired="true">
       <user-auth id="translator"></user-auth>
+
+      <style>
+        broadcast-viewer {
+          width: 320px;
+          height: 240px;
+          float: left;
+          background: #181818;
+        }
+      </style>
 
       <broadcast-viewer id="viewer" space="{{ $.translator.space }}"></broadcast-viewer>
 

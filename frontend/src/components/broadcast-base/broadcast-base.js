@@ -4,7 +4,7 @@
   Polymer({
     publish: {
       space: 'default',
-      language: 'en'
+      language: 'he'
     },
     ready: function () {
       var that = this;

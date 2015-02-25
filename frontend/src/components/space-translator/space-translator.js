@@ -1,5 +1,14 @@
 /* jshint strict:false */
 
 (function () {
-  Polymer({});
+  Polymer({
+    ready: function () {
+      this.super();
+
+      this.mediaConstraints = {
+        audio : true,
+        video : false
+      };
+    },
+  });
 })();
