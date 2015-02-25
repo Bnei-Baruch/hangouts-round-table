@@ -8,7 +8,7 @@
 <polymer-element name="instructor-page" noscript>
   <template>
     <header-layout header="Instructor" authRequired="true">
-      <user-auth id="user"></user-auth>
+      <user-auth id="instructor"></user-auth>
       <style>
         div {
           float: left;
@@ -22,10 +22,10 @@
         }
       </style>
       <div>
-        <space-instructor space="{{ $.user.space }}"></space-instructor>
-        <table-list space="{{ $.user.space }}"></table-list>
+        <space-instructor space="{{ $.instructor.space }}"></space-instructor>
+        <table-list space="{{ $.instructor.space }}"></table-list>
       </div>
-      <webdis-chat space="{{ $.user.space }}" isAdmin="true"></webdis-chat>
+      <webdis-chat space="{{ $.instructor.space }}" isAdmin="true"></webdis-chat>
     </header-layout>
   </template>
 </polymer-element>

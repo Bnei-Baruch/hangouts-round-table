@@ -25,8 +25,8 @@
           id="viewer"
           space="{{ $.table.appData.space }}"
           language="{{ $.table.appData.language }}"
-          on-master-resumed="{{mute}}"
-          on-master-paused="{{hide}}">
+          on-instructor-resumed="{{mute}}"
+          on-instructor-paused="{{hide}}">
       </broadcast-viewer>
       <viewer-heartbeat viewerId="viewer"></viewer-heartbeat>
       <webdis-chat

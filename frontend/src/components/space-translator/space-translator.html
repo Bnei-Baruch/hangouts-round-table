@@ -1,47 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../toggle-label-button/toggle-label-button.html">
-<link rel="import" href="../sound-level-indicator/sound-level-indicator.html">
 <link rel="import" href="../broadcast-master/broadcast-master.html">
 
-<polymer-element name="space-translator" extends="broadcast-master">
+<polymer-element name="space-translator" extends="broadcast-master" role="translator">
   <template>
-    <style>
-      :host::shadow video {
-        float: left;
-      }
-
-      sound-level-indicator {
-        width: 320px;
-      }
-
-      .controls {
-        float: left;
-      }
-
-      .controls toggle-label-button {
-        display: block;
-        margin-bottom: 10px;
-      }
-
-      .controls toggle-label-button[active] {
-        color: white;
-        background-color: red;
-      }
-    </style>
-
     <shadow></shadow>
 
-    <div class="controls">
-      <toggle-label-button raised active="{{ isEnabled }}" labelPressed="Pause" labelReleased="Resume" disabled?="{{ !isReady }}">Start
-      </toggle-label-button>
-
-      <toggle-label-button raised active="{{ isMuted }}" labelPressed="Unmute" disabled?="{{ !isReady }}">Mute
-      </toggle-label-button>
-
-    </div>
-
-    <div style="clear: both"></div>
-    <sound-level-indicator stream="{{ webRtcPeer.stream }}"></sound-level-indicator>
+    <audio id="mediaElement" autoplay></audio>
   </template>
 
   <script src="space-translator.js"></script>

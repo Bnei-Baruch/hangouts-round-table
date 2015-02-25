@@ -16,11 +16,11 @@ task :run do
 end
 
 desc "Create a new user"
-task :adduser, [:login, :space] do |t, user|
+task :adduser, [:login, :space, :language] do |t, user|
   app = RoundTable::API.new
 
-  if user.to_hash.length != 2
-    abort "Please provide login and space arguments"
+  if user.to_hash.length != 3
+    abort "Please provide login, space and language arguments"
   end
 
   user_key = "auth_user_#{user[:login]}"
@@ -33,8 +33,9 @@ task :adduser, [:login, :space] do |t, user|
   password = STDIN.noecho(&:gets).chomp
 
   user_json = {
-    :password => BCrypt::Password.create(password),
-    :space => user[:space]
+    'password' => BCrypt::Password.create(password),
+    'space' => user[:space],
+    'language' => user[:language],
   }.to_json
 
   app.helpers.redis.set(user_key, user_json)

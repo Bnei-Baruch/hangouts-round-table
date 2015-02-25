@@ -3,8 +3,8 @@
 (function () {
   Polymer({
     webRtcEndpointId: null,
-    assignMasterEndpoint: function (e, message) {
-      this.webRtcEndpointId = message.endpointId;
+    assignMasterEndpoints: function (e, message) {
+      this.webRtcEndpointId = message.instructorEndpointId;
       this.initKurento();
     },
     register: function () {
@@ -16,7 +16,7 @@
       this.shutdown();
 
       this.webRtcPeer = kurentoUtils.WebRtcPeer.startRecvOnly(
-        this.$.remoteVideo, function (sdpOffer) {
+        that.$.remoteVideo, function (sdpOffer) {
           kurentoClient(that.$.config.kurentoWsUri, that.cancelOnError(function(error, kurentoClient) {
 
             kurentoClient.getMediaobjectById(that.webRtcEndpointId, that.cancelOnError(function(error, webRtcMaster) {

@@ -2,31 +2,15 @@
 
 (function () {
   Polymer({
+    mediaConstraints: null,
     isReady: false,
     isMuted: false,
     isEnabled: false,
-    ready: function () {
-      this.super();
-
-      var videoConstraints = this.$.config.videoConstraints;
-
-      this.mediaConstraints = {
-        audio : true,
-        video : {
-          mandatory : {
-            maxWidth: videoConstraints.maxWidth,
-            maxHeight: videoConstraints.maxHeight,
-            minFrameRate : videoConstraints.minFrameRate,
-            maxFrameRate : videoConstraints.maxFrameRate
-          }
-        }
-      };
-    },
     initKurento: function () {
       var that = this;
 
       this.webRtcPeer = kurentoUtils.WebRtcPeer.startSendOnly(
-        this.$.localVideo, function (sdpOffer) {
+        that.$.mediaElement, function (sdpOffer) {
 
           kurentoClient(that.$.config.kurentoWsUri, that.cancelOnError(function(error, kurentoClient) {
 
@@ -41,7 +25,11 @@
                   that.toggleBroadcast();
                   that.webRtcPeer.processSdpAnswer(sdpAnswer);
                   that.isReady = true;
-                  that.$.signaling.sendMessage({action: 'register-master', endpointId: webRtc.id});
+                  that.$.signaling.sendMessage({
+                    action: 'register-master',
+                    role: that.role,
+                    endpointId: webRtc.id
+                  });
                 }));
               }));
             }));

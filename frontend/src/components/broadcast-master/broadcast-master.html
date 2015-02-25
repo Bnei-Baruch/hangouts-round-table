@@ -1,15 +1,51 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../broadcast-base/broadcast-base.html">
 <link rel="import" href="../backend-signaling/backend-signaling.html">
+<link rel="import" href="../toggle-label-button/toggle-label-button.html">
+<link rel="import" href="../sound-level-indicator/sound-level-indicator.html">
 
-<polymer-element name="broadcast-master" extends="broadcast-base" attributes="">
+<polymer-element name="broadcast-master" extends="broadcast-base" attributes="role">
   <template>
+    <style>
+      sound-level-indicator {
+        width: 320px;
+      }
+
+      .controls {
+        float: left;
+      }
+
+      .controls toggle-label-button {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .controls toggle-label-button[active] {
+        color: white;
+        background-color: red;
+      }
+    </style>
+
     <user-auth id="user"></user-auth>
 
-    <backend-signaling id="signaling" space="{{ space }}" on-websocket-open="{{initKurento}}"></backend-signaling>
+    <backend-signaling id="signaling"
+      space="{{ space }}"
+      language="{{ language }}"
+      on-websocket-open="{{initKurento}}">
+    </backend-signaling>
 
-    <video id="localVideo" autoplay width="320px" height="240px"></video>
     <shadow></shadow>
+
+    <div class="controls">
+      <toggle-label-button raised active="{{ isEnabled }}" labelPressed="Pause" labelReleased="Resume" disabled?="{{ !isReady }}">Start
+      </toggle-label-button>
+
+      <toggle-label-button raised active="{{ isMuted }}" labelPressed="Unmute" disabled?="{{ !isReady }}">Mute
+      </toggle-label-button>
+    </div>
+
+    <div style="clear: both"></div>
+    <sound-level-indicator stream="{{ webRtcPeer.stream }}"></sound-level-indicator>
   </template>
 
   <script src="broadcast-master.js"></script>

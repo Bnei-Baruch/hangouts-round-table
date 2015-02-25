@@ -30,7 +30,14 @@ class RoundTable::API
 
           case message['action']
             when 'register-master'
-              @@master_endpoint_ids[message['space']] << message
+              endpoints = @@master_endpoint_ids[message['space']]
+
+              endpoints.delete_if {|endpoint|
+                endpoint['role'] == message['role'] and
+                endpoint['language'] == message['language']
+              }
+              endpoints << message
+
               viewer_response = get_viewer_response(message)
               unless viewer_response.nil?
                 send_message(message['space'], viewer_response)

@@ -1,14 +1,28 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../layouts/header-layout.html">
 <link rel="import" href="../components/user-auth/user-auth.html" />
+<link rel="import" href="../components/broadcast-viewer/broadcast-viewer.html" />
 <link rel="import" href="../components/space-translator/space-translator.html" />
 
 <polymer-element name="translator-page" noscript>
   <template>
+    <style>
+      broadcast-viewer {
+        width: 320px;
+        height: 240px;
+        float: left;
+        background: #181818;
+      }
+    </style>
     <header-layout header="Translator" authRequired="true">
       <user-auth id="translator"></user-auth>
-      <space-instructor space="{{ $.translator.space }}" destLanguage="{{ $.translator.destLanguage }}" video="false"></space-instructor>
+
       <broadcast-viewer id="viewer" space="{{ $.translator.space }}"></broadcast-viewer>
+
+      <space-translator
+        space="{{ $.translator.space }}"
+        language="{{ $.translator.language }}">
+      </space-translator>
     </header-layout>
   </template>
 </polymer-element>

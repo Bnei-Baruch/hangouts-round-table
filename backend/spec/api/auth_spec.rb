@@ -29,12 +29,14 @@ describe RoundTable::API do
     expect(json_response).to include('token')
     expect(json_response['token'].empty?).to be_falsy
     expect(json_response['space']).to eq("default")
+    expect(json_response['language']).to eq("fake-language")
   end
 
   def create_sample_user
     sample_user = {
-      :password => BCrypt::Password.create("swordfish"),
-      :space => "default"
+      'password' => BCrypt::Password.create("swordfish"),
+      'space' => "default",
+      'language' => "fake-language"
     }.to_json
 
     redis.set('auth_user_user', sample_user)
