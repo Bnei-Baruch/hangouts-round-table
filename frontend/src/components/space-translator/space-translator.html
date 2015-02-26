@@ -1,8 +1,26 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../broadcast-master/broadcast-master.html">
+<link rel="import" href="../broadcast-viewer/broadcast-viewer.html" />
 
 <polymer-element name="space-translator" extends="broadcast-master" role="translator">
   <template>
+    <style>
+      broadcast-viewer {
+        width: 320px;
+        height: 240px;
+        float: left;
+        background: #181818;
+      }
+    </style>
+
+    <backend-signaling id="signaling"
+      space="{{ space }}"
+      language="{{ language }}"
+      on-assign-master-endpoints="{{assignMasterEndpoints}}">
+    </backend-signaling>
+
+    <broadcast-viewer id="viewer" space="{{ $.translator.space }}"></broadcast-viewer>
+
     <audio id="mediaElement" autoplay></audio>
 
     <shadow></shadow>

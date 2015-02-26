@@ -1,6 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../broadcast-base/broadcast-base.html">
-<link rel="import" href="../backend-signaling/backend-signaling.html">
 <link rel="import" href="../toggle-label-button/toggle-label-button.html">
 <link rel="import" href="../sound-level-indicator/sound-level-indicator.html">
 
@@ -25,12 +24,6 @@
         background-color: red;
       }
     </style>
-
-    <backend-signaling id="signaling"
-      space="{{ space }}"
-      language="{{ language }}"
-      on-websocket-open="{{initKurento}}">
-    </backend-signaling>
 
     <shadow></shadow>
 

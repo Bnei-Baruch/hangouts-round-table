@@ -2,9 +2,10 @@
 
 (function () {
   Polymer({
-    webRtcEndpointId: null,
+    instructorEndpointId: null,
     assignMasterEndpoints: function (e, message) {
-      this.webRtcEndpointId = message.instructorEndpointId;
+      this.instructorEndpointId = message.instructorEndpointId;
+      this.translatorEndpointId = message.translatorEndpointId;
       this.initKurento();
     },
     register: function () {
@@ -19,21 +20,27 @@
         that.$.remoteVideo, function (sdpOffer) {
           kurentoClient(that.$.config.kurentoWsUri, that.cancelOnError(function(error, kurentoClient) {
 
-            kurentoClient.getMediaobjectById(that.webRtcEndpointId, that.cancelOnError(function(error, webRtcMaster) {
+            kurentoClient.getMediaobjectById(that.instructorEndpointId, that.cancelOnError(function(error, instructorEndpoint) {
 
-              webRtcMaster.getMediaPipeline(that.cancelOnError(function(error, pipelineId) {
+              instructorEndpoint.getMediaPipeline(that.cancelOnError(function(error, pipelineId) {
 
                 kurentoClient.getMediaobjectById(pipelineId, that.cancelOnError(function(error, pipeline) {
 
-                  pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, webRtcViewer){
+                  pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, viewerEndpoint){
 
-                    that.webRtcEndpoint = webRtcViewer;
+                    that.viewerEndpoint = viewerEndpoint;
 
-                    webRtcMaster.connect(webRtcViewer, that.cancelOnError(function(){
-                      console.log('Connection established');
+                    instructorEndpoint.connect(viewerEndpoint, that.cancelOnError(function(){
+                      console.log('Connected to the instructor');
                     }));
 
-                    webRtcViewer.processOffer(sdpOffer, that.cancelOnError(function(error, sdpAnswer){
+                    kurentoClient.getMediaobjectById(that.translatorEndpointId, that.cancelOnError(function(error, translatorEndpoint) {
+                      translatorEndpoint.connect(viewerEndpoint, that.cancelOnError(function(){
+                        console.log('Connected to the translator');
+                      }));
+                    }));
+
+                    viewerEndpoint.processOffer(sdpOffer, that.cancelOnError(function(error, sdpAnswer){
                       that.webRtcPeer.processSdpAnswer(sdpAnswer);
                     }));
 

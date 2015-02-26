@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../backend-signaling/backend-signaling.html">
 <link rel="import" href="../broadcast-master/broadcast-master.html">
 
 <polymer-element name="space-instructor" extends="broadcast-master" role="instructor">
@@ -9,7 +10,16 @@
       }
     </style>
 
+    <backend-signaling id="signaling"
+      space="{{ space }}"
+      language="{{ language }}"
+      on-websocket-open="{{initKurento}}">
+    </backend-signaling>
+
     <video id="mediaElement" autoplay width="320px" height="240px"></video>
+
+    <div class="controls">
+    </div>
 
     <shadow></shadow>
   </template>
