@@ -50,7 +50,7 @@ describe RoundTable::API do
     }
     forwarded_message = {
       'space' => 'fake-space',
-      'action' => 'assign-master-endpoints',
+      'action' => 'assign-master-endpoint',
       'instructorEndpointId' => 'fake-instructor-endpoint-id',
       'translatorEndpointId' => 'fake-translator-endpoint-id',
     }
@@ -85,7 +85,7 @@ describe RoundTable::API do
     }
     forwarded_message = {
       'space' => 'fake-space',
-      'action' => 'assign-master-endpoints',
+      'action' => 'assign-master-endpoint',
       'instructorEndpointId' => 'fake-instructor-endpoint-id',
       'translatorEndpointId' => nil,
     }
@@ -105,7 +105,7 @@ describe RoundTable::API do
     }
     forwarded_message = {
       'space' => 'fake-space',
-      'action' => 'assign-master-endpoints',
+      'action' => 'assign-master-endpoint',
       'instructorEndpointId' => 'fake-instructor-endpoint-id',
       'translatorEndpointId' => nil,
     }

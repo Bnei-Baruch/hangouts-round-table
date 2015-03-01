@@ -10,9 +10,10 @@ class RoundTable::API
 
       if BCrypt::Password.new(user['password']) == body['password']
         halt 201, {
-          :token => create_auth_token,
-          :login => body['login'],
-          :space => user['space']
+          'token' => create_auth_token,
+          'login' => body['login'],
+          'space' => user['space'],
+          'language' => user['language']
         }.to_json
       else
         response_auth_error

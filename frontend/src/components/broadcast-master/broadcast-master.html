@@ -3,7 +3,7 @@
 <link rel="import" href="../toggle-label-button/toggle-label-button.html">
 <link rel="import" href="../sound-level-indicator/sound-level-indicator.html">
 
-<polymer-element name="broadcast-master" extends="broadcast-base" attributes="role">
+<polymer-element name="broadcast-master" extends="broadcast-base" attributes="role language">
   <template>
     <style>
       sound-level-indicator {
@@ -24,6 +24,13 @@
         background-color: red;
       }
     </style>
+
+    <backend-signaling id="signaling"
+      space="{{ space }}"
+      role="{{ role }}"
+      language="{{ language }}"
+      on-websocket-open="{{initKurento}}">
+    </backend-signaling>
 
     <shadow></shadow>
 

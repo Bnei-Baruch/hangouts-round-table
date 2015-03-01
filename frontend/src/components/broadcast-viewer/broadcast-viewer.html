@@ -2,7 +2,7 @@
 <link rel="import" href="../broadcast-base/broadcast-base.html">
 <link rel="import" href="../backend-signaling/backend-signaling.html">
 
-<polymer-element name="broadcast-viewer" extends="broadcast-base" attributes="language">
+<polymer-element name="broadcast-viewer" extends="broadcast-base" attributes="space language role">
   <template>
     <style>
       :host #remoteVideo {
@@ -15,12 +15,14 @@
     <backend-signaling
       id="signaling"
       space="{{ space }}"
+      role="{{ role }}"
       language="{{ language }}"
       on-websocket-open="{{register}}"
-      on-assign-master-endpoints={{assignMasterEndpoints}}>
+      on-assign-master-endpoint={{assignMasterEndpoint}}>
     </backend-signaling>
 
-    <video id="remoteVideo" autoplay></video>
+    {{ webRtcEndpointId }}
+    <video id="mediaElement" autoplay></video>
     <shadow></shadow>
 
   </template>

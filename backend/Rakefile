@@ -12,14 +12,22 @@ RSpec::Core::RakeTask.new(:coverage) do |spec|
 end
 
 task :run do
+  exec("bundle exec thin start -p 9393 -D")
+end
+
+task :run_with_trace do
   exec("bundle exec thin start -p 9393 -V -D")
 end
 
 desc "Create a new user"
 task :adduser, [:login, :space, :language] do |t, user|
+  adduser(user)
+end
+
+def adduser(user)
   app = RoundTable::API.new
 
-  if user.to_hash.length != 3
+  if user.to_hash.length < 3
     abort "Please provide login, space and language arguments"
   end
 

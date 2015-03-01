@@ -2,7 +2,7 @@
 <link rel="import" href="../broadcast-master/broadcast-master.html">
 <link rel="import" href="../broadcast-viewer/broadcast-viewer.html" />
 
-<polymer-element name="space-translator" extends="broadcast-master" role="translator">
+<polymer-element name="space-translator" extends="broadcast-master" role="translator" attributes="space language">
   <template>
     <style>
       broadcast-viewer {
@@ -13,13 +13,10 @@
       }
     </style>
 
-    <backend-signaling id="signaling"
+    <broadcast-viewer id="viewer"
       space="{{ space }}"
-      language="{{ language }}"
-      on-assign-master-endpoints="{{assignMasterEndpoints}}">
-    </backend-signaling>
-
-    <broadcast-viewer id="viewer" space="{{ $.translator.space }}"></broadcast-viewer>
+      role="instructor">
+    </broadcast-viewer>
 
     <audio id="mediaElement" autoplay></audio>
 

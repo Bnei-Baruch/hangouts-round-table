@@ -6,7 +6,8 @@
   Polymer({
     publish: {
       space: null,
-      language: null
+      language: null,
+      role: null
     },
     ready: function() {
       this.initBackendSocket();
@@ -39,6 +40,7 @@
     sendMessage: function (message) {
       message.space = this.space;
       message.language = this.language;
+      message.role = this.role;
       var jsonMessage = JSON.stringify(message);
       backendWs.send(jsonMessage);
     }

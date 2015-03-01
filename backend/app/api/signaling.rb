@@ -30,13 +30,12 @@ class RoundTable::API
 
           case message['action']
             when 'register-master'
-              endpoints = @@master_endpoint_ids[message['space']]
-
-              endpoints.delete_if {|endpoint|
-                endpoint['role'] == message['role'] and
-                endpoint['language'] == message['language']
-              }
-              endpoints << message
+              @@master_endpoint_ids[message['space']] |= [{
+                'role' => message['role'],
+                'language' => message['language'],
+                'endpointId' => message['endpointId'],
+                'socket' => ws
+              }]
 
               viewer_response = get_viewer_response(message)
               unless viewer_response.nil?
@@ -55,7 +54,10 @@ class RoundTable::API
         end
         ws.onclose do
           @@sockets.each{ |_, channel_sockets|
-            channel_sockets.delete_if { |_,v| v == ws }
+            channel_sockets.delete_if { |_, v| v == ws }
+          }
+          @@master_endpoint_ids.each{ |_, endpoints|
+            endpoints.delete_if { |endpoint| endpoint['socket'] == ws }
           }
           warn("Websocket closed")
         end
@@ -79,18 +81,23 @@ class RoundTable::API
   def get_viewer_response(message)
     endpoints = @@master_endpoint_ids[message['space']]
 
-    instructor = endpoints.select { |endpoint| endpoint['role'] == 'instructor' }
-
-    if not instructor.empty?
-      translator = endpoints.select { |endpoint|
-        endpoint['role'] == 'translator' and
+    if message['role'] == 'translator'
+      master = endpoints.select { |endpoint|
+        endpoint['role'] == message['role'] and
         endpoint['language'] == message['language']
       }
+    else
+      master = endpoints.select { |endpoint|
+        endpoint['role'] == message['role']
+      }
+    end
+
+    if not master.empty?
       {
         'space' => message['space'],
-        'action' => 'assign-master-endpoints',
-        'instructorEndpointId' => instructor.first['endpointId'],
-        'translatorEndpointId' => (translator.first and translator.first['endpointId'])
+        'action' => 'assign-master-endpoint',
+        'role' => message['role'],
+        'endpointId' => master.last['endpointId'],
       }
     else
       nil

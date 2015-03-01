@@ -10,12 +10,7 @@
         video : false
       };
     },
-    assignMasterEndpoints: function (e, message) {
-      if (message.instructorEndpointId !== this.instructorEndpointId) {
-        this.instructorEndpointId = message.instructorEndpointId;
-        this.initKurento();
-      }
-    },
+/*
     initKurento: function () {
       var that = this;
 
@@ -26,15 +21,49 @@
 
               kurentoClient.getMediaobjectById(that.instructorEndpointId, that.cancelOnError(function(error, instructorEndpoint) {
 
-                instructorEndpoint.getMediaPipeline(that.cancelOnError(function(error, pipelineId) {
+                instructorEndpoint.getMediaPipeline(that.cancelOnError(function(error, pipeline) {
 
-                  kurentoClient.getMediaobjectById(pipelineId, that.cancelOnError(function(error, pipeline) {
-                    that.createEndpoint(sdpOffer, pipeline);
-                  }));
+                  that.createMasterEndpoint(sdpOffer, pipeline, function () {
+                    that.createMixerHub(pipeline, instructorEndpoint);
+                  });
                 }));
               }));
             }));
           }, this.onError, this.mediaConstraints);
     },
+    createMixerHub: function (pipeline, instructorEndpoint) {
+      var that = this;
+
+      pipeline.create('Mixer', that.cancelOnError(function(error, mixerHub){
+
+        pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, mixerSinkEndpoint){
+          mixerHub.createHubPort(that.cancelOnError(function(error, videoHubPort) {
+            mixerHub.createHubPort(that.cancelOnError(function(error, audioHubPort) {
+              mixerHub.createHubPort(that.cancelOnError(function(error, sinkHubPort) {
+                instructorEndpoint.connect(videoHubPort);
+                that.masterEndpoint.connect(audioHubPort);
+                mixerSinkEndpoint.connect(sinkHubPort);
+
+                mixerHub.connect('VIDEO', videoHubPort, sinkHubPort, that.cancelOnError(function(){
+                  console.debug('Instructor connected to the hub');
+                }));
+
+                mixerHub.connect('AUDIO', audioHubPort, sinkHubPort, that.cancelOnError(function(){
+                  console.debug('Translator connected to the hub');
+                }));
+
+                that.$.signaling.sendMessage({
+                  action: 'register-master',
+                  role: that.role,
+                  endpointId: mixerSinkEndpoint.id
+                });
+              }));
+            }));
+          }));
+
+        }));
+      }));
+    },
+    */
   });
 })();

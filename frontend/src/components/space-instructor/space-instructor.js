@@ -23,7 +23,9 @@
       this.super();
 
       this.$.signaling.sendMessage({
-        action: this.isEnabled ? 'instructor-resumed': 'instructor-paused'
+        'action': this.isEnabled ? 'instructor-resumed': 'instructor-paused',
+        'language': this.language,
+        'role': this.role
       });
     },
   });
