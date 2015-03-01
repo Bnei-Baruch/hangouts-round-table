@@ -2,12 +2,14 @@
 
 (function () {
   Polymer({
+    isMuted: true,
+    isEnabled: true,
     ready: function () {
       this.super();
 
       this.mediaConstraints = {
         audio : true,
-        video : false
+        video : true
       };
     },
 /*

@@ -13,9 +13,12 @@
     <video id="mediaElement" autoplay width="320px" height="240px"></video>
 
     <div class="controls">
+      <toggle-label-button raised active="{{ isEnabled }}" labelPressed="Pause" labelReleased="Resume" disabled?="{{ !isReady }}">Start
+      </toggle-label-button>
     </div>
 
-    <shadow></shadow>
+    <shadow>
+    </shadow>
   </template>
 
   <script src="space-instructor.js"></script>

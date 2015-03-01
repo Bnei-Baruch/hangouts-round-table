@@ -29,7 +29,7 @@
         sdpOffer = that.setBandwidth(sdpOffer);
 
         webRtc.processOffer(sdpOffer, that.cancelOnError(function(error, sdpAnswer){
-          that.toggleBroadcast();
+          that.toggleTracksByKind(null, false);
           that.webRtcPeer.processSdpAnswer(sdpAnswer);
           that.isReady = true;
           that.$.signaling.sendMessage({
@@ -46,16 +46,21 @@
     isMutedChanged: function () {
       this.toggleBroadcast(true);
     },
-    toggleBroadcast: function (onlyAudio) {
+    toggleTracksByKind: function(kind, enabled) {
       var tracks = this.webRtcPeer.stream.getTracks();
       for (var trackIndex in tracks) {
         var track = tracks[trackIndex];
 
-        if (track.kind === 'audio') {
-          track.enabled = !this.isMuted && this.isEnabled;
-        } else if (!onlyAudio) {
-          track.enabled = this.isEnabled;
+        if (!kind || (track.kind === kind)) {
+          track.enabled = enabled;
         }
+      }
+    },
+    toggleBroadcast: function (onlyAudio) {
+      this.toggleTracksByKind('audio', !this.isMuted && this.isEnabled);
+
+      if (!onlyAudio) {
+        this.toggleTracksByKind('video', this.isEnabled);
       }
     }
   });

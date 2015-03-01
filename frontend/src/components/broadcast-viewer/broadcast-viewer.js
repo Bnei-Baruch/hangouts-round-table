@@ -4,8 +4,11 @@
   Polymer({
     webRtcEndpointId: null,
     assignMasterEndpoint: function (e, message) {
+      // Assign if the endpoint matches viewer
       if (message.role === this.role &&
+          (message.language === this.language || !this.language) &&
           message.webRtcEndpointId !== this.webRtcEndpointId) {
+        console.debug("Assigning", message.role, "endpoint");
         this.webRtcEndpointId = message.endpointId;
         this.initKurento();
       }

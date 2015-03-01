@@ -70,10 +70,11 @@ class RoundTable::API
     # sockets which specifically subscribed to that channel.
     sockets = []
     if message.key?('channel') && message['channel']
-      sockets = @@sockets[space][message['channel']]
+      channel_name = message['channel']
     else
-      sockets = @@sockets[space]['broadcast']
+      channel_name = 'broadcast'
     end
+      sockets = @@sockets[space][channel_name]
     encoded_message = message.to_json
     EM.next_tick{ sockets.each{ |sock| sock.send(encoded_message) } }
   end
@@ -97,6 +98,7 @@ class RoundTable::API
         'space' => message['space'],
         'action' => 'assign-master-endpoint',
         'role' => message['role'],
+        'language' => message['language'],
         'endpointId' => master.last['endpointId'],
       }
     else

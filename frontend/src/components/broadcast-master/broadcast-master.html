@@ -14,15 +14,15 @@
         float: left;
       }
 
-      .controls toggle-label-button {
-        display: block;
+      :host::shadow .controls toggle-label-button {
         margin-bottom: 10px;
       }
 
-      .controls toggle-label-button[active] {
+      :host::shadow .controls toggle-label-button[active] {
         color: white;
         background-color: red;
       }
+
     </style>
 
     <backend-signaling id="signaling"
@@ -35,9 +35,6 @@
     <shadow></shadow>
 
     <div class="controls">
-      <toggle-label-button raised active="{{ isEnabled }}" labelPressed="Pause" labelReleased="Resume" disabled?="{{ !isReady }}">Start
-      </toggle-label-button>
-
       <toggle-label-button raised active="{{ isMuted }}" labelPressed="Unmute" disabled?="{{ !isReady }}">Mute
       </toggle-label-button>
     </div>
