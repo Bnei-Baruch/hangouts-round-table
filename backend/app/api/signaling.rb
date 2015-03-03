@@ -1,6 +1,8 @@
 class RoundTable::API
   @@sockets = Hash.new { |sockets, space|
-    sockets[space] = Hash.new { |channels, channel| channels[channel] = [] };
+    sockets[space] = Hash.new { |channels, channel|
+      channels[channel] = Hash.new {}
+    };
   }
   @@master_endpoint_ids = Hash.new { |endpoints, space| endpoints[space] = [] } 
 
@@ -9,6 +11,14 @@ class RoundTable::API
     languages = @@master_endpoint_ids[params[:space]].map { |msg|
       msg['language']}.to_set.to_a
     JSON.generate(languages)
+  end
+
+  def register_socket(ws, channel, message)
+    translator_language = nil
+    if message['role'] == 'translator'
+      translator_language = message['language']
+    end
+    @@sockets[message['space']][channel][ws] = translator_language
   end
 
   # Websocket
@@ -26,7 +36,7 @@ class RoundTable::API
           warn("Got message %s" % msg)
 
           # Register socket if not registered
-          @@sockets[message['space']]['broadcast'] |= [ws]
+          register_socket(ws, 'broadcast', message)
 
           case message['action']
             when 'register-master'
@@ -49,12 +59,23 @@ class RoundTable::API
             when 'instructor-resumed', 'instructor-paused', 'update-heartbeat'
               send_message(message['space'], message)
             when 'subscribe'
-              @@sockets[message['space']][message['channel']] |= [ws]
+              register_socket(ws, message['channel'], message)
           end
         end
         ws.onclose do
-          @@sockets.each{ |_, channel_sockets|
-            channel_sockets.delete_if { |_, v| v == ws }
+          @@sockets.each{ |space, channel_sockets|
+            channel_sockets.each { |channel, sockets_hash|
+              if sockets_hash.key? ws
+                if !sockets_hash[ws].nil?
+                  send_message(space, {
+                    'action' => 'unregister-translator',
+                    'space' => space,
+                    'language' => sockets_hash[ws]
+                  })
+                end
+                sockets_hash.delete ws
+              end
+            }
           }
           @@master_endpoint_ids.each{ |_, endpoints|
             endpoints.delete_if { |endpoint| endpoint['socket'] == ws }
@@ -74,8 +95,9 @@ class RoundTable::API
     else
       channel_name = 'broadcast'
     end
-      sockets = @@sockets[space][channel_name]
+    sockets = @@sockets[space][channel_name].keys
     encoded_message = message.to_json
+    warn("Sent message %s" % message)
     EM.next_tick{ sockets.each{ |sock| sock.send(encoded_message) } }
   end
 

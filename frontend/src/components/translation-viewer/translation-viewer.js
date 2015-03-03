@@ -4,6 +4,11 @@
   Polymer({
     muteInstructor: function () {
       this.$.instructor.toggleAudio(false);
+    },
+    unmuteInstructor: function (e, message) {
+      if (message.language === this.language) {
+        this.$.instructor.toggleAudio(true);
+      }
     }
   });
 

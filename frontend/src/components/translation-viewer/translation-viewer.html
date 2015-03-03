@@ -9,6 +9,11 @@
       role="instructor">
     </broadcast-viewer>
 
+    <backend-signaling
+      space="{{ space }}"
+      on-unregister-translator="{{unmuteInstructor}}">
+    </backend-signaling>
+
     <broadcast-viewer
       space="{{ space }}"
       role="translator"
