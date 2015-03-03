@@ -12,7 +12,7 @@ describe RoundTable::API do
     expect(last_response).to be_bad_request
   end
 
-  it "should register viewer and not get notified on translator presence (no instructor)" do
+  it "should register instructor viewer and not get notified on translator presence (no instructor)" do
     register_master_message = {
       'space' => 'fake-space',
       'action' => 'register-master',
@@ -25,6 +25,7 @@ describe RoundTable::API do
     register_viewer_message = {
       'space' => 'fake-space',
       'action' => 'register-viewer',
+      'role' => 'instructor',
       'language' => 'fake-language',
     }
     send_ws_message(register_viewer_message) { |viewer_socket|
@@ -51,8 +52,9 @@ describe RoundTable::API do
     forwarded_message = {
       'space' => 'fake-space',
       'action' => 'assign-master-endpoint',
-      'instructorEndpointId' => 'fake-instructor-endpoint-id',
-      'translatorEndpointId' => 'fake-translator-endpoint-id',
+      'role' => 'translator',
+      'language' => 'translator-fake-language',
+      'endpointId' => 'fake-translator-endpoint-id'
     }
     verify_message(message, forwarded_message: forwarded_message)
   end
@@ -61,6 +63,7 @@ describe RoundTable::API do
     register_viewer_message = {
       'space' => 'fake-space',
       'action' => 'register-viewer',
+      'role' => 'instructor',
       'language' => 'fake-language'
     }
     send_ws_message(register_viewer_message) { |viewer_socket|
@@ -81,13 +84,15 @@ describe RoundTable::API do
     register_viewer_message = {
       'space' => 'fake-space',
       'action' => 'register-viewer',
+      'role' => 'instructor',
       'language' => 'fake-language',
     }
     forwarded_message = {
       'space' => 'fake-space',
       'action' => 'assign-master-endpoint',
-      'instructorEndpointId' => 'fake-instructor-endpoint-id',
-      'translatorEndpointId' => nil,
+      'role' => 'instructor',
+      'language' => 'fake-language',
+      'endpointId' => 'fake-instructor-endpoint-id'
     }
     json_message = JSON.generate(forwarded_message)
     send_ws_message(register_viewer_message) { |viewer_socket|
@@ -106,8 +111,9 @@ describe RoundTable::API do
     forwarded_message = {
       'space' => 'fake-space',
       'action' => 'assign-master-endpoint',
-      'instructorEndpointId' => 'fake-instructor-endpoint-id',
-      'translatorEndpointId' => nil,
+      'role' => 'instructor',
+      'language' => 'fake-language',
+      'endpointId' => 'fake-instructor-endpoint-id',
     }
     verify_message(message, forwarded_message: forwarded_message)
   end
