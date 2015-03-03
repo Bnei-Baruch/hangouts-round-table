@@ -1,5 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../broadcast-viewer/broadcast-viewer.html">
+<link rel="import" href="../translation-viewer/translation-viewer.html">
 <link rel="import" href="../update-table/update-table.html" />
 <link rel="import" href="../webdis-chat/webdis-chat.html" />
 <link rel="import" href="../viewer-heartbeat/viewer-heartbeat.html">
@@ -9,7 +9,7 @@
     <update-table id="table"></update-table>
     <template if="{{ $.table.isReady }}">
       <style>
-        broadcast-viewer {
+        translation-viewer {
           width: 66%;
           float: left;
           height: 100%;
@@ -21,13 +21,13 @@
           height: 100%;
         }
       </style>
-      <broadcast-viewer
+      <translation-viewer
           id="viewer"
           space="{{ $.table.appData.space }}"
           language="{{ $.table.appData.language }}"
           on-instructor-resumed="{{mute}}"
           on-instructor-paused="{{hide}}">
-      </broadcast-viewer>
+      </translation-viewer>
       <viewer-heartbeat viewerId="viewer"></viewer-heartbeat>
       <webdis-chat
          space="{{ $.table.appData.space }}"
