@@ -17,15 +17,22 @@ var template = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
   '  </Content>\n' +
   '</Module>\n';
 
+function pipeHangoutsXml(pipe) {
+  var config = require('../config.json', true);
+
+  pipe.pipe($.wrap(template))
+    .pipe($.template())
+    .pipe($.replace(/%frontend_url%/g, config.frontendUrl))
+    .pipe($.rename('hangouts.xml'));
+
+    return pipe;
+}
+
 /* Generate Hangouts app XML */
 gulp.task('xml', function () {
 
-  var config = require('../config.json', true);
-
-  gulp.src('src/hangouts.html')
-    .pipe($.wrap(template))
-    .pipe($.template())
-    .pipe($.replace(/%frontend_url%/g, config.frontendUrl))
-    .pipe($.rename('hangouts.xml'))
-    .pipe(gulp.dest('src/'));
+  var pipe = gulp.src('src/hangouts.html');
+  pipeHangoutsXml(pipe).pipe(gulp.dest('src/'));
 });
+
+module.exports.pipeHangoutsXml = pipeHangoutsXml;

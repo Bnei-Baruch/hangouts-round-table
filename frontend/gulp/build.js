@@ -13,9 +13,6 @@ gulp.task('jshint', function () {
     .pipe($.size());
 });
 
-function htmlPipe(pipe) {
-}
-
 gulp.task('index', function () {
   return gulp.src('src/index.html')
     .pipe($.vulcanize({
@@ -32,26 +29,31 @@ gulp.task('index', function () {
     .pipe($.size());
 });
 
-gulp.task('hangouts', function () {
-  var template = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
-    '<Module>\n' +
-    '  <ModulePrefs title="Round Table">\n' +
-    '    <Require feature="rpc" />\n' +
-    '    <Require feature="views" />\n' +
-    '    <Require feature="locked-domain" />\n' +
-    '  </ModulePrefs>\n' +
-    '  <Content type="html"><![CDATA[\n' +
-    '    <%= contents %>' +
-    '    ]]>\n' +
-    '  </Content>\n' +
-    '</Module>\n';
+gulp.task('hangouts', ['hangouts-participant'], function () {
+  var manifest = gulp.src('.tmp/rev-manifest.json');
 
-  return gulp.src('src/hangouts.html')
-    .pipe($.replace(/%frontend_url%/g, ''))
+  var pipe = gulp.src('src/hangouts.html')
+    .pipe($.replace(/components\/hangouts-participant/g, 'components'))
+    .pipe($.revReplace({manifest: manifest}))
+    .pipe($.minifyHtml({
+      empty: true,
+      spare: true,
+      quotes: true
+    }));
+
+  var xml = require('./xml');
+
+  xml.pipeHangoutsXml(pipe)
+    .pipe(gulp.dest('dist'))
+    .pipe($.size());
+});
+
+gulp.task('hangouts-participant', function () {
+  return gulp.src('src/components/hangouts-participant/hangouts-participant.html')
     .pipe($.vulcanize({
       inline: true,
       strip: true,
-      dest: '.tmp'
+      dest: '.tmp/components'
     }))
     .pipe($.replace(/\.\.\/src\/components\/(.*)\.(gif|png|jpeg)/g, 'images/$1.$2'))
     .pipe($.minifyHtml({
@@ -59,11 +61,10 @@ gulp.task('hangouts', function () {
       spare: true,
       quotes: true
     }))
-    .pipe($.wrap(template))
-    .pipe($.template())
-    .pipe($.rename('hangouts.xml'))
-    .pipe(gulp.dest('dist'))
-    .pipe($.size());
+    .pipe($.rev())
+    .pipe(gulp.dest('dist/components'))
+    .pipe($.rev.manifest())
+    .pipe(gulp.dest('.tmp'));
 });
 
 gulp.task('images', function () {
