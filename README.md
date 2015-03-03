@@ -4,7 +4,7 @@ Hangouts Round Table
 An app for managing round tables based on Google Hangouts.
 
 ```bash
-$ git clone https://github.com/bbfsdev/round_table.git
+$ git clone https://github.com/Bnei-Baruch/hangouts-round-table.git
 $ cd round_table
 ```
 
