@@ -6,7 +6,7 @@
     assignMasterEndpoint: function (e, message) {
       // Assign if the endpoint matches viewer
       if (message.role === this.role &&
-          (message.language === this.language || !this.language) &&
+          (message.language === this.language || (this.role === 'instructor')) &&
           message.webRtcEndpointId !== this.webRtcEndpointId) {
         console.debug("Assigning", message.role, "endpoint");
         this.webRtcEndpointId = message.endpointId;
@@ -40,6 +40,7 @@
 
                   viewerEndpoint.processOffer(sdpOffer, that.cancelOnError(function(error, sdpAnswer){
                     that.webRtcPeer.processSdpAnswer(sdpAnswer);
+                    that.fire('master-connected');
                   }));
 
                 }));
@@ -47,6 +48,9 @@
             }));
           }));
         }, this.onError);
+    },
+    toggleAudio: function (enabled) {
+      this.$.mediaElement.muted = !enabled;
     }
   });
 

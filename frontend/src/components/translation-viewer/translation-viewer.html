@@ -1,0 +1,22 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../broadcast-viewer/broadcast-viewer.html">
+
+<polymer-element name="translation-viewer" attributes="space language">
+  <template>
+    <broadcast-viewer
+      id="instructor"
+      space="{{ space }}"
+      role="instructor">
+    </broadcast-viewer>
+
+    <broadcast-viewer
+      space="{{ space }}"
+      role="translator"
+      language="{{ language }}"
+      audioOnly="true"
+      on-master-connected="{{muteInstructor}}">
+    </broadcast-viewer>
+  </template>
+
+  <script src="translation-viewer.js"></script>
+</polymer-element>
