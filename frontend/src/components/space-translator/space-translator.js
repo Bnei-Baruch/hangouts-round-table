@@ -12,7 +12,10 @@
         video : true
       };
     },
-/*
+/** Mixing instructor and translator streams with Mixer component,
+ * reuse once it will be implemented, see
+ * https://groups.google.com/forum/#!topic/kurento/YjPVb2lycbo
+ * for details
     initKurento: function () {
       var that = this;
 
