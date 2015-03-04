@@ -60,7 +60,7 @@ desc "Delete a user by login"
 task :deluser, [:login] do |t, user|
   app = RoundTable::API.new
 
-  if !user.has_key?(:login)
+  if !user.to_hash.has_key?(:login)
     abort "Please specify login argument"
   end
 
