@@ -70,11 +70,11 @@ gulp.task('hangouts-participant', function () {
 gulp.task('images', function () {
   return gulp.src(['src/components/**/*.{png,gif,jpeg}',
                    'src/bower_components/**/*.{png,gif,jpeg}'])
-    .pipe($.cache($.imagemin({
+    .pipe($.imagemin({
       optimizationLevel: 3,
       progressive: true,
       interlaced: true
-    })))
+    }))
     .pipe(gulp.dest('dist/images'))
     .pipe($.size());
 });

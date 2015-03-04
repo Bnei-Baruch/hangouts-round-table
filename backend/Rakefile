@@ -37,13 +37,19 @@ def adduser(user)
     abort "User #{user[:login]} already exists"
   end
 
-  puts "New password: "
+  print "New password: "
+  $stdout.flush
   password = STDIN.noecho(&:gets).chomp
+
+  print "\nE-Mail: "
+  $stdout.flush
+  email = STDIN.gets.chomp
 
   user_json = {
     'password' => BCrypt::Password.create(password),
     'space' => user[:space],
     'language' => user[:language],
+    'email' => email,
   }.to_json
 
   app.helpers.redis.set(user_key, user_json)
