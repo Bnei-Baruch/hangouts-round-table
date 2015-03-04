@@ -8,5 +8,4 @@ Hangout IDs generator
 $ ./generate_hangout_ids.sh
 ```
 The script will generate `backend/consts.yaml` file.
-
 4. Restart the backend.
