@@ -6,7 +6,7 @@ echo "Generating Hangout IDs"
 
 echo "---\nhangout_ids:" > "$CONSTS_FILE"
 
-for i in `seq 1 50`;
+for i in `seq 1 500`;
 do
   wget -x --load-cookies hangouts-cookies.txt https://plus.google.com/hangouts/_/ -O .hangouts.html
   hangout_id=$(grep -Po '(?<=https:\/\/plus.google.com\/hangouts\/_\/)g\w*' .hangouts.html);
