@@ -6,7 +6,5 @@ Hangout IDs generator
 3. Launch the generator: 
 ```bash
 $ ./generate_hangout_ids.sh
-```
-The script will generate `backend/consts.yaml` file.
-
+```The script will generate `backend/consts.yaml` file.
 4. Restart the backend.
