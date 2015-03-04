@@ -55,7 +55,7 @@ gulp.task('hangouts-participant', function () {
       strip: true,
       dest: '.tmp/components'
     }))
-    .pipe($.replace(/\.\.\/\.\.\/src\/components\/(.*)\.(gif|png|jpeg)/g, 'images/$1.$2'))
+    .pipe($.replace(/src\/components\/([^\"]*)\.(gif|png|jpeg)/g, 'images/$1.$2'))
     .pipe($.minifyHtml({
       empty: true,
       spare: true,
