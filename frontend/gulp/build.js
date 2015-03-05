@@ -29,7 +29,7 @@ gulp.task('index', function () {
     .pipe($.size());
 });
 
-gulp.task('hangouts', ['hangouts-participant'], function () {
+gulp.task('hangouts', ['webcomponents', 'hangouts-participant'], function () {
   var manifest = gulp.src('.tmp/rev-manifest.json');
 
   var pipe = gulp.src('src/hangouts.html')
@@ -65,6 +65,12 @@ gulp.task('hangouts-participant', function () {
     .pipe(gulp.dest('dist/components'))
     .pipe($.rev.manifest())
     .pipe(gulp.dest('.tmp'));
+});
+
+gulp.task('webcomponents', function () {
+  return gulp.src('src/bower_components/webcomponentsjs/webcomponents.min.js')
+    .pipe($.rename('webcomponents.js'))
+    .pipe(gulp.dest('dist/bower_components/webcomponentsjs'));
 });
 
 gulp.task('images', function () {
