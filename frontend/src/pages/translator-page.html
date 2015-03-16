@@ -5,14 +5,16 @@
 
 <polymer-element name="translator-page" noscript>
   <template>
-    <header-layout header="Translator" authRequired="true">
+    <header-layout header="Translator">
       <user-auth id="translator"></user-auth>
 
-      <space-translator
-        space="{{ $.translator.space }}"
-        language="{{ $.translator.language }}"
-        from_language="{{ $.translator.from_language }}">
-      </space-translator>
+      <template if="{{ $.translator.loggedIn }}">
+        <space-translator
+          space="{{ $.translator.space }}"
+          language="{{ $.translator.language }}"
+          from_language="{{ $.translator.from_language }}">
+        </space-translator>
+      </template>
     </header-layout>
   </template>
 </polymer-element>

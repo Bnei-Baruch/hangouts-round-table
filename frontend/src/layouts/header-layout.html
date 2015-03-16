@@ -27,18 +27,12 @@
 
     </style>
 
-    <template if="{{ authRequired }}">
-      <user-auth id="user"></user-auth>
-    </template>
-
-    <template if="{{ !authRequired || (authRequired && $.user.loggedIn) }}">
-      <core-header-panel>
-        <div class="core-header">{{ header || "Round Table" }}</div>
-        <div class="content" fit>
-          <content></content>
-        </div>
-      </core-header-panel>
-    </template>
+    <core-header-panel>
+      <div class="core-header">{{ header || "Round Table" }}</div>
+      <div class="content" fit>
+        <content></content>
+      </div>
+    </core-header-panel>
 
   </template>
 </polymer-element>

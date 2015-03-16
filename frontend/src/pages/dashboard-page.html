@@ -4,8 +4,11 @@
 
 <polymer-element name="dashboard-page" noscript>
   <template>
-    <header-layout header="Dashboard" authRequired="true">
-      <heartbeat-dashboard></heartbeat-dashboard>
+    <header-layout header="Dashboard">
+      <user-auth id="user"></user-auth>
+      <template if="{{ $.user.loggedIn }}">
+        <heartbeat-dashboard></heartbeat-dashboard>
+      </template>
     </header-layout>
   </template>
 </polymer-element>
