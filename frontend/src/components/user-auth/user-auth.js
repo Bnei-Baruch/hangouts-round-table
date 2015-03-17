@@ -2,11 +2,18 @@
 
 (function () {
   var authData = {};
+  var authElements = [];
   var modalDisplayed = false;
 
   Polymer({
+    publish: {
+      loginRequired: true
+    },
     get loggedIn() {
-      return authData.space !== undefined;
+      return authData.login !== undefined;
+    },
+    get login() {
+      return authData.login;
     },
     get space() {
       return authData.space;
@@ -18,7 +25,9 @@
       return authData.email;
     },
     ready: function () {
-      if (!authData.space && !modalDisplayed) {
+      authElements.push(this);
+
+      if (!authData.login && !modalDisplayed) {
         var cookieValue = this.$.cookie.value;
 
         if (cookieValue) {
@@ -40,6 +49,7 @@
           this.$.cookie.save();
           this.saveAuthData(parsedResponse);
           this.toggleLoginModal(false);
+          this.fireToAllElements('logged-in');
           break;
         case 400:
           this.errorText = parsedResponse.error;
@@ -49,19 +59,32 @@
       }
     },
     saveAuthData: function (data) {
-      authData = data;
+      if (data !== undefined) {
+        authData = data;
+      }
 
-      // Forcing binding mechanism to update DOM with global auth data
+      // Forcing properties update
       this.dummy = true;
     },
     logout: function () {
+      this.saveAuthData({});
       this.$.cookie.deleteCookie();
       this.toggleLoginModal(true);
-      authData = null;
+      this.fireToAllElements('logged-out');
     },
     toggleLoginModal: function (show) {
-      this.$.loginModal.toggle();
-      modalDisplayed = show;
+      if (this.loginRequired) {
+        this.$.loginModal.toggle();
+        modalDisplayed = show;
+      }
+    },
+    fireToAllElements: function(eventName) {
+      authElements.forEach(function (authElement) {
+        authElement.fire(eventName, {});
+      });
+    },
+    onLoggedIn: function () {
+      this.saveAuthData();
     }
   });
 })();

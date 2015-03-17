@@ -1,0 +1,29 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<polymer-element name="user-status">
+  <template>
+    <style>
+      #logout {
+        text-transform: none;
+        z-index: 1000;
+      }
+    </style>
+
+    <user-auth id="user" loginRequired="false"></user-auth>
+    <template if="{{ $.user.loggedIn }}">
+      <paper-button id="logout" on-click={{logout}}>
+        <core-icon icon="exit-to-app"></core-icon>
+        <core-tooltip>
+          {{ $.user.login }}
+          <div tip>
+            <p>Space: <strong>{{ $.user.space }}</strong></p>
+            <p>Language: <strong>{{ $.user.language }}</strong></p>
+            <p>E-Mail: <strong>{{ $.user.email }}</strong></p>
+          </div>
+        </core-tooltip>
+      </paper-button>
+    </template>
+  </template>
+
+  <script src="user-status.js"></script>
+</polymer-element>

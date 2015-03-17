@@ -9,7 +9,7 @@
 <link rel="import" href="../../bower_components/ajax-form/ajax-form.html">
 <link rel="import" href="../app-config/app-config.html" />
 
-<polymer-element name="user-auth">
+<polymer-element name="user-auth" on-logged-in="{{onLoggedIn}}">
   <template>
   <style>
     #errorText {
