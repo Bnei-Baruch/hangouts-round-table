@@ -23,21 +23,35 @@
     createEndpoint: function (sdpOffer, pipeline) {
       var that = this;
 
-      pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, webRtc){
+      pipeline.create('PlayerEndpoint',
+          {uri: "rtmp://edge1.il.kab.tv/rtplive/live1-cn4qdiwU-rus-medium.stream"},
+          // {uri: "http://files.kabbalahmedia.info/download/files/eng_t_rav_bs-shamati-068-kesher-adam_2015-03-16_lesson.mp4"},
+          // {uri: "http://icecast.kab.tv/live1-rus-574bcfd5.mp3"},
+          that.cancelOnError(function(error, webRtc){
+      // pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, webRtc){
         that.webRtcEndpoint = webRtc;
 
         sdpOffer = that.setBandwidth(sdpOffer);
 
-        webRtc.processOffer(sdpOffer, that.cancelOnError(function(error, sdpAnswer){
-          that.toggleTracksByKind(null, false);
-          that.webRtcPeer.processSdpAnswer(sdpAnswer);
+        webRtc.play(function () {
           that.isReady = true;
           that.$.signaling.sendMessage({
             action: 'register-master',
             role: that.role,
             endpointId: webRtc.id
           });
-        }));
+        });
+
+        // webRtc.processOffer(sdpOffer, that.cancelOnError(function(error, sdpAnswer){
+        //   that.toggleTracksByKind(null, false);
+        //   that.webRtcPeer.processSdpAnswer(sdpAnswer);
+        //   that.isReady = true;
+        //   that.$.signaling.sendMessage({
+        //     action: 'register-master',
+        //     role: that.role,
+        //     endpointId: webRtc.id
+        //   });
+        // }));
       }));
     },
     isEnabledChanged: function () {
