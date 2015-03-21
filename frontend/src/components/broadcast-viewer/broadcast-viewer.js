@@ -51,6 +51,11 @@
     },
     toggleAudio: function (enabled) {
       this.$.mediaElement.muted = !enabled;
+    },
+    languageChanged: function (oldValue, newValue) {
+      if (newValue) {
+        this.register();
+      }
     }
   });
 

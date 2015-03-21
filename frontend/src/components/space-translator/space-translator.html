@@ -1,11 +1,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../broadcast-master/broadcast-master.html">
-<link rel="import" href="../broadcast-viewer/broadcast-viewer.html" />
+<link rel="import" href="../translation-viewer/translation-viewer.html" />
+<link rel="import" href="../language-selector/language-selector.html" />
 
 <polymer-element name="space-translator" extends="broadcast-master" role="translator" attributes="space language">
   <template>
     <style>
-      broadcast-viewer {
+      translation-viewer {
         width: 320px;
         height: 240px;
         float: left;
@@ -13,14 +14,18 @@
       }
     </style>
 
-    <broadcast-viewer id="viewer"
+    <translation-viewer id="viewer"
       space="{{ space }}"
-      role="instructor">
-    </broadcast-viewer>
+      language="{{ $.languageSelector.language }}">
+    </translation-viewer>
 
     <audio id="mediaElement" autoplay></audio>
 
     <shadow></shadow>
+
+    <div>
+      Listen to: <language-selector id="languageSelector" space="{{ space }}" defaultLanguage="{{ language }}"></language-selector>
+    </div>
   </template>
 
   <script src="space-translator.js"></script>

@@ -1,14 +1,16 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../../bower_components/core-menu/core-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-dropdown/paper-dropdown.html">
+<link rel="import" href="../x-language/x-language.html" />
 <link rel="import" href="../app-config/app-config.html" />
 
-<polymer-element name="language-selector" attributes="space">
+<polymer-element name="language-selector" attributes="space defaultLanguage">
   <template id="language-selector">
 
   <app-config id="config"></app-config>
-
-  <link rel="stylesheet" href="language-selector.css">
 
   <core-ajax
     id="getLanguages"
@@ -19,15 +21,13 @@
     on-core-response="{{ setLanguages }}">
   </core-ajax>
 
-  <paper-dropdown-menu label="Select a language">
-    <paper-dropdown class="dropdown">
-      <core-menu class="menu">
-        <template repeat="{{ language in languages }}">
-          <paper-item value="{{ language }}">{{ language }}</paper-item>
-        </template>
-      </core-menu>
-    </paper-dropdown>
-  </paper-dropdown-menu>
+  <x-language id="lang"></x-language>
+
+  <select id="languageSelector" value="{{ defaultLanguage }}" on-change="{{selectLanguage}}">
+    <template repeat="{{ language in languages }}">
+      <option value="{{ language }}">{{ $.lang.code[language].nativeName }}</option>
+    </template>
+  </select>
 
   </template>
 

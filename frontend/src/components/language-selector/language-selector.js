@@ -2,9 +2,7 @@
 
 (function () {
   Polymer({
-    publish: {
-      space: 'default'
-    },
+    language: null,
     ready: function() {
       var that = this;
       function refreshLanguages() {
@@ -16,6 +14,12 @@
     setLanguages: function (e) {
       var that = this;
       that.languages = e.detail.response;
+      that.job('job', function () {
+        that.$.languageSelector.value = that.defaultLanguage;
+      });
+    },
+    selectLanguage: function(e, sel, target) {
+      this.language = target.value;
     }
   });
 
