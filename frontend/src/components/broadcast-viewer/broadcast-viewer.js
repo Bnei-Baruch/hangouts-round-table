@@ -29,25 +29,29 @@
             kurentoClient.getMediaobjectById(that.webRtcEndpointId, that.cancelOnError(function(error, webRtcEndpoint) {
 
               webRtcEndpoint.getMediaPipeline(that.cancelOnError(function(error, pipeline) {
-
-                pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, viewerEndpoint){
-
-                  that.viewerEndpoint = viewerEndpoint;
-
-                  webRtcEndpoint.connect(viewerEndpoint, that.cancelOnError(function(){
-                    console.log('Connected to master');
-                  }));
-
-                  viewerEndpoint.processOffer(sdpOffer, that.cancelOnError(function(error, sdpAnswer){
-                    that.webRtcPeer.processSdpAnswer(sdpAnswer);
-                    that.fire('master-connected');
-                  }));
-
-                }));
+                that.createEndpoint(sdpOffer, webRtcEndpoint, pipeline);
               }));
             }));
           }));
         }, this.onError);
+    },
+    createEndpoint: function (sdpOffer, webRtcEndpoint, pipeline) {
+      var that = this;
+
+      pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, viewerEndpoint){
+
+        that.viewerEndpoint = viewerEndpoint;
+
+        webRtcEndpoint.connect(viewerEndpoint, that.cancelOnError(function(){
+          console.log('Connected to master');
+        }));
+
+        viewerEndpoint.processOffer(sdpOffer, that.cancelOnError(function(error, sdpAnswer){
+          that.webRtcPeer.processSdpAnswer(sdpAnswer);
+          that.fire('master-connected');
+        }));
+
+      }));
     },
     toggleAudio: function (enabled) {
       this.$.mediaElement.muted = !enabled;

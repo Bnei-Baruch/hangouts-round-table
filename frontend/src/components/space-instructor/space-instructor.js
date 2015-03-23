@@ -19,6 +19,13 @@
         }
       };
     },
+    shutdown: function () {
+      this.super();
+
+      if (this.httpEndpoint) {
+        this.httpEndpoint.release();
+      }
+    },
     isEnabledChanged: function () {
       this.super();
 
