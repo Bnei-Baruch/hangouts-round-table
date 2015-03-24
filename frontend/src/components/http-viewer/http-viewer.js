@@ -31,10 +31,8 @@
 
       pipeline.create('HttpGetEndpoint', that.cancelOnError(function(error, httpEndpoint){
         that.httpEndpoint = httpEndpoint;
-        console.debug(error, httpEndpoint);
         webRtcEndpoint.connect(httpEndpoint);
         httpEndpoint.getUrl(that.cancelOnError(function (error, url) {
-          console.debug(error, url);
           that.$.mediaElement.src = url;
         }));
       }));

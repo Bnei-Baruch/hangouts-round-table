@@ -67,6 +67,24 @@ gulp.task('hangouts-participant', function () {
     .pipe(gulp.dest('.tmp'));
 });
 
+gulp.task('http-viewer-iframe', function () {
+  return gulp.src('src/components/http-viewer/iframe.html')
+    .pipe($.vulcanize({
+      inline: true,
+      strip: true,
+      dest: '.tmp'
+    }))
+    .pipe($.replace(/src\/components\/([^\"]*)\.(gif|png|jpeg)/g, 'images/$1.$2'))
+    .pipe($.minifyHtml({
+      empty: true,
+      spare: true,
+      quotes: true
+    }))
+    .pipe($.rename('http-viewer-iframe.html'))
+    .pipe(gulp.dest('dist'))
+    .pipe($.size());
+});
+
 gulp.task('webcomponents', function () {
   return gulp.src('src/bower_components/webcomponentsjs/webcomponents.min.js')
     .pipe($.rename('webcomponents.js'))
@@ -99,4 +117,4 @@ gulp.task('clean', function () {
   return gulp.src(['.tmp', 'dist'], { read: false }).pipe($.rimraf());
 });
 
-gulp.task('build', ['jshint', 'config', 'images', 'fonts', 'index', 'hangouts']);
+gulp.task('build', ['jshint', 'config', 'images', 'fonts', 'index', 'hangouts', 'http-viewer-iframe']);
