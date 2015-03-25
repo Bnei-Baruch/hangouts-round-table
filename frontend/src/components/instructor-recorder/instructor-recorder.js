@@ -3,6 +3,7 @@
 (function () {
   Polymer({
     state: null,  // 'recording', 'paused', 'stopped'
+    isReady: false,
     assignMasterEndpoint: function (e, message) {
       if (message.role === 'instructor' &&
         message.endpointId !== this.webRtcEndpointId) {
@@ -37,6 +38,7 @@
             that.recorderEndpoint = recorderEndpoint;
             that.registerForRelease(recorderEndpoint);
             webRtcEndpoint.connect(recorderEndpoint);
+            that.isReady = true;
       }));
     },
     getFileUri: function () {

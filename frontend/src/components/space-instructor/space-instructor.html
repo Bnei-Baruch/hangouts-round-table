@@ -44,7 +44,11 @@
     </div>
 
     <div class="controls">
-      <toggle-label-button raised active="{{ isEnabled }}" labelPressed="Pause" labelReleased="Resume" disabled?="{{ !isReady }}">Start
+      <toggle-label-button raised
+        active="{{ isEnabled }}"
+        labelPressed="Pause"
+        labelReleased="Resume"
+        disabled?="{{ !(isReady && $.recorder.isReady) }}">Start
       </toggle-label-button>
     </div>
 
