@@ -2,13 +2,6 @@
 
 (function () {
   Polymer({
-    shutdown: function () {
-      this.super();
-
-      if (this.httpEndpoint) {
-        this.httpEndpoint.release();
-      }
-    },
     initKurento: function () {
       var that = this;
 
@@ -31,6 +24,8 @@
 
       pipeline.create('HttpGetEndpoint', that.cancelOnError(function(error, httpEndpoint){
         that.httpEndpoint = httpEndpoint;
+        that.registerForRelease(httpEndpoint);
+
         webRtcEndpoint.connect(httpEndpoint);
         httpEndpoint.getUrl(that.cancelOnError(function (error, url) {
           that.$.mediaElement.src = url;

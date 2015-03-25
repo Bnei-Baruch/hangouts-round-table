@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer-fontawesome/polymer-fontawesome.html">
 <link rel="import" href="../backend-signaling/backend-signaling.html">
 <link rel="import" href="../broadcast-master/broadcast-master.html">
+<link rel="import" href="../instructor-recorder/instructor-recorder.html">
 
 <polymer-element name="space-instructor" extends="broadcast-master" role="instructor" attributes="language">
   <template>
@@ -8,9 +10,38 @@
       :host::shadow video {
         float: left;
       }
+
+      #videoContainer font-awesome {
+        float: left;
+        position: absolute;
+        color: red;
+        margin: 4px;
+      }
     </style>
 
-    <video id="mediaElement" autoplay width="320px" height="240px"></video>
+    <div id="videoContainer">
+      <template if="{{ recordingUri !== null }}">
+        <instructor-recorder
+          id="recorder"
+          space="{{ space }}"
+          recordingUri="{{ recordingUri }}">
+        </instructor-recorder>
+
+        <template if="{{ $.recorder.state === 'recording' }}">
+          <font-awesome icon="circle" size="2x"></font-awesome>
+        </template>
+
+        <template if="{{ $.recorder.state === 'stopped' }}">
+          <font-awesome icon="stop" size="2x"></font-awesome>
+        </template>
+
+        <template if="{{ $.recorder.state === 'paused' }}">
+          <font-awesome icon="pause" size="2x"></font-awesome>
+        </template>
+
+      </template>
+      <video id="mediaElement" autoplay width="320px" height="240px"></video>
+    </div>
 
     <div class="controls">
       <toggle-label-button raised active="{{ isEnabled }}" labelPressed="Pause" labelReleased="Resume" disabled?="{{ !isReady }}">Start

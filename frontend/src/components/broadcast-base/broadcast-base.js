@@ -9,6 +9,7 @@
     ready: function () {
       var that = this;
 
+      this.mediaObjectsToRelease = [];
       window.onbeforeunload = function () {
         that.shutdown();
       };
@@ -39,15 +40,20 @@
     onError: function (error) {
       console.error(error);
     },
+    registerForRelease: function (mediaObject) {
+      this.mediaObjectsToRelease.push(mediaObject);
+    },
     shutdown: function () {
       if (this.webRtcPeer) {
         this.webRtcPeer.dispose();
         this.webRtcPeer = null;
       }
 
-      if (this.webRtcEndpoint) {
-        this.webRtcEndpoint.release();
-      }
+      this.mediaObjectsToRelease.forEach(function (mediaObject) {
+        if (mediaObject) {
+          mediaObject.release();
+        }
+      });
     }
   });
 

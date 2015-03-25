@@ -5,6 +5,14 @@
     ready: function () {
       this.super();
 
+      var spaceConfig = this.$.config.spaces[this.space];
+
+      if (spaceConfig) {
+        this.recordingUri = spaceConfig.recordingUri;
+      } else {
+        this.recordingUri = null;
+      }
+
       var videoConstraints = this.$.config.videoConstraints;
 
       this.mediaConstraints = {
@@ -19,13 +27,6 @@
         }
       };
     },
-    shutdown: function () {
-      this.super();
-
-      if (this.httpEndpoint) {
-        this.httpEndpoint.release();
-      }
-    },
     isEnabledChanged: function () {
       this.super();
 
@@ -35,6 +36,13 @@
         'role': this.role
       });
     },
+    shutdown: function () {
+      this.super();
+
+      if (this.$.recorder) {
+        this.$.recorder.stop();
+      }
+    }
   });
 
 })();

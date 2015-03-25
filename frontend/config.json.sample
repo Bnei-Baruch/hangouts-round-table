@@ -17,5 +17,10 @@
   "updateTableInterval": 10000,
   "sendHeartbeatInterval": 10000,
   "dashboardRefreshInterval": 5000,
-  "hangoutsAppGid": "979640007671"
+  "hangoutsAppGid": "979640007671",
+  "spaces": {
+    "mak-online": {
+      "recordingUri": "/tmp"
+    }
+  }
 }
