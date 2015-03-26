@@ -48,7 +48,7 @@
         active="{{ isEnabled }}"
         labelPressed="Pause"
         labelReleased="Resume"
-        disabled?="{{ !(isReady && $.recorder.isReady) }}">Start
+        disabled?="{{ !(isReady && (!recordingUri || $.recorder.isReady)) }}">Start
       </toggle-label-button>
     </div>
 
