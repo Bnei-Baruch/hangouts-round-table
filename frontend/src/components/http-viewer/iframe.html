@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <title>HTTP Viewer</title>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <link rel="import" href="../../bower_components/polymer/polymer.html">
+    <link rel="import" href="http-viewer.html" />
+    <style>
+      body {
+        background: #181818;
+        color: white;
+      }
+    </style>
+  </head>
+  <body unresolved>
+    <template id="httpViewer" is="auto-binding" if="{{ space }}">
+      <http-viewer space="{{ space }}"></http-viewer>
+    </template>
+
+    <template id="error" is="auto-binding" if="{{ noSpace }}">
+      <p>Add space name hash to the iframe URL</p>
+    </template>
+
+    <script>
+      var httpViewer = document.querySelector('#httpViewer');
+      var space = window.location.hash.slice(1);
+
+      if (space) {
+        httpViewer.space = space;
+      } else {
+        var error = document.querySelector('#error');
+        error.noSpace = true;
+      }
+    </script>
+  </body>
+</html>

@@ -37,8 +37,12 @@
             role: that.role,
             endpointId: webRtc.id
           });
+          that.createEndpointCallback(webRtc, pipeline);
         }));
       }));
+    },
+    createEndpointCallback: function () {
+      console.debug("Called createEndpointCallback which is not implemented");
     },
     isEnabledChanged: function () {
       this.toggleBroadcast();
