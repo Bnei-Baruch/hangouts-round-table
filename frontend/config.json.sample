@@ -19,8 +19,8 @@
   "dashboardRefreshInterval": 5000,
   "hangoutsAppGid": "979640007671",
   "spaces": {
-    "mak-online": {
-      "recordingUri": "/tmp"
+    "default": {
+      "recordingUri": "file:///tmp"
     }
   }
 }
