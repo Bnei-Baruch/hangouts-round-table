@@ -25,6 +25,7 @@
 
       pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, webRtc){
         that.webRtcEndpoint = webRtc;
+        that.registerForRelease(webRtc);
 
         sdpOffer = that.setBandwidth(sdpOffer);
 

@@ -41,6 +41,7 @@
       pipeline.create('WebRtcEndpoint', that.cancelOnError(function(error, viewerEndpoint){
 
         that.viewerEndpoint = viewerEndpoint;
+        that.registerForRelease(viewerEndpoint);
 
         webRtcEndpoint.connect(viewerEndpoint, that.cancelOnError(function(){
           console.log('Connected to master');

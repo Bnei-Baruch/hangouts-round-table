@@ -1,0 +1,16 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../broadcast-base/broadcast-base.html">
+
+<polymer-element name="instructor-recorder" extends="broadcast-base" attributes="space recordingUri">
+  <template>
+    <backend-signaling
+      id="signaling"
+      space="{{ space }}"
+      on-assign-master-endpoint={{assignMasterEndpoint}}
+      on-instructor-resumed={{resume}}
+      on-instructor-paused={{pause}}>
+    </backend-signaling>
+  </template>
+
+  <script src="instructor-recorder.js"></script>
+</polymer-element>
