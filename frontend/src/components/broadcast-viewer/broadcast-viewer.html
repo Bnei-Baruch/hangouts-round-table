@@ -2,7 +2,7 @@
 <link rel="import" href="../broadcast-base/broadcast-base.html">
 <link rel="import" href="../backend-signaling/backend-signaling.html">
 
-<polymer-element name="broadcast-viewer" extends="broadcast-base" attributes="space language role audioOnly">
+<polymer-element name="broadcast-viewer" extends="broadcast-base" attributes="space language role audioOnly showControls">
   <template>
     <style>
       :host #mediaElement {
@@ -18,7 +18,7 @@
       role="{{ role }}"
       language="{{ language }}"
       on-websocket-open="{{register}}"
-      on-assign-master-endpoint={{assignMasterEndpoint}}>
+      on-assign-master-endpoint="{{assignMasterEndpoint}}">
     </backend-signaling>
 
     <template if="{{ audioOnly }}">
@@ -26,7 +26,7 @@
     </template>
 
     <template if="{{ !audioOnly }}">
-      <video id="mediaElement" autoplay></video>
+      <video id="mediaElement" autoplay controls?="{{ showControls }}"></video>
     </template>
 
     <shadow></shadow>
