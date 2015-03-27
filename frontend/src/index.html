@@ -12,7 +12,13 @@
     <link rel="import" href="pages/translator-page.html">
     <link rel="import" href="pages/dashboard-page.html">
     <link rel="import" href="pages/bad-user-agent-page.html">
+    <link rel="import" href="pages/find-table-page.html">
     <link rel="import" href="pages/not-found-page.html">
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
   </head>
   <body unresolved>
     <app-router trailingSlash="ignore">
@@ -20,6 +26,7 @@
       <app-route path="/translator" element="translator-page"></app-route>
       <app-route path="/dashboard" element="dashboard-page"></app-route>
       <app-route path="/bad-user-agent" element="bad-user-agent-page"></app-route>
+      <app-route path="/find-table/:space/:language" element="find-table-page"></app-route>
       <app-route path="*" element="not-found-page"></app-route>
     </app-router>
   </body>

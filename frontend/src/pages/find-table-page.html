@@ -1,0 +1,69 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/font-roboto/roboto.html">
+<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../components/app-config/app-config.html" />
+
+<polymer-element name="find-table-page">
+  <template>
+    <style>
+      #content {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        color: white;
+        background-color: #181818 !important;
+        background: center transparent url('../components/broadcast-viewer/spinner.gif') no-repeat;
+        font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+        text-align: center;
+      }
+
+      #content label {
+        font-weight: bold;
+        font-size: 24pt;
+        top: 35%;
+        position: relative;
+      }
+    </style>
+
+    <app-config id="config"></app-config>
+
+    <core-ajax
+      id="getTable"
+      url="{{ $.config.backendUrl }}/spaces/{{ space }}/tables/{{ language }}/existing",
+      method="GET"
+      contentType="application/json"
+      handleAs="json"
+      on-core-response="{{ joinTable }}">
+    </core-ajax>
+
+    <div id="content">
+      <label>Ищем стол, пожалуйста, подождите...</label>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      ready: function() {
+        var that = this;
+
+        function getTable() {
+          that.$.getTable.go();
+        }
+
+        getTable();
+
+        window.setInterval(getTable, 5000);
+      },
+      joinTable: function (e, response) {
+        var that = this;
+
+        if (response.xhr.status === 200) {
+          window.location = response.response.url;
+        } else {
+          console.debug("No tables found");
+        }
+      }
+    });
+  </script>
+</polymer-element>
