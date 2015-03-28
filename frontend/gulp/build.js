@@ -21,6 +21,7 @@ gulp.task('index', function () {
       dest: '.tmp'
     }))
     .pipe($.replace(/src\/bower_components\/fontawesome\/([^\"]*)fonts/g, 'fonts'))
+    .pipe($.replace(/src\/components\/broadcast-viewer\/spinner.gif/g, 'images/broadcast-viewer/spinner.gif'))
     .pipe($.minifyHtml({
       empty: true,
       spare: true,
