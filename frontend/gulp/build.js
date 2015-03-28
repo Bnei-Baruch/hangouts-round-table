@@ -20,6 +20,7 @@ gulp.task('index', function () {
       strip: true,
       dest: '.tmp'
     }))
+    .pipe($.replace(/src\/bower_components\/fontawesome\/([^\"]*)fonts/g, 'fonts'))
     .pipe($.minifyHtml({
       empty: true,
       spare: true,
