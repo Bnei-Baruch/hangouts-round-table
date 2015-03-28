@@ -3,10 +3,10 @@
     "maxBitrate": 64
   },
   "videoConstraints": {
-    "maxWidth": 320,
-    "maxHeight": 240,
-    "maxFrameRate": 15,
-    "minFrameRate": 15,
+    "maxWidth": 640,
+    "maxHeight": 360,
+    "maxFrameRate": 10,
+    "minFrameRate": 1,
     "maxBitrate": 256
   },
   "backendUrl": "https://rt-dev.kbb1.com/backend",
