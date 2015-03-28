@@ -11,6 +11,7 @@
       var initHangouts = function (apiInitEvent) {
         if (apiInitEvent.isApiReady) {
           that.startUpdatingTable();
+          that.displayName = gapi.hangout.getLocalParticipant().person.displayName;
           that.isReady = true;
           gapi.hangout.onApiReady.remove(initHangouts);
         }

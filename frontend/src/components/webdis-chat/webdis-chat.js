@@ -10,7 +10,7 @@
       var l = document.createElement("a");
       l.href = this.$.config.frontendUrl;
       this.hostname = l.hostname;
-    }
+    },
   });
 
 })();
