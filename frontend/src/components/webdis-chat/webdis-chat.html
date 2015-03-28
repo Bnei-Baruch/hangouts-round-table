@@ -2,7 +2,7 @@
 <link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
 <link rel="import" href="../app-config/app-config.html" />
 
-<polymer-element name="webdis-chat" attributes="space">
+<polymer-element name="webdis-chat" attributes="space fromName">
   <template id="chat-list">
 
   <app-config id="config"></app-config>
@@ -20,7 +20,7 @@
     <iframe src="{{ $.config.chatUri }}/admin.html?label={{ hostname }}.{{ space }}"></iframe>
   </template>
   <template if="{{ !isAdmin }}">
-    <iframe src="{{ $.config.chatUri }}?label={{ hostname }}.{{ space }}"></iframe>
+    <iframe src="{{ $.config.chatUri }}?label={{ hostname }}.{{ space }}&minimal_form=true&from_text={{ fromName }}"></iframe>
   </template>
 
   </template>
