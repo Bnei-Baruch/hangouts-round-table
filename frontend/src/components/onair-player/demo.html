@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <title>HTTP viewer demo</title>
+  </head>
+
+  <body>
+    <div id="rtPlayerContainer">
+      Здесь будет плеер с трансляцией
+    </div>
+
+    <script src="onair-player.js"></script>
+
+    <script>
+      initOnAirPlayer({
+        container: document.getElementById('rtPlayerContainer'),
+        channelId: 'UC47ukJjUCMtIok1wMYo2Zhw',
+        width: 677,
+        height: 390,
+        callback: function (title) {
+          if (title) {
+            alert(title);
+          }
+        }
+      });
+    </script>
+  </body>
+
+</html>
