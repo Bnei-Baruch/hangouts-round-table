@@ -93,6 +93,11 @@ gulp.task('webcomponents', function () {
     .pipe(gulp.dest('dist/bower_components/webcomponentsjs'));
 });
 
+gulp.task('player', function () {
+  return gulp.src('src/components/onair-player/onair-player.js')
+    .pipe(gulp.dest('dist/components/onair-player'));
+});
+
 gulp.task('images', function () {
   return gulp.src(['src/components/**/*.{png,gif,jpeg}',
                    'src/bower_components/**/*.{png,gif,jpeg}'])
@@ -119,4 +124,4 @@ gulp.task('clean', function () {
   return gulp.src(['.tmp', 'dist'], { read: false }).pipe($.rimraf());
 });
 
-gulp.task('build', ['jshint', 'config', 'images', 'fonts', 'index', 'hangouts', 'http-viewer-iframe']);
+gulp.task('build', ['jshint', 'config', 'images', 'fonts', 'index', 'hangouts', 'http-viewer-iframe', 'player']);
