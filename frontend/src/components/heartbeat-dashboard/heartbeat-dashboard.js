@@ -75,18 +75,17 @@
       }
 
       message.timestamp = this.timestamp;
-      message.videoColor = '#fff';
+      message.videoColor = '#000';
       if (message.averageVideoColor) {
         message.videoColor = 'rgb(' + message.averageVideoColor.join(',') + ')';
       }
       table.participants[message.participantId] = message;
 
-      for (var index in message.participants) {
-        var participant = message.participants[index];
+      message.participants.forEach(function (participant) {
         if (!(participant.participantId in table.participants)) {
           table.participants[participant.participantId] = participant;
         }
-      }
+      });
     }
   });
 })();

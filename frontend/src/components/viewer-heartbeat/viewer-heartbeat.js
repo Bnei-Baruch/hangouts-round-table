@@ -33,11 +33,8 @@
       this.$.signaling.sendMessage(message);
     },
     getAverageVideoColor: function () {
-      if (this.viewer.webRtcPeer === undefined) {
-        return null;
-      }
+      var video = this.viewer.getVideoElement();
 
-      var video = this.viewer.webRtcPeer.remoteVideo;
       this.snapshotContext.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
 
       var result;
@@ -68,7 +65,7 @@
         var AC = window.webkitAudioContext || window.AudioContext;
         this.audioContext = new AC();
 
-        this.source = this.audioContext.createMediaElementSource(this.viewer.webRtcPeer.remoteVideo);
+        this.source = this.audioContext.createMediaElementSource(this.viewer.getVideoElement());
         this.analyser = this.audioContext.createAnalyser();
         this.analyser.smoothingTimeConstant = 0.3;
         this.analyser.fftSize = 1024;
@@ -88,18 +85,6 @@
       average = average/this.array.length;
 
       return average;
-    },
-    getPeerConnectionStats: function () {
-      this.viewer.webRtcPeer.pc.getStats(function (connStats){
-        console.log(connStats);
-        // var rtcStatsReports = connStats.result();
-        // console.log(rtcStatsReports);
-
-        // rtcStatsReports[7].names()
-        //
-        // var googCurrentDelayMs = rtcStatsReports[7].stat('googCurrentDelayMs')
-        // console.log(googCurrentDelayMs)
-      });
     },
     getParticipants: function () {
       var result = [];

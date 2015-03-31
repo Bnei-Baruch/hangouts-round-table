@@ -9,6 +9,9 @@
       if (message.language === this.language) {
         this.$.instructor.toggleAudio(true);
       }
+    },
+    getVideoElement: function () {
+      return this.$.instructor.webRtcPeer.remoteVideo;
     }
   });
 
