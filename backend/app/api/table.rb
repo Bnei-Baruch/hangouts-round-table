@@ -177,7 +177,10 @@ class RoundTable::API
   end
 
   def get_table_url(request, space, language, onair, subspace, is_moderator)
-    redirect_on_bad_user_agent(request)
+    bad_user_agent_url = get_bad_user_agent_url(request)
+    if bad_user_agent_url
+      return bad_user_agent_url
+    end
 
     table_id = get_free_table_id(space, language,
                                  onair, subspace, is_moderator: is_moderator)
@@ -189,10 +192,10 @@ class RoundTable::API
     end
   end
 
-  def redirect_on_bad_user_agent(request)
+  def get_bad_user_agent_url(request)
     browser = Browser.new(:ua => request.user_agent)
     if browser.mobile? or (not browser.chrome? and not browser.firefox?)
-      redirect "#{config['bad_user_agent_url']}?from=#{request.url}"
+      "#{config['bad_user_agent_url']}?from=#{request.url}"
     end
   end
 
