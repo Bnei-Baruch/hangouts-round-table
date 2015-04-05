@@ -30,7 +30,7 @@ function rt_renderPlayer(data) {
   if (liveEvent) {
     title = liveEvent[liveEvent.length-1].title.$t;
     window.clearInterval(rt_interval);
-    var embedHtml = '<iframe src="http://www.youtube.com/embed/' +
+    var embedHtml = '<iframe id="onair-event-player" src="http://www.youtube.com/embed/' +
       liveEvent[liveEvent.length-1].content.src.split('/').splice(-1,1) +
       '&#038;autoplay=1&#038;rel=0" frameborder="0" ' +
       'width="' + rt_config.width + '" height="' + rt_config.height + '"></iframe>';
