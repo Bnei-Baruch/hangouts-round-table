@@ -11,7 +11,7 @@
       }
     },
     getVideoElement: function () {
-      return this.$.instructor.webRtcPeer.remoteVideo;
+      return this.$.instructor.webRtcPeer.mediaElement;
     }
   });
 
