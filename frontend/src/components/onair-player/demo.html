@@ -8,10 +8,10 @@
     <div id="rtPlayerContainer">
       Здесь будет плеер с трансляцией
     </div>
-
     <script src="onair-player.js"></script>
 
     <script>
+
       initOnAirPlayer({
         container: document.getElementById('rtPlayerContainer'),
         channelId: 'UCTqAf_5qv9wlk_I9643PSAA',
@@ -24,6 +24,17 @@
         }
       });
     </script>
+
+    <script>
+      function mutePlayer() {
+        var rtPlayerElem = document.getElementById('onair-event-player');
+        if (rtPlayerElem) {
+          rtPlayerElem.mute();
+        }
+      }
+    </script>
+
+    <a href="http://ya.ru" target="_blank" onclick="javascript:mutePlayer();">Mute player</a>
   </body>
 
 </html>
