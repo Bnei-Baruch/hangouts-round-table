@@ -11,26 +11,22 @@
     <script src="onair-player.js"></script>
 
     <script>
+      var rt_player;
 
       initOnAirPlayer({
-        container: document.getElementById('rtPlayerContainer'),
+        containerId: 'rtPlayerContainer',
         channelId: 'UCTqAf_5qv9wlk_I9643PSAA',
         width: 677,
         height: 390,
-        callback: function (title) {
+        callback: function (title, player) {
           if (title) {
-            alert(title);
+            rt_player = player;
           }
         }
       });
-    </script>
 
-    <script>
       function mutePlayer() {
-        var rtPlayerElem = document.getElementById('onair-event-player');
-        if (rtPlayerElem) {
-          rtPlayerElem.mute();
-        }
+        rt_player.mute();
       }
     </script>
 

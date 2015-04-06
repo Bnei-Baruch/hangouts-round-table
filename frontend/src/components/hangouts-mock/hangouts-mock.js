@@ -45,6 +45,10 @@
           displayName: "Fake Participant 1"
         }
       };
+    },
+    layout: {
+      setChatPaneVisible: function () {
+      }
     }
   };
 
