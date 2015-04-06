@@ -14,6 +14,7 @@
   "kurentoWsUri": "wss://webrtc-dev.kbb1.com:8433/kurento",
   "backendWsUri": "wss://rt-dev.kbb1.com/backend/socket",
   "chatUri": "http://we.kab.tv",
+  "numbersImageUrl": "http://i.imgur.com/lfX11iN.png",
   "updateTableInterval": 10000,
   "sendHeartbeatInterval": 10000,
   "dashboardRefreshInterval": 5000,

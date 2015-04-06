@@ -48,6 +48,20 @@
     },
     layout: {
       setChatPaneVisible: function () {
+        console.debug("gapi.hangout.setChatPaneVisible() mock called");
+      }
+    },
+    av: {
+      effects: {
+        createImageResource: function () {
+          console.debug("gapi.hangout.av.effects.createImageResource() mock called");
+
+          return {
+            createOverlay: function () {
+              console.debug("gapi.hangout.av.effects.createOverlay() mock called");
+            }
+          };
+        }
       }
     }
   };

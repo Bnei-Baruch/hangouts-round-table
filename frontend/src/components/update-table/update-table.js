@@ -13,7 +13,6 @@
           that.startUpdatingTable();
           that.displayName = gapi.hangout.getLocalParticipant().person.displayName;
           that.isReady = true;
-          gapi.hangout.layout.setChatPaneVisible(false);
           gapi.hangout.onApiReady.remove(initHangouts);
         }
       };
