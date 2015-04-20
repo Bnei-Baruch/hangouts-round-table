@@ -15,19 +15,20 @@
       gapi.hangout.onApiReady.add(initHangouts);
     },
     initOverlay: function () {
-      var participantIndex = this.getParticipantIndex();
+      var participantNumber = this.getParticipantNumber();
 
-      if (participantIndex !== -1) {
+      if (participantNumber > 0) {
+        var imagePath = this.$.config.numbersImagePath.replace('{}', participantNumber);
+
         var resource = gapi.hangout.av.effects.createImageResource(
-          this.$.config.numbersImageUrl,
-            [{
-              left: participantIndex * 64,
-              top: 0,
-              width: 64,
-              height: 64
-            }]
-          );
-        resource.createOverlay();
+          this.$.config.frontendUrl + imagePath);
+
+        resource.showOverlay({
+          position: {
+            x: 0.0,
+            y: 0.4
+          }
+        });
       }
     },
     mute: function () {
@@ -36,7 +37,7 @@
     hide: function () {
       gapi.hangout.hideApp();
     },
-    getParticipantIndex: function () {
+    getParticipantNumber: function () {
       var localParticipantId = gapi.hangout.getLocalParticipant().id;
 
       var hangoutParticipants = gapi.hangout.getParticipants();
@@ -46,7 +47,7 @@
         participantIds.push(participant.id);
       });
 
-      return participantIds.indexOf(localParticipantId);
+      return participantIds.indexOf(localParticipantId) + 1;
     }
   });
 
