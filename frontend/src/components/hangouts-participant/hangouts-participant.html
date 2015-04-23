@@ -38,7 +38,7 @@
           Это фокус-группа, видео студии не показывается.
         </div>
       </template>
-      <viewer-heartbeat viewerId="viewer"></viewer-heartbeat>
+      <viewer-heartbeat viewerId="viewer" space="{{ $.table.appData.space }}"></viewer-heartbeat>
       <webdis-chat
          space="{{ $.table.appData.space }}"
          isAdmin="false"
