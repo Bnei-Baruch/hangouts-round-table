@@ -8,7 +8,7 @@
       var initHangouts = function (apiInitEvent) {
         if (apiInitEvent.isApiReady) {
           gapi.hangout.layout.setChatPaneVisible(false);
-          that.initOverlay();
+          // that.initOverlay();
           gapi.hangout.onApiReady.remove(initHangouts);
         }
       };

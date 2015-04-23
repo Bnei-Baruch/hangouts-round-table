@@ -11,7 +11,8 @@
     <update-table id="table"></update-table>
     <template if="{{ $.table.isReady }}">
       <style>
-        translation-viewer {
+        translation-viewer, #noViewer {
+          color: #fff;
           width: 66%;
           float: left;
           height: 100%;
@@ -23,13 +24,20 @@
           height: 100%;
         }
       </style>
-      <translation-viewer
+      <template if="{{ !$.table.appData.is_focus_group }}">
+        <translation-viewer
           id="viewer"
           space="{{ $.table.appData.space }}"
           language="{{ $.table.appData.language }}"
           on-instructor-resumed="{{mute}}"
           on-instructor-paused="{{hide}}">
-      </translation-viewer>
+        </translation-viewer>
+      </template>
+      <template if="{{ $.table.appData.is_focus_group }}">
+        <div id="noViewer">
+          Это фокус-группа, видео студии не показывается.
+        </div>
+      </template>
       <viewer-heartbeat viewerId="viewer"></viewer-heartbeat>
       <webdis-chat
          space="{{ $.table.appData.space }}"

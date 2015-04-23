@@ -33,6 +33,10 @@
       this.$.signaling.sendMessage(message);
     },
     getAverageVideoColor: function () {
+      if (!this.viewer) {
+        return null;
+      }
+
       var video = this.viewer.getVideoElement();
 
       this.snapshotContext.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);

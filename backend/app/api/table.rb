@@ -21,13 +21,19 @@ class RoundTable::API
   # Create a new table, only for moderators
   get '/spaces/:space/tables/:language/moderated' do
     redirect get_table_url(request, params[:space], params[:language],
-                           params[:onair], "", true)
+                           params[:onair], "", true, false)
+  end
+
+  # Create a new table, only for focus group
+  get '/spaces/:space/tables/:language/focus-group' do
+    redirect get_table_url(request, params[:space], params[:language],
+                           params[:onair], "", true, true)
   end
 
   # Gets existing table info
   get '/spaces/:space/tables/:language/existing' do
     table_url = get_table_url(request, params[:space], params[:language],
-                      params[:onair], "", false)
+                      params[:onair], "", false, false)
     if table_url.nil?
       halt 204, {
         'reason' => "No tables available"
@@ -41,14 +47,15 @@ class RoundTable::API
 
   # Get free table
   get '/spaces/:space/tables/:language/free' do
-    redirect get_table_url(request, params[:space], params[:language],
-                      params[:onair], "", nil)
+    url = get_table_url(request, params[:space], params[:language],
+                        params[:onair], "", nil, false)
+    redirect url
   end
 
   # Get fixed table
   get '/spaces/:space/tables/:language/fixed/:subspace' do
     redirect get_table_url(request, params[:space], params[:language],
-                      params[:onair], params[:subspace], nil)
+                      params[:onair], params[:subspace], nil, false)
   end
 
   # Get space tables
@@ -64,11 +71,13 @@ class RoundTable::API
     JSON.generate(live_tables)
   end
 
-  def get_hangouts_url(table_id, space, language, onair, subspace)
+  def get_hangouts_url(table_id, space, language, onair, subspace,
+                       is_focus_group: false)
     app_data = { :space => space,
                  :language => language,
                  :onair => onair,
-                 :subspace => subspace }.to_json
+                 :subspace => subspace,
+                 :is_focus_group => is_focus_group }.to_json
     escaped = URI.escape(app_data)
 
     if table_id.nil?
@@ -81,6 +90,8 @@ class RoundTable::API
     "gid=#{config['hangout_app_gid']}&gd=#{escaped}#{onair_param}"
   end
 
+  # Search redis for space, language and subspace.
+  # Check tables are live and returns array of live tables.
   def get_space_tables(space, language, time_now, subspace)
     keys = redis.keys("table_#{space}_*" )
 
@@ -91,12 +102,15 @@ class RoundTable::API
       if (is_table_live(one_table, time_now) and
           (language.nil? or language == one_table['language']) and
           (subspace.nil? or subspace.empty? or subspace == one_table['subspace']))
+        is_focus_group = one_table['is_focus_group']
+        is_focus_group = false if is_focus_group.nil?
         one_table['hangouts_url'] = get_hangouts_url(
           one_table['id'],
           one_table['space'],
           one_table['language'],
           one_table['onair'],
-          one_table['subspace']
+          one_table['subspace'],
+          is_focus_group: is_focus_group
         )
         live_tables << one_table
       end
@@ -105,10 +119,13 @@ class RoundTable::API
     live_tables
   end
 
-  def get_free_table_id(space, language, onair, subspace, is_moderator: nil)
-    time_now = redis.time[0]
-    live_tables = get_space_tables(space, language, time_now, subspace)
+  def get_free_table(space, language, onair, subspace, is_moderator: nil)
+    table = nil
+
+    # If free (or subspace) and existing links (not for moderated)
     if is_moderator != true
+      time_now = redis.time[0]
+      live_tables = get_space_tables(space, language, time_now, subspace)
       if subspace.nil? or subspace.empty?
         table = choose_table(live_tables)
       else
@@ -116,14 +133,18 @@ class RoundTable::API
       end
     end
 
-    grab_table(table, space, language, onair, subspace, is_moderator: is_moderator)
+    grab_table(table, space, language, onair, subspace,
+               is_moderator: is_moderator)
   end
 
-  def grab_table(table, space, language, onair, subspace, is_moderator: nil)
-    if not table.nil?
-      table_id = table['id']
-    else
-      if is_moderator.nil?
+  # If table was found, just return its id, otherwise
+  # selects a hangout_id (table_id) out of existing set of tables.
+  def grab_table(table, space, language, onair, subspace,
+                 is_moderator: nil)
+    table_id = nil
+    table_id = table['id'] if not table.nil?
+    if table.nil?
+      if is_moderator.nil?  # Free or subspace tables only.
         table = { 'participants' => [],
                   'space' => space,
                   'language' => language,
@@ -137,12 +158,13 @@ class RoundTable::API
     end
 
     if not table_id.nil? and is_moderator.nil?
-      # Add one user to table
+      # Add one user to free or subspace table
       table['participants'].push('Unknown')
+      table['id'] = table_id
       update_table(table_id, space, table)
     end
 
-    table_id
+    table
   end
 
   def choose_table(tables)
@@ -176,19 +198,26 @@ class RoundTable::API
     keys.map { |key| key.split('_').last }
   end
 
-  def get_table_url(request, space, language, onair, subspace, is_moderator)
+  def get_table_url(request, space, language, onair, subspace, is_moderator, is_focus_group)
     bad_user_agent_url = get_bad_user_agent_url(request)
     if bad_user_agent_url
       return bad_user_agent_url
     end
 
-    table_id = get_free_table_id(space, language,
-                                 onair, subspace, is_moderator: is_moderator)
+    table = get_free_table(
+      space, language, onair, subspace,
+      is_moderator: is_moderator)
+    table_id = nil
+    if not table.nil?
+      table_id = table['id']
+      is_focus_group ||= table['is_focus_group'] if not table['is_focus_group'].nil?
+    end
 
     if is_moderator == false and table_id.nil?
       nil
     else
-      get_hangouts_url(table_id, space, language, onair, subspace)
+      get_hangouts_url(table_id, space, language, onair, subspace,
+                       is_focus_group: is_focus_group)
     end
   end
 
