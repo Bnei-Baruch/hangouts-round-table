@@ -37,6 +37,8 @@ class RoundTable::API
 
           # Register socket if not registered
           register_socket(ws, 'broadcast', message)
+          aggregate_info_for_log(ws, message)
+          print_info_to_tsv
 
           case message['action']
             when 'register-master'
@@ -128,4 +130,63 @@ class RoundTable::API
     end
   end
 
+  @@spaces
+  @@tables
+
+  @@users_by_ws = {}
+  @@users_by_id = {}
+
+  def get_user(ws, id)
+    u_ws = nil
+    u_id = nil
+    if not ws.nil? and @@users_by_ws.has_key? ws 
+      u_ws = @@users_by_ws[ws]
+    end
+    if not id.nil? and @@users_by_id.has_key? id 
+      u_id = @@users_by_id[id]
+    end
+    u = u_ws or u_id
+    if u.nil?
+      u = {}
+    end
+    @@users_by_id[id] = u if not id.nil?
+    @@users_by_id[ws] = u if not id.nil?
+    u
+  end
+
+  def aggregate_info_for_log(ws, message)
+    case message['action']
+    # when 'register-master'
+    # when 'register-viewer'
+    # when 'instructor-resumed', 'instructor-paused'
+    # when 'subscribe'
+    when 'update-heartbeat'
+      aggregate_heartbeat(ws, message)
+    end
+  end
+
+  def aggregate_heartbeat(ws, message)
+    now = Time.now.to_i
+
+    update_user(get_user(ws, message['participantId']), message, now)
+
+    message['participants'].each { |p_message|
+      p = get_user(nil, p_message['participantId'])
+      p['last_seen_by_other'] = now
+    }
+  end
+
+  def update_user(user, message, now)
+    user['last_heartbeat'] = now
+    message.each { |key,value|
+      if not ['action', 'channel', 'participants'].include? key
+        user[key] = value
+      end
+    } 
+  end
+
+  def print_info_to_tsv()
+    print @@users_by_ws
+    print @@users_by_id
+  end
 end
