@@ -11,6 +11,7 @@
           // that.initOverlay();
           gapi.hangout.onApiReady.remove(initHangouts);
           gapi.hangout.av.setLocalParticipantVideoMirrored(false);
+          that.initOverlay();
         }
       };
       gapi.hangout.onApiReady.add(initHangouts);
@@ -19,39 +20,16 @@
         that.initOverlay();
       };
 
-      gapi.hangout.onEnabledParticipantsChanged.add(initOverlay);
+      gapi.hangout.onParticipantsChanged.add(initOverlay);
     },
     initOverlay: function () {
-      var participantNumber = this.getParticipantNumber();
+      var that = this;
+      var ids = this.getParticipantsIds();
 
-      this.releaseOverlay();
-
-      if (participantNumber > 0) {
-        var imagePath = this.$.config.numbersImagePath.replace('{}', participantNumber);
-
-        this.numberResource = gapi.hangout.av.effects.createImageResource(
-          this.$.config.frontendUrl + imagePath);
-
-        this.numberOverlay = this.numberResource.showOverlay({
-          position: {
-            x: 0.0,
-            y: 0.3
-          },
-          scale: {
-            magnitude: 0.2,
-            reference: gapi.hangout.av.effects.ScaleReference.WIDTH
-          }
-        });
-      }
-    },
-    releaseOverlay: function () {
-      if (this.numberResource) {
-        this.numberResource.dispose();
-      }
-
-      if (this.numberOverlay) {
-        this.numberOverlay.dispose();
-      }
+      ids.forEach(function (id, index) {
+        var imagePath = that.$.config.numbersImagePath.replace('{}', index + 1);
+        gapi.hangout.av.setAvatar(id, that.$.config.frontendUrl + imagePath);
+      });
     },
     mute: function () {
       gapi.hangout.av.setMicrophoneMute(true);
@@ -59,9 +37,7 @@
     hide: function () {
       gapi.hangout.hideApp();
     },
-    getParticipantNumber: function () {
-      var localParticipantId = gapi.hangout.getLocalParticipant().id;
-
+    getParticipantsIds: function () {
       var hangoutParticipants = gapi.hangout.getParticipants();
       var participantIds = [];
 
@@ -71,7 +47,7 @@
 
       participantIds.sort();
 
-      return participantIds.indexOf(localParticipantId) + 1;
+      return participantIds;
     }
   });
 
