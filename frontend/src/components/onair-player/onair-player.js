@@ -27,20 +27,24 @@ function initOnAirPlayer(config) {
 var liveEvent;
 
 function onYouTubeIframeAPIReady() {
-  var title = liveEvent[liveEvent.length-1].title.$t;
-  var videoId = liveEvent[liveEvent.length-1].content.src.split('/').splice(-1,1);
+  if (liveEvent == undefined) {
+    setTimeout(onYouTubeIframeAPIReady, 3000);
+  } else {
+    var title = liveEvent[liveEvent.length-1].title.$t;
+    var videoId = liveEvent[liveEvent.length-1].content.src.split('/').splice(-1,1);
 
-  var player = new YT.Player(rt_config.containerId, {
-    width: rt_config.width,
-    height: rt_config.height,
-    videoId: videoId,
-    playerVars : {
-      version: 3,
-      autoplay : 1
-    }
-  });
+    var player = new YT.Player(rt_config.containerId, {
+      width: rt_config.width,
+        height: rt_config.height,
+        videoId: videoId,
+        playerVars : {
+          version: 3,
+        autoplay : 1
+        }
+    });
 
-  rt_config.callback(title, player);
+    rt_config.callback(title, player);
+  }
 }
 
 function rt_loadYouTubeAPI() {
