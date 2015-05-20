@@ -35,7 +35,12 @@
       </template>
       <template if="{{ $.table.appData.is_focus_group }}">
         <div id="noViewer">
-          Это фокус-группа, видео студии не показывается.
+          <template if="{{ $.table.appData.language === 'ru' }}">
+            Это фокус-группа, видео студии не показывается.
+          </template>
+          <template if="{{ $.table.appData.language !== 'ru' }}">
+            This is a focus group, the instructor video is not displayed.
+          </template>
         </div>
       </template>
       <viewer-heartbeat viewerId="viewer" space="{{ $.table.appData.space }}"></viewer-heartbeat>
