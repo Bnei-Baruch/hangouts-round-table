@@ -245,8 +245,12 @@ class RoundTable::API
               row << user[key]
             end
           }
-          row << user['browser']['name']
-          row << user['browser']['version']
+          if user.key? 'browser'
+            row << user['browser']['name']
+            row << user['browser']['version']
+          else
+            row << '' << ''
+          end
           csv << row
         end
       }
