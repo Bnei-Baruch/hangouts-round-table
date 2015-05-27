@@ -238,7 +238,7 @@ class RoundTable::API
         if @@spaces.key?(user['space'])
           row = [now.to_s]
           ['last_heartbeat', 'last_seen_by_other', 'space', 'language',
-           'table_id', 'participantName', 'participantId'].each { |key|
+           'tableId', 'participantName', 'participantId'].each { |key|
             if ['last_heartbeat', 'last_seen_by_other'].include? key
               row << user[key].to_s
             else
@@ -255,7 +255,7 @@ class RoundTable::API
     tables = {}
     users.each { |user|
       table = {}
-      table_id = user['table_id']
+      table_id = user['tableId']
       table = tables[table_id] if tables.key? table_id
 
       table['users'] = 0 unless table.key? 'users'
@@ -270,7 +270,7 @@ class RoundTable::API
       tables.values().each { |table|
         if @@spaces.key?(table['space'])
           row = [now.to_s]
-          ['table_id', 'space', 'language', 'users'].each { |key|
+          ['tableId', 'space', 'language', 'users'].each { |key|
             row << table[key]
           }
           csv << row
