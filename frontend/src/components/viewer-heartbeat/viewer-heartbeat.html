@@ -3,7 +3,7 @@
 <link rel="import" href="../app-config/app-config.html" />
 <link rel="import" href="../backend-signaling/backend-signaling.html">
 
-<polymer-element name="viewer-heartbeat" attributes="viewerId space">
+<polymer-element name="viewer-heartbeat" attributes="viewerId space language">
   <template>
     <style>
       #videoSnapshot {
@@ -13,7 +13,7 @@
 
     <app-config id="config"></app-config>
 
-    <backend-signaling id="signaling" space="{{ space }}"></backend-signaling>
+    <backend-signaling id="signaling" space="{{ space }}" language="{{ language }}"></backend-signaling>
 
     <canvas
       id="videoSnapshot"

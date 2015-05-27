@@ -16,3 +16,7 @@ redis_test:
   host: 127.0.0.1
   port: 6379
   db: 15
+sessions_logs:
+  space: /tmp/round_space_sessions.tsv
+  users: /tmp/round_users_sessions.tsv
+  tables: /tmp/round_tables_sessions.tsv

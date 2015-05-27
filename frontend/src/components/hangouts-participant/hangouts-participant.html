@@ -43,11 +43,15 @@
           </template>
         </div>
       </template>
-      <viewer-heartbeat viewerId="viewer" space="{{ $.table.appData.space }}"></viewer-heartbeat>
+      <viewer-heartbeat
+          viewerId="viewer"
+          space="{{ $.table.appData.space }}"
+          language="{{ $.table.appData.language }}">
+      </viewer-heartbeat>
       <webdis-chat
-         space="{{ $.table.appData.space }}"
-         isAdmin="false"
-         fromName="{{ $.table.displayName }}">
+          space="{{ $.table.appData.space }}"
+          isAdmin="false"
+          fromName="{{ $.table.displayName }}">
       </webdis-chat>
     </template>
   </template>

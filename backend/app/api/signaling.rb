@@ -1,3 +1,6 @@
+require 'csv'
+
+
 class RoundTable::API
   @@sockets = Hash.new { |sockets, space|
     sockets[space] = Hash.new { |channels, channel|
@@ -38,6 +41,7 @@ class RoundTable::API
           # Register socket if not registered
           register_socket(ws, 'broadcast', message)
           aggregate_info_for_log(ws, message)
+
           print_info_to_tsv
 
           case message['action']
@@ -82,6 +86,7 @@ class RoundTable::API
           @@master_endpoint_ids.each{ |_, endpoints|
             endpoints.delete_if { |endpoint| endpoint['socket'] == ws }
           }
+          clean_agregated_data(ws)
           warn("Websocket closed")
         end
       end  # request.websocket do
@@ -130,11 +135,27 @@ class RoundTable::API
     end
   end
 
-  @@spaces
-  @@tables
-
+  @@spaces = {}
   @@users_by_ws = {}
   @@users_by_id = {}
+
+  def clean_agregated_data(ws)
+    user = @@users_by_ws.delete(ws)
+    @@users_by_id.delete(user['participantId']) unless user.nil?
+
+    @@spaces.delete_if { |space, data|
+      data['ws'] == ws
+    }
+  end
+
+  def clean_stale_users()
+    @@users_by_ws.delete_if { |ws, user|
+      user['last_seen_by_other'].to_i + 60 < Time.now.to_i
+    }
+    @@users_by_id.delete_if { |ws, user|
+      user['last_seen_by_other'].to_i + 60 < Time.now.to_i
+    }
+  end
 
   def get_user(ws, id)
     u_ws = nil
@@ -145,48 +166,123 @@ class RoundTable::API
     if not id.nil? and @@users_by_id.has_key? id 
       u_id = @@users_by_id[id]
     end
-    u = u_ws or u_id
+    u = u_ws || u_id
     if u.nil?
       u = {}
     end
     @@users_by_id[id] = u if not id.nil?
-    @@users_by_id[ws] = u if not id.nil?
+    @@users_by_ws[ws] = u if not ws.nil?
     u
   end
 
   def aggregate_info_for_log(ws, message)
+    clean_stale_users()
+
     case message['action']
-    # when 'register-master'
-    # when 'register-viewer'
-    # when 'instructor-resumed', 'instructor-paused'
-    # when 'subscribe'
+    when 'register-master'
+      update_instructor_state(ws, message['space'], 'init')
+    when 'instructor-paused'
+      update_instructor_state(ws, message['space'], 'pause')
+    when 'instructor-resumed'
+      update_instructor_state(ws, message['space'], 'resume')
+    #when 'register-viewer'
+    #when 'subscribe'
     when 'update-heartbeat'
       aggregate_heartbeat(ws, message)
     end
   end
 
+  def update_instructor_state(ws, space, status)
+    now = Time.now.utc
+
+    @@spaces[space] = {
+      'ws' => ws,
+      'status' => status,
+      'timestamp' => now
+    }
+  end
+
   def aggregate_heartbeat(ws, message)
-    now = Time.now.to_i
+    now = Time.now.utc
 
     update_user(get_user(ws, message['participantId']), message, now)
 
     message['participants'].each { |p_message|
       p = get_user(nil, p_message['participantId'])
+      p['tableId'] = message['tabldId']
       p['last_seen_by_other'] = now
+      p_message.each { |key, value|
+        p[key] = value
+      }
+      ['space', 'language'].each { |key|
+        p[key] = message[key]
+      } 
     }
   end
 
   def update_user(user, message, now)
     user['last_heartbeat'] = now
-    message.each { |key,value|
-      if not ['action', 'channel', 'participants'].include? key
+    message.each { |key, value|
+      if not ['action', 'channel', 'participants', 'role'].include? key
         user[key] = value
       end
     } 
   end
 
   def print_info_to_tsv()
-    print @@users_by_ws
-    print @@users_by_id
+    now = Time.now.utc
+
+    users = Set.new(@@users_by_id.values() + @@users_by_ws.values())
+    CSV.open(config['sessions_logs']['users'], "a+") do |csv|
+      users.each { |user| 
+        if @@spaces.key?(user['space'])
+          row = [now.to_s]
+          ['last_heartbeat', 'last_seen_by_other', 'space', 'language',
+           'table_id', 'participantName', 'participantId'].each { |key|
+            if ['last_heartbeat', 'last_seen_by_other'].include? key
+              row << user[key].to_s
+            else
+              row << user[key]
+            end
+          }
+          row << user['browser']['name']
+          row << user['browser']['version']
+          csv << row
+        end
+      }
+    end
+
+    tables = {}
+    users.each { |user|
+      table = {}
+      table_id = user['table_id']
+      table = tables[table_id] if tables.key? table_id
+
+      table['users'] = 0 unless table.key? 'users'
+      table['users'] += 1
+
+      table['space'] = user['space']
+      table['language'] = user['language']
+
+      tables[table_id] = table
+    }
+    CSV.open(config['sessions_logs']['tables'], "a+") do |csv|
+      tables.values().each { |table|
+        if @@spaces.key?(table['space'])
+          row = [now.to_s]
+          ['table_id', 'space', 'language', 'users'].each { |key|
+            row << table[key]
+          }
+          csv << row
+        end
+      }
+    end
+
+    CSV.open(config['sessions_logs']['space'], "a+") do |csv|
+      @@spaces.each { |space, data|
+        row = [now.to_s, space, data['status'], data['timestamp'].to_s]
+        csv << row
+      }
+    end
   end
 end

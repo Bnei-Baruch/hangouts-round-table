@@ -25,6 +25,11 @@
         console.debug('Remove from onApiReady: ' + func.toString());
       }
     },
+    onParticipantsChanged: {
+      add: function(func) {
+        console.debug('gapi.hangout.onParticipantsChanged.add(' + func + ') mock called');
+      }
+    },
     getParticipants: function() {
       return participants;
     },
@@ -52,6 +57,12 @@
       }
     },
     av: {
+      setLocalParticipantVideoMirrored: function(value) {
+        console.debug("gapi.hangout.av.setLocalParticipantVideoMirrored(" + value + ") mock called");
+      },
+      setAvatar: function(id, url) {
+        console.debug("gapi.hangout.av.setAvatar(" + id + ", " + url + ") mock called");
+      },
       effects: {
         createImageResource: function () {
           console.debug("gapi.hangout.av.effects.createImageResource() mock called");
