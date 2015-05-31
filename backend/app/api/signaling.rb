@@ -265,6 +265,7 @@ class RoundTable::API
       table['users'] = 0 unless table.key? 'users'
       table['users'] += 1
 
+      table['tableId'] = user['tableId']
       table['space'] = user['space']
       table['language'] = user['language']
 
