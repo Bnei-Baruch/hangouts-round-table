@@ -9,6 +9,17 @@ class RoundTable::API
   }
   @@master_endpoint_ids = Hash.new { |endpoints, space| endpoints[space] = [] } 
 
+  # Get instructor status
+  get '/spaces/:space/instructor-status' do
+    endpoints = @@master_endpoint_ids[params[:space]].select { |endpoint|
+      endpoint['role'] == 'instructor'
+    }
+    status = endpoints.first['status'] unless endpoints.empty?
+    {
+      'status' => status
+    }.to_json
+  end
+
   # Get space languages
   get '/spaces/:space/languages' do
     languages = @@master_endpoint_ids[params[:space]].map { |msg|
@@ -22,6 +33,16 @@ class RoundTable::API
       translator_language = message['language']
     end
     @@sockets[message['space']][channel][ws] = translator_language
+  end
+
+  def set_master_endpoint_status(space, ws, status)
+    @@master_endpoint_ids[space].each { |endpoint|
+      if endpoint['socket'] == ws
+        endpoint['status'] = status
+      else
+        endpoint['status'] = nil
+      end
+    }
   end
 
   # Websocket
@@ -46,12 +67,14 @@ class RoundTable::API
 
           case message['action']
             when 'register-master'
-              @@master_endpoint_ids[message['space']] |= [{
+              endpoint = {
                 'role' => message['role'],
                 'language' => message['language'],
                 'endpointId' => message['endpointId'],
-                'socket' => ws
-              }]
+                'socket' => ws,
+                'status' => 'init'
+              }
+              @@master_endpoint_ids[message['space']] |= [endpoint]
 
               viewer_response = get_viewer_response(message)
               unless viewer_response.nil?
@@ -62,7 +85,13 @@ class RoundTable::API
               unless viewer_response.nil?
                 ws.send(viewer_response.to_json)
               end
-            when 'instructor-resumed', 'instructor-paused', 'update-heartbeat'
+            when 'instructor-resumed'
+              set_master_endpoint_status(message['space'], ws, 'broadcasting')
+              send_message(message['space'], message)
+            when 'instructor-paused'
+              set_master_endpoint_status(message['space'], ws, 'paused')
+              send_message(message['space'], message)
+            when 'update-heartbeat'
               send_message(message['space'], message)
             when 'subscribe'
               register_socket(ws, message['channel'], message)

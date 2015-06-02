@@ -22,10 +22,22 @@
             display: block;
           }
         </style>
-        <div>
-          <space-instructor space="{{ $.instructor.space }}" language="{{ $.instructor.language }}"></space-instructor>
-          <table-list space="{{ $.instructor.space }}"></table-list>
-        </div>
+
+        <core-ajax
+          id="getInstructorStatus"
+          url="{{ $.config.backendUrl }}/spaces/{{ space }}/instructor-status",
+          method="GET"
+          contentType="application/json"
+          handleAs="json"
+          on-core-response="{{ setOtherInstructorStatus }}">
+        </core-ajax>
+
+        <template if="{{ noInstructorOrConfirmed }}">
+          <div>
+            <space-instructor space="{{ $.instructor.space }}" language="{{ $.instructor.language }}"></space-instructor>
+            <table-list space="{{ $.instructor.space }}"></table-list>
+          </div>
+        </template>
         <webdis-chat space="{{ $.instructor.space }}" isAdmin="true"></webdis-chat>
       </template>
     </header-layout>
