@@ -11,7 +11,7 @@
     <app-config id="config"></app-config>
 
     <backend-signaling id="signaling"
-      space="{{ space }}"
+      space="{{ $.table.appData.space }}"
       on-websocket-open="{{initWS}}">
     </backend-signaling>
 
