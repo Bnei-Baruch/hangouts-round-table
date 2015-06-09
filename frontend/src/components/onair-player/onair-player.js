@@ -46,20 +46,25 @@ function onYouTubeIframeAPIReady() {
   if (liveEvent === undefined) {
     setTimeout(onYouTubeIframeAPIReady, 3000);
   } else {
-    //var title = liveEvent.snippet.title;
     var videoId = liveEvent;
-
     var player = new YT.Player(rt_config.containerId, {
       width: rt_config.width,
-        height: rt_config.height,
-        videoId: videoId,
-        playerVars : {
-          version: 3,
+      height: rt_config.height,
+      videoId: videoId,
+      playerVars : {
+        version: 3,
         autoplay : 1
-        }
+      }
     });
 
-    rt_config.callback("" /*title*/, player);
+    var getTitleUrl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id="+videoId+"&key=AIzaSyBoMXQDrlRUCQCxv4fjfiyTHXog8OB2Nz0";
+    httpGet(getTitleUrl, function(data) {
+      var title = "";
+      if (data.items && data.items.length > 0) {
+        title = data.items[0].snippet.title;
+      }
+      rt_config.callback(title, player);
+    });
   }
 }
 
