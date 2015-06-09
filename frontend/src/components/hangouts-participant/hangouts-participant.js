@@ -32,7 +32,7 @@
       this.sendLiveId();
     },
     updateLiveId: function(id) {
-      this.liveId = id;
+      this.liveId = id.youTubeLiveId;
       this.sendLiveId();
     },
     sendLiveId: function() {
