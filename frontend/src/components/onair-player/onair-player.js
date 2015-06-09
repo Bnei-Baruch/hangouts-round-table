@@ -9,7 +9,7 @@ function rt_pollEventsApi() {
   //script.src='https://gdata.youtube.com/feeds/api/users/' + rt_config.channelId  +
   //    '/live/events?v=2&status=active&fields=entry(title,content)' +
   //    '&alt=json-in-script&callback=rt_renderPlayer';
-  script.src='https://www.googleapis.com/youtube/v3/search?eventType=live&part=id%2Csnippet&channelId='+ rt_config.channelId +'&type=video&key=AIzaSyBoMXQDrlRUCQCxv4fjfiyTHXog8OB2Nz0&callback=rt_renderPlayer';
+  script.src='https://www.googleapis.com/youtube/v3/search?eventType=upcoming&part=id%2Csnippet&channelId='+ rt_config.channelId +'&type=video&key=AIzaSyBoMXQDrlRUCQCxv4fjfiyTHXog8OB2Nz0&callback=rt_renderPlayer';
   //script.src='https://www.googleapis.com/youtube/v3/search?eventType=live&part=id%2Csnippet&channelId=UCYi0-Xrr-B7Ap4sAwR6iEpg&type=video&key=AIzaSyBoMXQDrlRUCQCxv4fjfiyTHXog8OB2Nz0&callback=rt_renderPlayer';
 
   document.getElementsByTagName("head")[0].appendChild(script);
@@ -22,9 +22,12 @@ function rt_pollEventsApi() {
  * width
  * height
  */
+var time_now = null;
 function initOnAirPlayer(config) {
+  time_now = Date.now();
   rt_config = config;
   rt_interval = window.setInterval(rt_pollEventsApi, 5000);
+  rt_pollEventsApi();
 }
 
 var liveEvent;
@@ -39,7 +42,7 @@ function onYouTubeIframeAPIReady() {
     var player = new YT.Player(rt_config.containerId, {
       width: rt_config.width,
         height: rt_config.height,
-        videoId: videoId,
+        videoId: 'uPSYf589eRU', //videoId,
         playerVars : {
           version: 3,
         autoplay : 1
@@ -59,7 +62,10 @@ function rt_loadYouTubeAPI() {
 }
 
 function rt_renderPlayer(data) {
-  if (data.items !== undefined && data.items.length > 0) {
+  console.log(data);
+  console.log((Date.now() - time_now)/1000);
+  //if (data.items !== undefined && data.items.length > 0) {
+  if (true) {
     liveEvent = data.items[0];
     window.clearInterval(rt_interval);
     rt_loadYouTubeAPI();

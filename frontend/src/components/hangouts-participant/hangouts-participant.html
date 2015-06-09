@@ -3,11 +3,18 @@
 <link rel="import" href="../update-table/update-table.html" />
 <link rel="import" href="../webdis-chat/webdis-chat.html" />
 <link rel="import" href="../viewer-heartbeat/viewer-heartbeat.html">
+<link rel="import" href="../backend-signaling/backend-signaling.html">
 <link rel="import" href="../app-config/app-config.html" />
 
 <polymer-element name="hangouts-participant">
   <template>
     <app-config id="config"></app-config>
+
+    <backend-signaling id="signaling"
+      space="{{ space }}"
+      on-websocket-open="{{initWS}}">
+    </backend-signaling>
+
     <update-table id="table"></update-table>
     <template if="{{ $.table.isReady }}">
       <style>

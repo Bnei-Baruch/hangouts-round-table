@@ -5,8 +5,13 @@
     ready: function () {
       var that = this;
 
+      var updateLiveId = function () {
+        that.updateLiveId();
+      };
+
       var initHangouts = function (apiInitEvent) {
         if (apiInitEvent.isApiReady) {
+          gapi.hangout.onair.onYouTubeLiveIdReady.add(updateLiveId);
           gapi.hangout.layout.setChatPaneVisible(false);
           // that.initOverlay();
           gapi.hangout.onApiReady.remove(initHangouts);
@@ -21,6 +26,24 @@
       };
 
       gapi.hangout.onParticipantsChanged.add(initOverlay);
+    },
+    initWS: function() {
+      this.wsInited = true;
+      this.sendLiveId();
+    },
+    updateLiveId: function(id) {
+      this.liveId = id;
+      this.sendLiveId();
+    },
+    sendLiveId: function() {
+      var that = this;
+
+      if (this.wsInited && this.liveId) {
+        that.$.signaling.sendMessage({
+          action: 'update-live-id',
+          id: that.liveId
+        });
+      }
     },
     initOverlay: function () {
       var that = this;
