@@ -52,7 +52,7 @@ function onYouTubeIframeAPIReady() {
     var player = new YT.Player(rt_config.containerId, {
       width: rt_config.width,
         height: rt_config.height,
-        videoId: 'uPSYf589eRU', //videoId,
+        videoId: videoId,
         playerVars : {
           version: 3,
         autoplay : 1
