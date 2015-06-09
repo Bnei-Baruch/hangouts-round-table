@@ -25,7 +25,7 @@ class RoundTable::API
       live_id = @@live_ids[params[:space]]
     end
     {
-      id => live_id
+      "id" => live_id
     }.to_json
   end
 
