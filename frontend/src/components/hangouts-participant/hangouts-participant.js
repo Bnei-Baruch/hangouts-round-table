@@ -5,8 +5,8 @@
     ready: function () {
       var that = this;
 
-      var updateLiveId = function () {
-        that.updateLiveId();
+      var updateLiveId = function (id) {
+        that.updateLiveId(id);
       };
 
       var initHangouts = function (apiInitEvent) {
