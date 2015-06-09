@@ -24,7 +24,6 @@ class RoundTable::API
     puts @@live_ids
     live_id = nil
     live_id = @@live_ids[params[:space]] unless status.nil?
-    end
     {
       "id" => live_id
     }.to_json
