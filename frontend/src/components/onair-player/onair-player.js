@@ -27,7 +27,7 @@ function initOnAirPlayer(config) {
 var liveEvent;
 
 function onYouTubeIframeAPIReady() {
-  if (liveEvent == undefined) {
+  if (liveEvent === undefined) {
     setTimeout(onYouTubeIframeAPIReady, 3000);
   } else {
     var title = liveEvent[liveEvent.length-1].title.$t;
