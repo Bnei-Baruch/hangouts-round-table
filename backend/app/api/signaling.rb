@@ -209,7 +209,7 @@ class RoundTable::API
 
     message['participants'].each { |p_message|
       p = get_user(nil, p_message['participantId'])
-      p['tableId'] = message['tabldId']
+      p['tableId'] = message['tableId']
       p['last_seen_by_other'] = now
       p_message.each { |key, value|
         p[key] = value
@@ -265,6 +265,7 @@ class RoundTable::API
       table['users'] = 0 unless table.key? 'users'
       table['users'] += 1
 
+      table['tableId'] = user['tableId']
       table['space'] = user['space']
       table['language'] = user['language']
 
