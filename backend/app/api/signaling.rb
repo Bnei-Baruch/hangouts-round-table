@@ -11,12 +11,21 @@ class RoundTable::API
 
   # Get instructor status
   get '/spaces/:space/instructor-status' do
-    endpoints = @@master_endpoint_ids[params[:space]].select { |endpoint|
-      endpoint['role'] == 'instructor'
-    }
-    status = endpoints.first['status'] unless endpoints.empty?
+    status = get_instructor_status(params[:space])
     {
       'status' => status
+    }.to_json
+  end
+
+  # Get space live-id
+  get '/spaces/:space/live-id' do
+    status = get_instructor_status(params[:space])
+    live_id = nil
+    if ['broadcasting', 'paused'].include? status
+      live_id = @@live_ids[params[:space]]
+    end
+    {
+      id => live_id
     }.to_json
   end
 
@@ -25,6 +34,13 @@ class RoundTable::API
     languages = @@master_endpoint_ids[params[:space]].map { |msg|
       msg['language']}.to_set.to_a
     JSON.generate(languages)
+  end
+
+  def get_instructor_status(space)
+    endpoints = @@master_endpoint_ids[params[:space]].select { |endpoint|
+      endpoint['role'] == 'instructor'
+    }
+    endpoints.first['status'] unless endpoints.empty?
   end
 
   def register_socket(ws, channel, message)
@@ -43,6 +59,11 @@ class RoundTable::API
         endpoint['status'] = nil
       end
     }
+  end
+
+  @@live_ids = {}
+  def update_live_id(message)
+    @@live_ids[message['space']] = message['id']
   end
 
   # Websocket
@@ -95,6 +116,8 @@ class RoundTable::API
               send_message(message['space'], message)
             when 'subscribe'
               register_socket(ws, message['channel'], message)
+            when 'update-live-id'
+              update_live_id(message)
           end
         end
         ws.onclose do
