@@ -1,13 +1,15 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../layouts/header-layout.html">
+<link rel="import" href="../components/app-config/app-config.html" />
 <link rel="import" href="../components/user-auth/user-auth.html" />
 <link rel="import" href="../components/table-list/table-list.html" />
 <link rel="import" href="../components/webdis-chat/webdis-chat.html" />
 <link rel="import" href="../components/space-instructor/space-instructor.html" />
 
-<polymer-element name="instructor-page" noscript>
+<polymer-element name="instructor-page">
   <template>
     <header-layout header="Instructor">
+      <app-config id="config"></app-config>
       <user-auth id="instructor"></user-auth>
       <template if="{{ $.instructor.loggedIn }}">
         <style>
@@ -22,12 +24,27 @@
             display: block;
           }
         </style>
-        <div>
-          <space-instructor space="{{ $.instructor.space }}" language="{{ $.instructor.language }}"></space-instructor>
-          <table-list space="{{ $.instructor.space }}"></table-list>
-        </div>
+
+        <core-ajax
+          id="getInstructorStatus"
+          url="{{ $.config.backendUrl }}/spaces/{{ $.instructor.space }}/instructor-status",
+          method="GET"
+          auto="true"
+          contentType="application/json"
+          handleAs="json"
+          on-core-response="{{ setOtherInstructorStatus }}">
+        </core-ajax>
+
+        <template if="{{ noOtherInstructorOrConfirmed }}">
+          <div>
+            <space-instructor space="{{ $.instructor.space }}" language="{{ $.instructor.language }}"></space-instructor>
+            <table-list space="{{ $.instructor.space }}"></table-list>
+          </div>
+        </template>
         <webdis-chat space="{{ $.instructor.space }}" isAdmin="true"></webdis-chat>
       </template>
     </header-layout>
   </template>
+
+  <script src="instructor-page.js"></script>
 </polymer-element>

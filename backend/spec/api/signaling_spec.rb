@@ -149,7 +149,8 @@ describe RoundTable::API do
       'space' => 'fake-space',
       'channel' => 'fake-channel',
       'fake-header' => 'fake-content',
-      'action' => 'update-heartbeat'
+      'action' => 'update-heartbeat',
+      'participants' => []
     }
     json_message = JSON.generate(channel_message)
 
