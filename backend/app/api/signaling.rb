@@ -20,9 +20,10 @@ class RoundTable::API
   # Get space live-id
   get '/spaces/:space/live-id' do
     status = get_instructor_status(params[:space])
+    puts status
+    puts @@live_ids
     live_id = nil
-    if ['broadcasting', 'paused'].include? status
-      live_id = @@live_ids[params[:space]]
+    live_id = @@live_ids[params[:space]] unless status.nil?
     end
     {
       "id" => live_id
