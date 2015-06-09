@@ -4,15 +4,25 @@
 var rt_config, rt_interval;
 
 function rt_pollEventsApi() {
-  var script = document.createElement('script');
-  script.type='text/javascript';
-  //script.src='https://gdata.youtube.com/feeds/api/users/' + rt_config.channelId  +
-  //    '/live/events?v=2&status=active&fields=entry(title,content)' +
-  //    '&alt=json-in-script&callback=rt_renderPlayer';
-  script.src='https://www.googleapis.com/youtube/v3/search?eventType=upcoming&part=id%2Csnippet&channelId='+ rt_config.channelId +'&type=video&key=AIzaSyBoMXQDrlRUCQCxv4fjfiyTHXog8OB2Nz0&callback=rt_renderPlayer';
-  //script.src='https://www.googleapis.com/youtube/v3/search?eventType=live&part=id%2Csnippet&channelId=UCYi0-Xrr-B7Ap4sAwR6iEpg&type=video&key=AIzaSyBoMXQDrlRUCQCxv4fjfiyTHXog8OB2Nz0&callback=rt_renderPlayer';
+  httpGet(rt_config.liveIdUrl, function(ret) {
+    console.log(ret);
+    if (ret.id) {
+      liveEvent = ret.id;
+      window.clearInterval(rt_interval);
+      rt_loadYouTubeAPI();
+    }
+  });
+}
 
-  document.getElementsByTagName("head")[0].appendChild(script);
+function httpGet(theUrl, callback) {
+  var xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange = function() {
+    if (xmlHttp.readyState === 4) {
+      callback(JSON.parse(xmlHttp.responseText));
+    }
+  };
+  xmlHttp.open("GET", theUrl, true);
+  xmlHttp.send();
 }
 
 /*
@@ -36,8 +46,8 @@ function onYouTubeIframeAPIReady() {
   if (liveEvent === undefined) {
     setTimeout(onYouTubeIframeAPIReady, 3000);
   } else {
-    var title = liveEvent.snippet.title;
-    var videoId = liveEvent.id.videoId;
+    //var title = liveEvent.snippet.title;
+    var videoId = liveEvent;
 
     var player = new YT.Player(rt_config.containerId, {
       width: rt_config.width,
@@ -49,7 +59,7 @@ function onYouTubeIframeAPIReady() {
         }
     });
 
-    rt_config.callback(title, player);
+    rt_config.callback("" /*title*/, player);
   }
 }
 
@@ -62,12 +72,4 @@ function rt_loadYouTubeAPI() {
 }
 
 function rt_renderPlayer(data) {
-  console.log(data);
-  console.log((Date.now() - time_now)/1000);
-  //if (data.items !== undefined && data.items.length > 0) {
-  if (true) {
-    liveEvent = data.items[0];
-    window.clearInterval(rt_interval);
-    rt_loadYouTubeAPI();
-  }
 }
