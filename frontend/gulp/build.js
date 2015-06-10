@@ -110,7 +110,7 @@ gulp.task('clean', function () {
   return gulp.src(['.tmp', 'dist'], { read: false }).pipe($.rimraf());
 });
 
-gulp.task('build', ['jshint', 'config', 'images', 'fonts', 'index', 'hangouts', 'http-viewer-iframe', 'player']);
+gulp.task('build', ['jshint', 'config', 'images', 'fonts', 'index', 'hangouts', 'http-viewer-iframe', 'join-button-toggler', 'player']);
 
 
 ////
