@@ -69,23 +69,9 @@ gulp.task('hangouts-participant', function () {
     .pipe(gulp.dest('.tmp'));
 });
 
-gulp.task('http-viewer-iframe', function () {
-  return gulp.src('src/components/http-viewer/iframe.html')
-    .pipe($.vulcanize({
-      inline: true,
-      strip: true,
-      dest: '.tmp'
-    }))
-    .pipe($.replace(/src\/components\/([^\"]*)\.(gif|png|jpeg)/g, 'images/$1.$2'))
-    .pipe($.minifyHtml({
-      empty: true,
-      spare: true,
-      quotes: true
-    }))
-    .pipe($.rename('http-viewer-iframe.html'))
-    .pipe(gulp.dest('dist'))
-    .pipe($.size());
-});
+registerBuildComponentTask('http-viewer-iframe', 'src/components/http-viewer/iframe.html');
+
+registerBuildComponentTask('join-button-toggler');
 
 gulp.task('webcomponents', function () {
   return gulp.src('src/bower_components/webcomponentsjs/webcomponents.min.js')
@@ -125,3 +111,35 @@ gulp.task('clean', function () {
 });
 
 gulp.task('build', ['jshint', 'config', 'images', 'fonts', 'index', 'hangouts', 'http-viewer-iframe', 'player']);
+
+
+////
+
+function registerBuildComponentTask(componentName, htmlPath) {
+  gulp.task(componentName, function () {
+    var componentPath;
+
+    if (htmlPath !== undefined) {
+      componentPath = htmlPath;
+    } else {
+      componentPath = 'src/components/' + componentName + '/' + componentName + '.html';
+    }
+
+    return gulp.src(componentPath)
+    .pipe($.vulcanize({
+      inline: true,
+      strip: true,
+      dest: '.tmp'
+    }))
+    .pipe($.replace(/src\/components\/([^\"]*)\.(gif|png|jpeg)/g, 'images/$1.$2'))
+    .pipe($.minifyHtml({
+      empty: true,
+      spare: true,
+      quotes: true
+    }))
+    .pipe($.rename(componentName + '.html'))
+    .pipe(gulp.dest('dist'))
+    .pipe($.size());
+  });
+
+}
