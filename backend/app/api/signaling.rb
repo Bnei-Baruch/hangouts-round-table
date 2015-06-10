@@ -20,8 +20,6 @@ class RoundTable::API
   # Get space live-id
   get '/spaces/:space/live-id' do
     status = get_instructor_status(params[:space])
-    puts status
-    puts @@live_ids
     live_id = nil
     live_id = @@live_ids[params[:space]] unless status.nil?
     {
@@ -37,7 +35,7 @@ class RoundTable::API
   end
 
   def get_instructor_status(space)
-    endpoints = @@master_endpoint_ids[params[:space]].select { |endpoint|
+    endpoints = @@master_endpoint_ids[space].select { |endpoint|
       endpoint['role'] == 'instructor'
     }
     endpoints.first['status'] unless endpoints.empty?
@@ -96,6 +94,7 @@ class RoundTable::API
                 'status' => 'init'
               }
               @@master_endpoint_ids[message['space']] |= [endpoint]
+              send_instructor_status(message['space'])
 
               viewer_response = get_viewer_response(message)
               unless viewer_response.nil?
@@ -108,14 +107,21 @@ class RoundTable::API
               end
             when 'instructor-resumed'
               set_master_endpoint_status(message['space'], ws, 'broadcasting')
+              # This is not really needed remove and use subscribe channel.
               send_message(message['space'], message)
+              send_instructor_status(message['space'])
             when 'instructor-paused'
               set_master_endpoint_status(message['space'], ws, 'paused')
+              # This is not really needed remove and use subscribe channel.
               send_message(message['space'], message)
+              send_instructor_status(message['space'])
             when 'update-heartbeat'
               send_message(message['space'], message)
             when 'subscribe'
               register_socket(ws, message['channel'], message)
+              if message['channel'] == 'instructor-status'
+                send_instructor_status(message['space'])
+              end
             when 'update-live-id'
               update_live_id(message)
           end
@@ -135,15 +141,27 @@ class RoundTable::API
               end
             }
           }
-          @@master_endpoint_ids.each{ |_, endpoints|
+          deleted_ws_space = nil
+          @@master_endpoint_ids.each{ |space, endpoints|
             endpoints.delete_if { |endpoint| endpoint['socket'] == ws }
+            deleted_ws_space = space
           }
+          send_instructor_status(deleted_ws_space) unless deleted_ws_space.nil?
           clean_agregated_data(ws)
           warn("Websocket closed")
         end
       end  # request.websocket do
     end  # request.websocket?
   end  # get '/socket' do
+
+  def send_instructor_status(space)
+    send_message(space, {
+      'space' => space,
+      'channel' => 'instructor-status',
+      'status' => get_instructor_status(space),
+      'action' => 'instructor-status'
+    })
+  end
 
   def send_message(space, message)
     # Don't broadcast messages which have 'channel' attribute, send them to

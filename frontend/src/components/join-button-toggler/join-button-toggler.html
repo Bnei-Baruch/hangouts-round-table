@@ -1,0 +1,17 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../app-config/app-config.html" />
+<link rel="import" href="../backend-signaling/backend-signaling.html">
+
+<polymer-element name="join-button-toggler" attributes="space">
+  <template>
+    <app-config id="config"></app-config>
+
+    <backend-signaling id="signaling"
+      space="{{ space }}"
+      on-instructor-status="{{toggle}}"
+      on-websocket-open="{{subscribe}}">
+    </backend-signaling>
+  </template>
+
+  <script src="join-button-toggler.js"></script>
+</polymer-element>

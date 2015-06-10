@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Join button toggler demo</title>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <script src="../../bower_components/webcomponentsjs/webcomponents.js"></script>
+    <link rel="import" href="join-button-toggler.html" />
+  </head>
+
+  <body unresolved>
+
+    <core-header-panel>
+    <div class="core-header">Join button toggler demo</div>
+    <div class="content" fit>
+      <script>
+        function toggled(enabled) {
+          console.log(enabled);
+        }
+      </script>
+      <join-button-toggler space="default" onToggle="return toggled;"></join-button-toggler>
+    </div>
+    </core-header-panel>
+
+  </body>
+
+</html>
