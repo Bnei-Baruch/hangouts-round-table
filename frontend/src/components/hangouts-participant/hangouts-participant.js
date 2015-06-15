@@ -5,40 +5,44 @@
     ready: function () {
       var that = this;
 
-      var updateLiveId = function (id) {
-        that.updateLiveId(id);
-      };
-
       var initHangouts = function (apiInitEvent) {
         if (apiInitEvent.isApiReady) {
-          gapi.hangout.onair.onYouTubeLiveIdReady.add(updateLiveId);
-          gapi.hangout.layout.setChatPaneVisible(false);
-          // that.initOverlay();
           gapi.hangout.onApiReady.remove(initHangouts);
+
+          that.bindHangoutHandlers();
+
+          gapi.hangout.layout.setChatPaneVisible(false);
           gapi.hangout.av.setLocalParticipantVideoMirrored(false);
+
           that.initOverlay();
         }
       };
       gapi.hangout.onApiReady.add(initHangouts);
 
-      var initOverlay = function () {
-        that.initOverlay();
-      };
-
-      gapi.hangout.onParticipantsChanged.add(initOverlay);
     },
-    initWS: function() {
-      this.wsInited = true;
+    bindHangoutHandlers: function () {
+      var that = this;
+
+      gapi.hangout.onParticipantsChanged.add(function () {
+        that.initOverlay();
+      });
+
+      gapi.hangout.onair.onYouTubeLiveIdReady.add(function (e) {
+        that.updateLiveId(e);
+      });
+    },
+    initWebsocket: function() {
+      this.isWsReady = true;
       this.sendLiveId();
     },
-    updateLiveId: function(id) {
-      this.liveId = id.youTubeLiveId;
+    updateLiveId: function(e) {
+      this.liveId = e.youTubeLiveId;
       this.sendLiveId();
     },
     sendLiveId: function() {
       var that = this;
 
-      if (this.wsInited && this.liveId) {
+      if (that.isWsReady && that.liveId) {
         that.$.signaling.sendMessage({
           action: 'update-live-id',
           id: that.liveId
