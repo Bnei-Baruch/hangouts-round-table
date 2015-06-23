@@ -1,0 +1,32 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../layouts/header-layout.html">
+<link rel="import" href="../components/app-config/app-config.html" />
+<link rel="import" href="../components/user-auth/user-auth.html" />
+<link rel="import" href="../components/table-list/table-list.html" />
+<link rel="import" href="../components/webdis-chat/webdis-chat.html" />
+
+<polymer-element name="moderator-page" noscript>
+  <template>
+    <header-layout header="Moderator">
+      <app-config id="config"></app-config>
+      <user-auth id="modrator"></user-auth>
+      <template if="{{ $.modrator.loggedIn }}">
+        <style>
+          table-list {
+            float: left;
+            width: 50%;
+          }
+          webdis-chat {
+            float: right;
+            width: 50%;
+            height: 100%;
+            display: block;
+          }
+        </style>
+
+        <table-list space="{{ $.modrator.space }}"></table-list>
+        <webdis-chat space="{{ $.modrator.space }}" isAdmin="true"></webdis-chat>
+      </template>
+    </header-layout>
+  </template>
+</polymer-element>
