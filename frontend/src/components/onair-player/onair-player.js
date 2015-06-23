@@ -14,7 +14,7 @@
    */
   window.initOnAirPlayer = function (cfg) {
     config = cfg;
-    splashElement = document.getElementById(config.containerId).cloneNode();
+    splashElement = document.getElementById(config.containerId).cloneNode(true);
     loadYouTubeAPI();
   };
 
@@ -30,7 +30,7 @@
     var container = document.getElementById(config.containerId);
     var body = container.parentNode;
     body.removeChild(container);
-    var splashClone = splashElement.cloneNode();
+    var splashClone = splashElement.cloneNode(true);
     body.appendChild(splashClone);
   }
 
