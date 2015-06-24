@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/polymer-fontawesome/polymer-fontawesome.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../backend-signaling/backend-signaling.html">
 <link rel="import" href="../broadcast-master/broadcast-master.html">
 <link rel="import" href="../instructor-recorder/instructor-recorder.html">
@@ -50,7 +51,14 @@
         labelReleased="Resume"
         disabled?="{{ !(isReady && (!recordingUri || $.recorder.isReady)) }}">Start
       </toggle-label-button>
-      <a href="{{ $.config.backendUrl }}/spaces/{{ space }}/tables/{{ language }}/focus-group?onair=true" target="_blank">Create Focus Group</a>
+
+      <div>
+      <paper-button
+        raised
+        onclick="javascript:window.open('{{ $.config.backendUrl }}/spaces/{{ space }}/tables/{{ language }}/focus-group?onair=true', '_blank')"
+        target="_blank">Focus Group
+      </paper-button>
+      </div>
     </div>
 
     <shadow>

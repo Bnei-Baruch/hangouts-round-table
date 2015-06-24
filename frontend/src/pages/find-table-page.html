@@ -37,7 +37,12 @@
     </core-ajax>
 
     <div id="content">
-      <label>Ищем стол, пожалуйста, подождите...</label>
+      <template if="{{ language === 'ru' }}">
+        <label>Ищем стол, пожалуйста, подождите...</label>
+      </template>
+      <template if="{{ language !== 'ru' }}">
+        <label>Waiting for a table, please wait...</label>
+      </template>
     </div>
 
   </template>
