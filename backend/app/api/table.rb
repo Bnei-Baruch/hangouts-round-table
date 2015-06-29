@@ -145,7 +145,6 @@ class RoundTable::API
                  is_moderator: nil, is_focus_group: nil)
     table_id = nil
     table_id = table['id'] if not table.nil?
-    puts "table '%s' table_id '%s'" % [table, table_id]
     if table.nil?
       if is_moderator.nil? or is_focus_group == true # Free or subspace or focus tables only.
         table = { 'participants' => [],
