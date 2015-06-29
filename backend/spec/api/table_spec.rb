@@ -45,6 +45,11 @@ describe RoundTable::API do
     expect(last_response.location).to start_with(config['bad_user_agent_url'])
   end
 
+  it "should create pre-generated table for focus group and use it later" do
+    verify_free_table_id("pre-generated-id-1", is_focus_group: true)
+    verify_free_table_id("pre-generated-id-1", is_focus_group: true)
+  end
+
   it "should create a new pre-generated table if all tables are full" do
     update_fake_table("some-id-1", 9)
     update_fake_table("some-id-2", 10)
@@ -135,7 +140,7 @@ describe RoundTable::API do
     expect(tables.map { |table| table['id'] }.sort!).to eq(["1", "2", "3"])
   end
 
-  def update_fake_table(table_id, participants_number, space: "fake-space", language: "fake-language")
+  def update_fake_table(table_id, participants_number, space: "fake-space", language: "fake-language", is_focus_group: nil)
     participants = ["Haim", "Moshe", "Jude", "Avi", "Moti", "Tzvika", "Oded",
                     "Valik", "Misha", "Igor"]
     test_table = {
@@ -143,13 +148,15 @@ describe RoundTable::API do
       "language" => language,
       "space" => space,
     }
+    test_table['is_focus_group'] = is_focus_group unless is_focus_group.nil?
     test_table['participants'] = participants[0..participants_number-1]
     put "/spaces/#{space}/tables/#{table_id}", JSON.generate(test_table)
   end
 
   def verify_free_table_id(table_id, language: "fake-language",
-                           space: "fake-space", subspace: "")
-    table_url = get_free_table_url(language: language, space: space, subspace: subspace)
+                           space: "fake-space", subspace: "", is_focus_group: nil)
+    table_url = get_free_table_url(
+      language: language, space: space, subspace: subspace, is_focus_group: is_focus_group)
     expect(table_url).to include("_/#{table_id}?")
   end
 
@@ -158,9 +165,12 @@ describe RoundTable::API do
   end
 
   def get_free_table_url(language: "fake-language", space: "fake-space",
-                         url_params: {}, subspace: "")
+                         url_params: {}, subspace: "", is_focus_group: nil)
     query = Rack::Utils.build_query(url_params)
-    if subspace.empty?
+    if is_focus_group == true
+      get("/spaces/#{space}/tables/#{language}/focus-group?#{query}",
+          {}, { 'HTTP_USER_AGENT' => 'Chrome/39.0.2171.99' })
+    elsif subspace.empty?
       get("/spaces/#{space}/tables/#{language}/free?#{query}",
           {}, { 'HTTP_USER_AGENT' => 'Chrome/39.0.2171.99' })
     else
