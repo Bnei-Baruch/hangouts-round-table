@@ -119,15 +119,17 @@ class RoundTable::API
     live_tables
   end
 
-  def get_free_table(space, language, onair, subspace, is_moderator: nil)
+  def get_free_table(space, language, onair, subspace, is_moderator: nil, is_focus_group: nil)
     table = nil
 
     # If free (or subspace) and existing links (not for moderated)
-    if is_moderator != true
+    if is_moderator != true or is_focus_group == true
       time_now = redis.time[0]
       live_tables = get_space_tables(space, language, time_now, subspace)
       if subspace.nil? or subspace.empty?
         table = choose_table(live_tables)
+      elsif is_focus_group == true
+        table = choose_focus_group_table(live_tables)
       else
         table = choose_subspace_table(live_tables)
       end
@@ -184,9 +186,17 @@ class RoundTable::API
   end
 
   def choose_subspace_table(tables)
-    return tables.max_by {
-      |table| table['participants'].size
+    return tables.max_by { |table|
+      table['participants'].size
     }
+  end
+
+  def choose_focus_group_table(tables)
+    tables.filter { |table|
+      is_focus_group = table['is_focus_group']
+      is_focus_group = false if is_focus_group.nil?
+      is_focus_group
+    }.first
   end
 
   def is_table_live(table, time_now)
@@ -206,7 +216,7 @@ class RoundTable::API
 
     table = get_free_table(
       space, language, onair, subspace,
-      is_moderator: is_moderator)
+      is_moderator: is_moderator, is_focus_group: is_focus_group)
     table_id = nil
     if not table.nil?
       table_id = table['id']
