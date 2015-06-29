@@ -126,32 +126,34 @@ class RoundTable::API
     if is_moderator != true or is_focus_group == true
       time_now = redis.time[0]
       live_tables = get_space_tables(space, language, time_now, subspace)
-      if subspace.nil? or subspace.empty?
-        table = choose_table(live_tables)
-      elsif is_focus_group == true
+      if is_focus_group == true
         table = choose_focus_group_table(live_tables)
+      elsif subspace.nil? or subspace.empty?
+        table = choose_table(live_tables)
       else
         table = choose_subspace_table(live_tables)
       end
     end
 
     grab_table(table, space, language, onair, subspace,
-               is_moderator: is_moderator)
+               is_moderator: is_moderator, is_focus_group: is_focus_group)
   end
 
   # If table was found, just return its id, otherwise
   # selects a hangout_id (table_id) out of existing set of tables.
   def grab_table(table, space, language, onair, subspace,
-                 is_moderator: nil)
+                 is_moderator: nil, is_focus_group: nil)
     table_id = nil
     table_id = table['id'] if not table.nil?
+    puts "table '%s' table_id '%s'" % [table, table_id]
     if table.nil?
-      if is_moderator.nil?  # Free or subspace tables only.
+      if is_moderator.nil? or is_focus_group == true # Free or subspace or focus tables only.
         table = { 'participants' => [],
                   'space' => space,
                   'language' => language,
                   'onair' => onair,
-                  'subspace' => subspace }
+                  'subspace' => subspace,
+                  'is_focus_group' => is_focus_group }
         existing_ids = get_existing_table_ids
         table_id = consts['hangout_ids'].detect do |id|
           not existing_ids.include? id
@@ -159,8 +161,8 @@ class RoundTable::API
       end
     end
 
-    if not table_id.nil? and is_moderator.nil?
-      # Add one user to free or subspace table
+    if (not table_id.nil? and is_moderator.nil?) or is_focus_group == true
+      # Add one user to free or subspace or focus table
       table['participants'].push('Unknown')
       table['id'] = table_id
       update_table(table_id, space, table)
@@ -192,7 +194,7 @@ class RoundTable::API
   end
 
   def choose_focus_group_table(tables)
-    tables.filter { |table|
+    tables.select { |table|
       is_focus_group = table['is_focus_group']
       is_focus_group = false if is_focus_group.nil?
       is_focus_group
