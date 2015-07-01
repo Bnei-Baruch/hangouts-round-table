@@ -18,6 +18,16 @@ class RoundTable::API
               {:ex => config['table']['time_to_live']} )
   end
 
+  # Send user to hangout to validate he approved round tables application
+  get '/validate/:language' do
+    bad_user_agent_url = get_bad_user_agent_url(request)
+    if bad_user_agent_url
+      redirect bad_user_agent_url
+    else
+      redirect get_hangouts_url(nil, "validate", params[:language], false, "")
+    end
+  end
+
   # Create a new table, only for moderators
   get '/spaces/:space/tables/:language/moderated' do
     redirect get_table_url(request, params[:space], params[:language],

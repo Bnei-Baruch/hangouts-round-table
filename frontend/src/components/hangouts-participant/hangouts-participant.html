@@ -19,6 +19,7 @@
     <template if="{{ $.table.isReady }}">
       <style>
         translation-viewer, #noViewer {
+          text-align: center;
           color: #fff;
           width: 66%;
           float: left;
@@ -31,35 +32,49 @@
           height: 100%;
         }
       </style>
-      <template if="{{ !$.table.appData.is_focus_group }}">
-        <translation-viewer
-          id="viewer"
-          space="{{ $.table.appData.space }}"
-          language="{{ $.table.appData.language }}"
-          on-instructor-resumed="{{mute}}"
-          on-instructor-paused="{{hide}}">
-        </translation-viewer>
-      </template>
-      <template if="{{ $.table.appData.is_focus_group }}">
-        <div id="noViewer">
-          <template if="{{ $.table.appData.language === 'ru' }}">
-            Это фокус-группа, видео студии не показывается.
-          </template>
-          <template if="{{ $.table.appData.language !== 'ru' }}">
-            This is a focus group, the instructor video is not displayed.
-          </template>
-        </div>
-      </template>
-      <viewer-heartbeat
+      <template if="{{ $.table.appData.space != 'validate' }}">
+        <template if="{{ !$.table.appData.is_focus_group }}">
+          <translation-viewer
+            id="viewer"
+            space="{{ $.table.appData.space }}"
+            language="{{ $.table.appData.language }}"
+            on-instructor-resumed="{{mute}}"
+            on-instructor-paused="{{hide}}">
+          </translation-viewer>
+        </template>
+        <template if="{{ $.table.appData.is_focus_group }}">
+          <div id="noViewer">
+            <template if="{{ $.table.appData.language === 'ru' }}">
+              Это фокус-группа, видео студии не показывается.
+            </template>
+            <template if="{{ $.table.appData.language !== 'ru' }}">
+              This is a focus group, the instructor video is not displayed.
+            </template>
+          </div>
+        </template>
+        <viewer-heartbeat
           viewerId="viewer"
           space="{{ $.table.appData.space }}"
           language="{{ $.table.appData.language }}">
-      </viewer-heartbeat>
-      <webdis-chat
+        </viewer-heartbeat>
+        <webdis-chat
           space="{{ $.table.appData.space }}"
           isAdmin="false"
           fromName="{{ $.table.displayName }}">
-      </webdis-chat>
+        </webdis-chat>
+      </template>
+      <template if="{{ $.table.appData.space == 'validate' }}">
+        <div id="noViewer" style="width: 100%;">
+          <template if="{{ $.table.appData.language === 'ru' }}">
+            <h1>Работает!</h1>
+            <h2>Вы успешно установили приложение Round Table и теперь можете участвовать в семинарах.</h2>
+          </template>
+          <template if="{{ $.table.appData.language !== 'ru' }}">
+            <h1>It works!</h1>
+            <h2>You have successfully enabled Round Table application, now you can join Live Workshops.</h2>
+          </template>
+        </div>
+      </template>
     </template>
   </template>
 
