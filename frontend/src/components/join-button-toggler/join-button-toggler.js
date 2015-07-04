@@ -10,9 +10,10 @@
     },
     toggle: function (event) {
       var message = event.detail;
-      if (this.ontoggle) {
+      if (this.onToggle) {
         var enabled = ['broadcasting', 'paused'].indexOf(message.status) !== -1;
-        this.ontoggle()(enabled);
+        var handler = window[this.onToggle];
+        handler(enabled);
       }
     }
   });
