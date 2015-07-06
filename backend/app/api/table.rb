@@ -182,7 +182,8 @@ class RoundTable::API
 
   def choose_table(tables)
     focus_group_tables = tables.select do |one_table|
-      one_table['is_focus_group'] == true
+      one_table['is_focus_group'] == true and 
+        one_table['participants'].size < config['table']['max_participants_number']
     end
     return focus_group_tables.first if focus_group_tables.size > 0
     small_tables = tables.select do |one_table|

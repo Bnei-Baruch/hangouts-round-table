@@ -110,6 +110,10 @@ describe RoundTable::API do
     update_fake_table(2, 4)
     verify_free_table_id(1)
 
+    update_fake_table(1, 10, is_focus_group: true)
+    update_fake_table(2, 5)
+    verify_free_table_id(2)
+
     update_fake_table(1, 6)
     update_fake_table(2, 7, is_focus_group: true)
     verify_free_table_id(2)
