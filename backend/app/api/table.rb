@@ -14,7 +14,9 @@ class RoundTable::API
     table['space'] = space
     table['timestamp'] = redis.time[0]
     table_key = "table_#{space}_#{id}"
-    redis.set(table_key, JSON.generate(table),
+    redis_table = JSON.parse(redis.get(table_key).force_encoding('UTF-8'))
+    redis_table.merge!(table)
+    redis.set(table_key, JSON.generate(redis_table),
               {:ex => config['table']['time_to_live']} )
   end
 
@@ -158,6 +160,7 @@ class RoundTable::API
     if table.nil?
       if is_moderator.nil? or is_focus_group == true # Free or subspace or focus tables only.
         table = { 'participants' => [],
+                  'joining_participants' => [],
                   'space' => space,
                   'language' => language,
                   'onair' => onair,
@@ -172,7 +175,8 @@ class RoundTable::API
 
     if (not table_id.nil? and is_moderator.nil?) or is_focus_group == true
       # Add one user to free or subspace or focus table
-      table['participants'].push('Unknown')
+      time_now = redis.time[0]
+      table['joining_participants'].push(time_now)
       table['id'] = table_id
       update_table(table_id, space, table)
     end
@@ -180,23 +184,30 @@ class RoundTable::API
     table
   end
 
+  def get_table_expected_participants(table)
+    time_now = redis.time[0]
+    table['joining_participants'].count { |timestamp|
+      timestamp + 30 > time_now
+    } + table['participants'].size
+  end
+
   def choose_table(tables)
     focus_group_tables = tables.select do |one_table|
-      one_table['is_focus_group'] == true and 
-        one_table['participants'].size < config['table']['max_participants_number']
+      (one_table['is_focus_group'] == true and 
+       get_table_expected_participants(one_table) < config['table']['max_participants_number'])
     end
     return focus_group_tables.first if focus_group_tables.size > 0
     small_tables = tables.select do |one_table|
-      one_table['participants'].size < config['table']['min_participants_number']
+      get_table_expected_participants(one_table) < config['table']['min_participants_number']
     end
     return small_tables.max_by {
-      |table| table['participants'].size
+      |table| get_table_expected_participants(one_table)
     } if !small_tables.empty?
     not_full_tables = tables.select do |one_table|
-      one_table['participants'].size < config['table']['max_participants_number']
+      get_table_expected_participants(one_table) < config['table']['max_participants_number']
     end
     return not_full_tables.min_by {
-      |table| table['participants'].size
+      |table| get_table_expected_participants(one_table)
     } if !not_full_tables.empty?
     return nil
   end
