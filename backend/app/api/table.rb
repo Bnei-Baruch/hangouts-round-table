@@ -14,9 +14,14 @@ class RoundTable::API
     table['space'] = space
     table['timestamp'] = redis.time[0]
     table_key = "table_#{space}_#{id}"
-    redis_table = JSON.parse(redis.get(table_key).force_encoding('UTF-8'))
-    redis_table.merge!(table)
-    redis.set(table_key, JSON.generate(redis_table),
+    if not table.key?('joining_participants') 
+      redis_table_json = redis.get(table_key)
+      if not redis_table_json.nil?
+        redis_table = JSON.parse(redis_table_json.force_encoding('UTF-8'))
+        table['joining_participants'] = redis_table['joining_participants']
+      end
+    end
+    redis.set(table_key, JSON.generate(table),
               {:ex => config['table']['time_to_live']} )
   end
 
@@ -192,22 +197,27 @@ class RoundTable::API
   end
 
   def choose_table(tables)
+    # Choose Focus Group table if it exists and has small number of participants
     focus_group_tables = tables.select do |one_table|
       (one_table['is_focus_group'] == true and 
-       get_table_expected_participants(one_table) < config['table']['max_participants_number'])
+       get_table_expected_participants(one_table) < config['table']['min_participants_number'])
     end
-    return focus_group_tables.first if focus_group_tables.size > 0
+    return focus_group_tables.max_by { |one_table|
+      get_table_expected_participants(one_table)
+    } if !focus_group_tables.empty?
+
+    # Choose from other tables
     small_tables = tables.select do |one_table|
       get_table_expected_participants(one_table) < config['table']['min_participants_number']
     end
-    return small_tables.max_by {
-      |table| get_table_expected_participants(one_table)
+    return small_tables.max_by { |one_table|
+      get_table_expected_participants(one_table)
     } if !small_tables.empty?
     not_full_tables = tables.select do |one_table|
       get_table_expected_participants(one_table) < config['table']['max_participants_number']
     end
-    return not_full_tables.min_by {
-      |table| get_table_expected_participants(one_table)
+    return not_full_tables.min_by { |one_table|
+      get_table_expected_participants(one_table)
     } if !not_full_tables.empty?
     return nil
   end

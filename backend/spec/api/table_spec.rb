@@ -74,11 +74,11 @@ describe RoundTable::API do
 
   it "should not choose same table id when accessing different spaces" do
     2.times { verify_free_table_id('pre-generated-id-1', space: "one") }
-    expect(get_table('pre-generated-id-1', 'one')['participants'].length).to be(2)
+    expect(get_table('pre-generated-id-1', 'one')['joining_participants'].length).to be(2)
     2.times { verify_free_table_id('pre-generated-id-2', space: "two") }
-    expect(get_table('pre-generated-id-2', 'two')['participants'].length).to be(2)
+    expect(get_table('pre-generated-id-2', 'two')['joining_participants'].length).to be(2)
     8.times { verify_free_table_id('pre-generated-id-2', space: "two") }
-    expect(get_table('pre-generated-id-2', 'two')['participants'].length).to be(10)
+    expect(get_table('pre-generated-id-2', 'two')['joining_participants'].length).to be(10)
     verify_free_table_id('', space: "two")
     verify_free_table_id('', space: "three")
   end
@@ -172,6 +172,7 @@ describe RoundTable::API do
     }
     test_table['is_focus_group'] = is_focus_group unless is_focus_group.nil?
     test_table['participants'] = participants[0..participants_number-1]
+    test_table['joining_participants'] = []
     put "/spaces/#{space}/tables/#{table_id}", JSON.generate(test_table)
   end
 
