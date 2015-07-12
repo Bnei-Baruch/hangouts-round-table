@@ -51,12 +51,12 @@ describe RoundTable::API do
   end
 
   it "should create a new pre-generated table if all tables are full" do
-    update_fake_table("some-id-1", 9)
-    update_fake_table("some-id-2", 10)
+    update_fake_table("some-id-1", 7)
+    update_fake_table("some-id-2", 8)
     verify_free_table_id("some-id-1")
 
-    update_fake_table("some-id-1", 10)
-    update_fake_table("some-id-2", 10)
+    update_fake_table("some-id-1", 8)
+    update_fake_table("some-id-2", 8)
     verify_free_table_id("pre-generated-id-1")
   end
 
@@ -77,8 +77,8 @@ describe RoundTable::API do
     expect(get_table('pre-generated-id-1', 'one')['joining_participants'].length).to be(2)
     2.times { verify_free_table_id('pre-generated-id-2', space: "two") }
     expect(get_table('pre-generated-id-2', 'two')['joining_participants'].length).to be(2)
-    8.times { verify_free_table_id('pre-generated-id-2', space: "two") }
-    expect(get_table('pre-generated-id-2', 'two')['joining_participants'].length).to be(10)
+    6.times { verify_free_table_id('pre-generated-id-2', space: "two") }
+    expect(get_table('pre-generated-id-2', 'two')['joining_participants'].length).to be(8)
     verify_free_table_id('', space: "two")
     verify_free_table_id('', space: "three")
   end
@@ -116,11 +116,11 @@ describe RoundTable::API do
 
     update_fake_table(1, 6)
     update_fake_table(2, 7, is_focus_group: true)
-    verify_free_table_id(2)
+    verify_free_table_id(1)
 
     update_fake_table(1, 6, is_focus_group: true)
     update_fake_table(2, 4)
-    verify_free_table_id(1)
+    verify_free_table_id(2)
   end
 
   it "should redirect to a free table for selected language" do
