@@ -5,6 +5,7 @@
     publish: {
       space: 'default',
       isAdmin: false,
+      autoApprove: false,
     },
     ready: function () {
       var l = document.createElement("a");

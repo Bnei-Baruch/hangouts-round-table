@@ -7,6 +7,16 @@ class RoundTable::API
     update_table(params[:id], params[:space], body)
   end
 
+  def get_table(space, id)
+    table_key = "table_#{space}_#{id}"
+    redis_table_json = redis.get(table_key)
+    redis_table = {}
+    if not redis_table_json.nil?
+      redis_table = JSON.parse(redis_table_json.force_encoding('UTF-8'))
+    end
+    redis_table
+  end
+
   def update_table(id, space, table)
     raise "Bad table id" unless not table.key?('id') or table['id'] == id
     raise "Bad table space" unless not table.key?('space') or table['space'] == space
@@ -29,21 +39,26 @@ class RoundTable::API
   get '/validate/:language' do
     bad_user_agent_url = get_bad_user_agent_url(request)
     if bad_user_agent_url
-      redirect bad_user_agent_url
+      log_request_and_redirect bad_user_agent_url
     else
-      redirect get_hangouts_url(nil, "validate", params[:language], false, "")
+      log_request_and_redirect get_hangouts_url(nil, "validate", params[:language], false, "")
     end
+  end
+
+  def log_request_and_redirect(url)
+    warn(Time.now.utc.to_s + ": Request: " + request.url + "\n\tRedirect:" + url)
+    redirect url
   end
 
   # Create a new table, only for moderators
   get '/spaces/:space/tables/:language/moderated' do
-    redirect get_table_url(request, params[:space], params[:language],
+    log_request_and_redirect get_table_url(request, params[:space], params[:language],
                            params[:onair], "", true, false)
   end
 
   # Create a new table, only for focus group
   get '/spaces/:space/tables/:language/focus-group' do
-    redirect get_table_url(request, params[:space], params[:language],
+    log_request_and_redirect get_table_url(request, params[:space], params[:language],
                            params[:onair], "", true, true)
   end
 
@@ -66,12 +81,12 @@ class RoundTable::API
   get '/spaces/:space/tables/:language/free' do
     url = get_table_url(request, params[:space], params[:language],
                         params[:onair], "", nil, false)
-    redirect url
+    log_request_and_redirect url
   end
 
   # Get fixed table
   get '/spaces/:space/tables/:language/fixed/:subspace' do
-    redirect get_table_url(request, params[:space], params[:language],
+    log_request_and_redirect get_table_url(request, params[:space], params[:language],
                       params[:onair], params[:subspace], nil, false)
   end
 

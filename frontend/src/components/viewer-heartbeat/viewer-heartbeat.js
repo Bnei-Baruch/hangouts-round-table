@@ -18,10 +18,13 @@
     sendHeartbeat: function () {
       var participant = gapi.hangout.getLocalParticipant();
 
+      var urlArray = gapi.hangout.getHangoutUrl().split('/');
+      var tableId = urlArray[urlArray.length - 1];
+
       var message = {
         action: 'update-heartbeat',
         channel: 'update-heartbeat',
-        tableId: gapi.hangout.getHangoutId(),
+        tableId: tableId,
         participantId: participant.person.id,
         participantName: participant.person.displayName,
         averageVideoColor: this.getAverageVideoColor(),

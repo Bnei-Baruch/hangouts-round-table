@@ -20,7 +20,12 @@
     <iframe src="{{ $.config.chatUri }}/admin.html?label={{ hostname }}.{{ space }}"></iframe>
   </template>
   <template if="{{ !isAdmin }}">
-    <iframe src="{{ $.config.chatUri }}?label={{ hostname }}.{{ space }}&minimal_form=true&from_text={{ fromName }}"></iframe>
+    <template if="{{ autoApprove }}"0>
+      <iframe src="{{ $.config.chatUri }}?label={{ hostname }}.{{ space }}&minimal_form=true&auto_approve=true&from_text={{ fromName }}"></iframe>
+    </template>
+    <template if="{{ !autoApprove }}"0>
+      <iframe src="{{ $.config.chatUri }}?label={{ hostname }}.{{ space }}&minimal_form=true&from_text={{ fromName }}"></iframe>
+    </template>
   </template>
 
   </template>

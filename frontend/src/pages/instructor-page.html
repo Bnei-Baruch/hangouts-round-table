@@ -15,12 +15,18 @@
         <style>
           div {
             float: left;
-            width: 58%;
+            width: 60%;
           }
-          webdis-chat {
+          #chat-admin {
             float: right;
-            width: 42%;
-            height: 100%;
+            width: 40%;
+            height: 49%;
+            display: block;
+          }
+          #inner-chat {
+            float: right;
+            width: 40%;
+            height: 49%;
             display: block;
           }
         </style>
@@ -41,7 +47,8 @@
             <table-list space="{{ $.instructor.space }}"></table-list>
           </div>
         </template>
-        <webdis-chat space="{{ $.instructor.space }}" isAdmin="true"></webdis-chat>
+        <webdis-chat id="inner-chat" space="{{ $.moderator.space }}.inner" autoApprove="true"></webdis-chat>
+        <webdis-chat id="chat-admin" space="{{ $.instructor.space }}" isAdmin="true"></webdis-chat>
       </template>
     </header-layout>
   </template>

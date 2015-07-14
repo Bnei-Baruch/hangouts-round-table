@@ -9,23 +9,30 @@
   <template>
     <header-layout header="Moderator">
       <app-config id="config"></app-config>
-      <user-auth id="modrator"></user-auth>
-      <template if="{{ $.modrator.loggedIn }}">
+      <user-auth id="moderator"></user-auth>
+      <template if="{{ $.moderator.loggedIn }}">
         <style>
           table-list {
             float: left;
-            width: 50%;
+            width: 33%;
           }
-          webdis-chat {
+          #chat-admin {
             float: right;
-            width: 50%;
-            height: 100%;
+            width: 33%;
+            height: 99%;
+            display: block;
+          }
+          #inner-chat {
+            float: right;
+            width: 34%;
+            height: 99%;
             display: block;
           }
         </style>
 
-        <table-list space="{{ $.modrator.space }}"></table-list>
-        <webdis-chat space="{{ $.modrator.space }}" isAdmin="true"></webdis-chat>
+        <table-list space="{{ $.moderator.space }}"></table-list>
+        <webdis-chat id="inner-chat" space="{{ $.moderator.space }}.inner" autoApprove="true"></webdis-chat>
+        <webdis-chat id="chat-admin" space="{{ $.moderator.space }}" isAdmin="true"></webdis-chat>
       </template>
     </header-layout>
   </template>

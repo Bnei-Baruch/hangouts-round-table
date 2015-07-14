@@ -76,7 +76,7 @@ class RoundTable::API
         ws.onmessage do |msg|
           message = JSON.parse(msg)
 
-          warn("Got message %s" % msg)
+          warn(Time.now.utc.to_s + ": Got message %s" % msg)
 
           # Register socket if not registered
           register_socket(ws, 'broadcast', message)
@@ -148,7 +148,7 @@ class RoundTable::API
           }
           send_instructor_status(deleted_ws_space) unless deleted_ws_space.nil?
           clean_agregated_data(ws)
-          warn("Websocket closed")
+          warn(Time.now.utc.to_s + ": Websocket closed")
         end
       end  # request.websocket do
     end  # request.websocket?
@@ -174,7 +174,7 @@ class RoundTable::API
     end
     sockets = @@sockets[space][channel_name].keys
     encoded_message = message.to_json
-    warn("Sent message %s" % message)
+    warn(Time.now.utc.to_s + ": Sent message %s" % message)
     EM.next_tick{ sockets.each{ |sock| sock.send(encoded_message) } }
   end
 
@@ -268,7 +268,8 @@ class RoundTable::API
     @@spaces[space] = {
       'ws' => ws,
       'status' => status,
-      'timestamp' => now
+      'timestamp' => now,
+      'users' => 0
     }
   end
 
@@ -298,6 +299,29 @@ class RoundTable::API
       end
     } 
   end
+
+  # Finish this code and pring via this method!
+  #@@rows_cache = {}
+  #def write_row(cache_key, csv, row, headers)
+  #  now = Time.now.utc
+  #  write_row = true
+  #  write_headers = true
+  #  if @@rows_cache.key?(cache_key)
+  #    cached_now, cached_row = @@rows_cache[cache_key]
+  #    if now.to_i - cached_now.to_i < 60 and cached_row == row
+  #      write_row = false
+  #      write_headers = false
+  #    end
+  #  else
+  #    @@rows_cache[cache_key] = [now, row]
+  #  end
+  #  if write_row
+  #    if write_headers
+  #      csv << headers
+  #    end
+  #    csv << row
+  #  end
+  #end
 
   def print_info_to_tsv()
     now = Time.now.utc
@@ -341,13 +365,34 @@ class RoundTable::API
 
       tables[table_id] = table
     }
+    tables.each { |id, table|
+      if @@spaces.key?(table['space'])
+        @@spaces[table['space']]['users'] = 0
+      end
+    }
+    tables.each { |id, table|
+      redis_table = get_table(table['space'], table['tableId'])
+      table.merge! redis_table
+      if @@spaces.key?(table['space'])
+        @@spaces[table['space']]['users'] += table['users']
+      end
+    }
     CSV.open(config['sessions_logs']['tables'], "a+") do |csv|
       tables.values().each { |table|
         if @@spaces.key?(table['space'])
           row = [now.to_s]
-          ['tableId', 'space', 'language', 'users'].each { |key|
-            row << table[key]
+          headers = ['now']
+          table.each { |key, value|
+            headers << key
+            if value.kind_of?(Array)
+              row << value.size
+            elsif key == 'timestamp'
+              row << Time.at(value).utc.to_s
+            else
+              row << value
+            end
           }
+          csv << headers
           csv << row
         end
       }
@@ -355,7 +400,7 @@ class RoundTable::API
 
     CSV.open(config['sessions_logs']['space'], "a+") do |csv|
       @@spaces.each { |space, data|
-        row = [now.to_s, space, data['status'], data['timestamp'].to_s]
+        row = [now.to_s, space, data['status'], data['timestamp'].to_s, data['users']]
         csv << row
       }
     end
