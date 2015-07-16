@@ -206,9 +206,13 @@ class RoundTable::API
 
   def get_table_expected_participants(table)
     time_now = redis.time[0]
-    table['joining_participants'].count { |timestamp|
-      timestamp + 30 > time_now
-    } + table['participants'].size
+    if table.has_key?('joining_participants')
+      table['joining_participants'].count { |timestamp|
+        timestamp + 30 > time_now
+      } + table['participants'].size
+    else
+      return table['participants'].size
+    end
   end
 
   def choose_table(tables)
