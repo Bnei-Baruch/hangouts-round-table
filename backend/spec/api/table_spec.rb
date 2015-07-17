@@ -2,6 +2,12 @@ require_relative '../spec_helper'
 
 
 describe RoundTable::API do
+  subject do
+    app = described_class.allocate
+    app.send :initialize
+    app
+  end
+
   before do
     redis.flushdb
 
@@ -74,11 +80,11 @@ describe RoundTable::API do
 
   it "should not choose same table id when accessing different spaces" do
     2.times { verify_free_table_id('pre-generated-id-1', space: "one") }
-    expect(get_table('pre-generated-id-1', 'one')['joining_participants'].length).to be(2)
+    expect(subject.get_table('one', 'pre-generated-id-1')['joining_participants'].length).to be(2)
     2.times { verify_free_table_id('pre-generated-id-2', space: "two") }
-    expect(get_table('pre-generated-id-2', 'two')['joining_participants'].length).to be(2)
+    expect(subject.get_table('two', 'pre-generated-id-2')['joining_participants'].length).to be(2)
     6.times { verify_free_table_id('pre-generated-id-2', space: "two") }
-    expect(get_table('pre-generated-id-2', 'two')['joining_participants'].length).to be(8)
+    expect(subject.get_table('two', 'pre-generated-id-2')['joining_participants'].length).to be(8)
     verify_free_table_id('', space: "two")
     verify_free_table_id('', space: "three")
   end
@@ -86,41 +92,41 @@ describe RoundTable::API do
   it "should redirect to a free table" do
     update_fake_table(1, 3)
     update_fake_table(2, 2)
-    verify_free_table_id(1)
+    verify_free_table_id('1')
 
     update_fake_table(1, 3)
     update_fake_table(2, 4)
-    verify_free_table_id(2)
+    verify_free_table_id('2')
 
     update_fake_table(1, 6)
     update_fake_table(2, 7)
-    verify_free_table_id(1)
+    verify_free_table_id('1')
 
     update_fake_table(1, 6)
     update_fake_table(2, 4)
-    verify_free_table_id(2)
+    verify_free_table_id('2')
   end
 
   it "should redirect to a free table prioritizing focus_group" do
     update_fake_table(1, 3)
     update_fake_table(2, 2, is_focus_group: true)
-    verify_free_table_id(2)
+    verify_free_table_id('2')
 
     update_fake_table(1, 3, is_focus_group: true)
     update_fake_table(2, 4)
-    verify_free_table_id(1)
+    verify_free_table_id('1')
 
     update_fake_table(1, 10, is_focus_group: true)
     update_fake_table(2, 5)
-    verify_free_table_id(2)
+    verify_free_table_id('2')
 
     update_fake_table(1, 6)
     update_fake_table(2, 7, is_focus_group: true)
-    verify_free_table_id(1)
+    verify_free_table_id('1')
 
     update_fake_table(1, 6, is_focus_group: true)
     update_fake_table(2, 4)
-    verify_free_table_id(2)
+    verify_free_table_id('2')
   end
 
   it "should redirect to a free table for selected language" do
@@ -128,13 +134,19 @@ describe RoundTable::API do
     update_fake_table(2, 2, language: 'en')
     update_fake_table(3, 3, language: 'he')
     update_fake_table(4, 2, language: 'he')
-    verify_free_table_id(1, language: 'en')
-    verify_free_table_id(3, language: 'he')
+    verify_free_table_id('1', language: 'en')
+    verify_free_table_id('3', language: 'he')
   end
 
   it "should create a table with onair param" do
     table_url = get_free_table_url(url_params: { :onair => "yes" })
     expect(table_url).to include("&hso=0")
+  end
+
+  it "should redirect only when moderated table exists." do
+    verify_free_table_id('', space: "KUKU", is_existing: true, status: 204)
+    verify_free_table_id('pre-generated-id-1', space: "KUKU", is_moderated: true)
+    verify_free_table_id('pre-generated-id-1', space: "KUKU", is_existing: true, status: 200)
   end
 
   it "should redirect to a different table for subspace" do
@@ -177,21 +189,36 @@ describe RoundTable::API do
   end
 
   def verify_free_table_id(table_id, language: "fake-language",
-                           space: "fake-space", subspace: "", is_focus_group: nil)
+                           space: "fake-space", subspace: "",
+                           is_focus_group: nil, is_moderated: nil,
+                           is_existing: nil, status: nil)
     table_url = get_free_table_url(
-      language: language, space: space, subspace: subspace, is_focus_group: is_focus_group)
-    expect(table_url).to include("_/#{table_id}?")
-  end
-
-  def get_table(id, space)
-    JSON.parse(redis.get("table_#{space}_#{id}"))
+      language: language, space: space, subspace: subspace,
+      is_focus_group: is_focus_group, is_moderated: is_moderated,
+      is_existing: is_existing, status: status)
+    if status.nil?
+      expect(table_url).to include("_/#{table_id}?")
+    end
+    if not table_id.empty?
+      table = subject.get_table(space, table_id)
+      expect(table.has_key?('joining_participants'))
+      expect(table['joining_participants'].kind_of?(Array)).to be(true)
+    end
   end
 
   def get_free_table_url(language: "fake-language", space: "fake-space",
-                         url_params: {}, subspace: "", is_focus_group: nil)
+                         url_params: {}, subspace: "", is_focus_group: nil,
+                         is_moderated: is_moderated, is_existing: is_existing,
+                         status: nil)
     query = Rack::Utils.build_query(url_params)
     if is_focus_group == true
       get("/spaces/#{space}/tables/#{language}/focus-group?#{query}",
+          {}, { 'HTTP_USER_AGENT' => 'Chrome/39.0.2171.99' })
+    elsif is_moderated == true
+      get("/spaces/#{space}/tables/#{language}/moderated?#{query}",
+          {}, { 'HTTP_USER_AGENT' => 'Chrome/39.0.2171.99' })
+    elsif is_existing == true
+      get("/spaces/#{space}/tables/#{language}/existing?#{query}",
           {}, { 'HTTP_USER_AGENT' => 'Chrome/39.0.2171.99' })
     elsif subspace.empty?
       get("/spaces/#{space}/tables/#{language}/free?#{query}",
@@ -200,8 +227,13 @@ describe RoundTable::API do
       get("/spaces/#{space}/tables/#{language}/fixed/#{subspace}?#{query}",
           {}, { 'HTTP_USER_AGENT' => 'Chrome/39.0.2171.99' })
     end
-    expect(last_response).to be_redirect
-    last_response.location
+    if status.nil?
+      expect(last_response).to be_redirect
+      last_response.location
+    else
+      expect(last_response.status).to be(status)
+      last_response
+    end
   end
 
 end

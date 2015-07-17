@@ -52,8 +52,9 @@ class RoundTable::API
 
   # Create a new table, only for moderators
   get '/spaces/:space/tables/:language/moderated' do
-    log_request_and_redirect get_table_url(request, params[:space], params[:language],
-                           params[:onair], "", true, false)
+    log_request_and_redirect get_table_url(
+        request, params[:space], params[:language],
+        params[:onair], "", true, false)
   end
 
   # Create a new table, only for focus group
@@ -66,6 +67,7 @@ class RoundTable::API
   get '/spaces/:space/tables/:language/existing' do
     table_url = get_table_url(request, params[:space], params[:language],
                       params[:onair], "", false, false)
+    warn(Time.now.utc.to_s + ": Request: " + request.url + "\n\tRedirect/Block: '" + table_url.to_s + "'")
     if table_url.nil?
       halt 204, {
         'reason' => "No tables available"
@@ -178,7 +180,7 @@ class RoundTable::API
     table_id = nil
     table_id = table['id'] if not table.nil?
     if table.nil?
-      if is_moderator.nil? or is_focus_group == true # Free or subspace or focus tables only.
+      if is_moderator != false or is_focus_group == true # Free or subspace or focus tables only.
         table = { 'participants' => [],
                   'joining_participants' => [],
                   'space' => space,
@@ -193,7 +195,7 @@ class RoundTable::API
       end
     end
 
-    if (not table_id.nil? and is_moderator.nil?) or is_focus_group == true
+    if not table_id.nil?
       # Add one user to free or subspace or focus table
       time_now = redis.time[0]
       table['joining_participants'].push(time_now)
