@@ -63,8 +63,18 @@
     });
   }
 
+  function getLiveId(callback) {
+    if (config.overrideLiveIdUrl) {
+      httpGet(config.overrideLiveIdUrl, callback, function() {
+        httpGet(config.liveIdUrl, callback);
+      });
+    } else {
+      httpGet(config.liveIdUrl, callback);
+    }
+  }
+
   function pollEventsApi() {
-    httpGet(config.liveIdUrl, function(ret) {
+    getLiveId(function(ret) {
       if (ret.id !== lastLiveId) {
         if (ret.id) {
           checkIsLive(ret.id, function(isLive) {
@@ -96,11 +106,17 @@
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   }
 
-  function httpGet(theUrl, callback) {
+  function httpGet(theUrl, callback, errorCallback) {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
       if (xmlHttp.readyState === 4) {
-        callback(JSON.parse(xmlHttp.responseText));
+        if (xmlHttp.status < 400) {
+          callback(JSON.parse(xmlHttp.responseText));
+        } else {
+          if (errorCallback !== undefined) {
+            errorCallback(xmlHttp.status);
+          }
+        }
       }
     };
     xmlHttp.open("GET", theUrl, true);
