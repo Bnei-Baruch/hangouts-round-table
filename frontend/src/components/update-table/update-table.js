@@ -36,17 +36,20 @@
     updateIfRequired: function () {
       var updateRequired = true;
 
-      var localParticipantId = gapi.hangout.getLocalParticipantId();
-      var participants = gapi.hangout.getEnabledParticipants();
-
-      for (var index in participants) {
-        var participant = participants[index];
-
-        if (participant.id < localParticipantId) {
-          updateRequired = false;
-          break;
-        }
-      }
+      // TODO: Uncomment when update bug is fixed.
+      // We comment the following logic to force all users to update
+      // the table.
+      // var localParticipantId = gapi.hangout.getLocalParticipantId();
+      // var participants = gapi.hangout.getEnabledParticipants();
+      //
+      // for (var index in participants) {
+      //   var participant = participants[index];
+      //
+      //   if (participant.id < localParticipantId) {
+      //     updateRequired = false;
+      //     break;
+      //   }
+      // }
 
       if (updateRequired) {
         this.$.updateTable.body = this.getParticipantsJSON();
