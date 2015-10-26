@@ -188,10 +188,7 @@ class RoundTable::API
                   'onair' => onair,
                   'subspace' => subspace,
                   'is_focus_group' => is_focus_group }
-        existing_ids = get_existing_table_ids
-        table_id = consts['hangout_ids'].detect do |id|
-          not existing_ids.include? id
-        end
+        table_id = get_hangout_id
       end
     end
 
@@ -204,6 +201,16 @@ class RoundTable::API
     end
 
     table
+  end
+
+  def get_hangout_id
+    existing_ids = get_existing_table_ids
+    table_id = consts['hangout_ids'].detect do |id|
+      not existing_ids.include? id
+    end
+    consts['hangout_ids'].delete(table_id)
+    consts['hangout_ids'].push(table_id)
+    table_id
   end
 
   def get_table_expected_participants(table)

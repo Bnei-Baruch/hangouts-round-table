@@ -37,6 +37,12 @@ describe RoundTable::API do
     expect(test_table).to eq(table_test_from_db)
   end
 
+  it "should return next hangout id each time" do
+    expect(subject.get_hangout_id).to eq('pre-generated-id-1')
+    expect(subject.get_hangout_id).to eq('pre-generated-id-2')
+    expect(subject.get_hangout_id).to eq('pre-generated-id-1')
+  end
+
   it "should add new table id to constants table list" do
     # TODO: Make sure that if generated hangout id is not in the constans
     # we add it to existing constants ids (maybe also update the local file?!).
